@@ -6,6 +6,7 @@ import sqlite3
 import requests
 import pandas as pd
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
 
 # 페이지 설정 (반드시 맨 처음에 위치해야 합니다)
 st.set_page_config(
@@ -13,6 +14,9 @@ st.set_page_config(
     page_icon="🧬",
     layout="wide"
 )
+
+# 60초(60000밀리초)마다 앱 전체를 자동으로 새로고침
+st_autorefresh(interval=60 * 1000, key="upbit_auto_refresh")
 
 WEIGHTS_FILE = "strategy_weights.json"
 DB_FILE = "upbit_history.db"
@@ -246,45 +250,20 @@ def run_analysis_process():
     
     return records, evolved_weights['generation']
 
-# 상단 레이아웃 설정 (AI리포트 이동 버튼과 타이틀 배치)
-top_col1, top_col2 = st.columns([1, 5])
-with top_col1:
-    st.markdown(
-        """
-        <a href="https://upbit-a.onrender.com/" target="_blank">
-            <button style="
-                background-color: #093687; 
-                color: white; 
-                padding: 10px 15px; 
-                border: none; 
-                border-radius: 8px; 
-                font-weight: bold; 
-                cursor: pointer;
-                width: 100%;
-                margin-top: 10px;
-            ">
-                📊 AI리포트 이동
-            </button>
-        </a>
-        """,
-        unsafe_allow_html=True
-    )
-
-with top_col2:
-    st.markdown("<h1 style='color: #093687; margin-top: 0;'>🧬 업비트 AI 자가진화형 실시간 분석 대시보드</h1>", unsafe_allow_html=True)
+# UI 헤더 구성
+st.markdown("<h1 style='text-align: center; color: #093687;'>🧬 업비트 AI 자가진화형 실시간 분석 대시보드</h1>", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     gen_placeholder = st.empty()
     time_placeholder = st.empty()
 
-# 최초 실행 혹은 데이터가 없을 때 실행
-if not st.session_state.cached_results:
-    with st.spinner("🚀 AI가 전체 코인을 분석하고 진화 알고리즘을 적용 중입니다..."):
-        results, generation = run_analysis_process()
-        st.session_state.cached_results = results
-        st.session_state.generation = generation
-        st.session_state.last_update = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+# 1분마다 자동 새로고침될 때마다 최신 데이터를 다시 계산하여 캐시에 반영
+with st.spinner("🚀 AI가 최신 코인 데이터를 분석하고 진화 알고리즘을 적용 중입니다..."):
+    results, generation = run_analysis_process()
+    st.session_state.cached_results = results
+    st.session_state.generation = generation
+    st.session_state.last_update = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 gen_placeholder.markdown(f"<div style='text-align: center;'><span style='background: #093687; color: white; padding: 4px 12px; border-radius: 12px; font-size: 14px;'>🧬 현재 진화 세대 (Generation): {st.session_state.generation}</span></div>", unsafe_allow_html=True)
 time_placeholder.markdown(f"<p style='text-align: center; color: #666; margin-top: 8px;'>마지막 업데이트: {st.session_state.last_update} (총 {len(st.session_state.cached_results)}개 코인 분석됨)</p>", unsafe_allow_html=True)
@@ -325,11 +304,6 @@ df_show = df_filtered.drop(columns=['raw_name'])
 # 테이블 출력
 st.dataframe(df_show, use_container_width=True, hide_index=True)
 
-# 자동 새로고침 버튼 (또는 수동 갱신)
-if st.button("🔄 데이터 새로고침 및 재분석"):
-    with st.spinner("AI가 최신 데이터를 다시 분석하는 중입니다..."):
-        results, generation = run_analysis_process()
-        st.session_state.cached_results = results
-        st.session_state.generation = generation
-        st.session_state.last_update = datetime.now().strftime("%Y-%m-d %H:%M:%S")
-        st.rerun()
+# 수동 새로고침 버튼 (필요시 즉시 갱신용)
+if st.button("🔄 데이터 즉시 새로고침 및 재분석"):
+    st.rerun()
