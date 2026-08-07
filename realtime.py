@@ -302,6 +302,17 @@ def main():
             background-color: #f1f3f5;
             color: #495057;
             font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }}
+        th:hover {{
+            background-color: #e9ecef;
+        }}
+        th::after {{
+            content: " ↕";
+            font-size: 11px;
+            color: #adb5bd;
         }}
         tr:hover {{
             background-color: #f8f9fa;
@@ -329,12 +340,14 @@ def main():
         }}
     </style>
     <script>
+        let sortDirections = {{}};
+
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
             let table = document.getElementById('coinTable');
             let tr = table.getElementsByTagName('tr');
             for (let i = 1; i < tr.length; i++) {{
-                let tdName = tr[i].getElementsByTagName('td')[1]; // 한글코인명 컬럼 검색 (index 1)
+                let tdName = tr[i].getElementsByTagName('td')[1];
                 if (tdName) {{
                     let textName = tdName.textContent || tdName.innerText;
                     if (textName.toLowerCase().indexOf(input) > -1) {{
@@ -344,6 +357,38 @@ def main():
                     }}
                 }}
             }}
+        }}
+
+        function sortTable(columnIndex) {{
+            let table = document.getElementById('coinTable');
+            let tbody = table.querySelector('tbody');
+            let rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // 정렬 방향 토글 (기본값: 내림차순, 순위와 이름 컬럼은 오름차순 기본)
+            if (!(columnIndex in sortDirections)) {{
+                sortDirections[columnIndex] = (columnIndex === 0 || columnIndex === 1) ? true : false;
+            }} else {{
+                sortDirections[columnIndex] = !sortDirections[columnIndex];
+            }}
+
+            let isAscending = sortDirections[columnIndex];
+
+            rows.sort((a, b) => {{
+                let valA = a.children[columnIndex].getAttribute('data-val') || a.children[columnIndex].innerText.trim();
+                let valB = b.children[columnIndex].getAttribute('data-val') || b.children[columnIndex].innerText.trim();
+
+                let numA = parseFloat(valA.replace(/[^0-9.-]/g, ''));
+                let numB = parseFloat(valB.replace(/[^0-9.-]/g, ''));
+
+                if (!isNaN(numA) && !isNaN(numB)) {{
+                    return isAscending ? numA - numB : numB - numA;
+                }} else {{
+                    return isAscending ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                }}
+            }});
+
+            // DOM 정렬 적용
+            rows.forEach(row => tbody.appendChild(row));
         }}
     </script>
 </head>
@@ -368,17 +413,17 @@ def main():
     <table id="coinTable">
         <thead>
             <tr>
-                <th>순위</th>
-                <th>한글코인명</th>
-                <th>현재가격 (KRW)</th>
-                <th>전일대비등락율</th>
-                <th>패턴유사율</th>
-                <th>세력매집강도</th>
-                <th>유동성지수</th>
-                <th>최근 3시간 TOP10</th>
-                <th>매수우세 (6시간/15분)</th>
-                <th>1주일 5% 변동 (15분봉)</th>
-                <th>예측점수</th>
+                <th onclick="sortTable(0)">순위</th>
+                <th onclick="sortTable(1)">한글코인명</th>
+                <th onclick="sortTable(2)">현재가격 (KRW)</th>
+                <th onclick="sortTable(3)">전일대비등락율</th>
+                <th onclick="sortTable(4)">패턴유사율</th>
+                <th onclick="sortTable(5)">세력매집강도</th>
+                <th onclick="sortTable(6)">유동성지수</th>
+                <th onclick="sortTable(7)">최근 3시간 TOP10</th>
+                <th onclick="sortTable(8)">매수우세 (6시간/15분)</th>
+                <th onclick="sortTable(9)">1주일 5% 변동 (15분봉)</th>
+                <th onclick="sortTable(10)">예측점수</th>
             </tr>
         </thead>
         <tbody>
@@ -390,17 +435,19 @@ def main():
 
         html_content += f"""
             <tr>
-                <td><b>{item['rank']}</b></td>
-                <td><span class="rank-badge">[{item['rank']}]</span> <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span></td>
-                <td>{item['current_price']:,}</td>
-                <td class="{change_class}">{change_sign}{item['change_rate']}%</td>
-                <td>{item['pattern_similarity']}%</td>
-                <td class="accumulation">{item['accumulation_score']}점</td>
-                <td class="liquidity">{item['liquidity_index']}점</td>
-                <td>{item['recent_top10_count']}회</td>
-                <td>{item['positive_count']}회</td>
-                <td><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
-                <td><b>{item['score']}점</b></td>
+                <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
+                <td data-val="{item['name']}">
+                    <span class="rank-badge">[{item['rank']}]</span> <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
+                </td>
+                <td data-val="{item['current_price']}">{item['current_price']:,}</td>
+                <td data-val="{item['change_rate']}" class="{change_class}">{change_sign}{item['change_rate']}%</td>
+                <td data-val="{item['pattern_similarity']}">{item['pattern_similarity']}%</td>
+                <td data-val="{item['accumulation_score']}" class="accumulation">{item['accumulation_score']}점</td>
+                <td data-val="{item['liquidity_index']}" class="liquidity">{item['liquidity_index']}점</td>
+                <td data-val="{item['recent_top10_count']}">{item['recent_top10_count']}회</td>
+                <td data-val="{item['positive_count']}">{item['positive_count']}회</td>
+                <td data-val="{item['up_5pct_count']}"><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
+                <td data-val="{item['score']}"><b>{item['score']}점</b></td>
             </tr>
 """
 
