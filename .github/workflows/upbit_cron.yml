@@ -1,36 +1,42 @@
-name: Upbit AI Auto Evolution Cron
+name: Upbit AI Evolution Cron Action
 
 on:
+  # 💡 실행 주기 설정 (UTC 기준, 아래는 예시로 매 1시간마다 실행. 한국 시간은 +9시간)
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 * * * *' 
+  
+  # GitHub 웹페이지에서 수동으로도 실행할 수 있게 설정
   workflow_dispatch:
 
 jobs:
-  run-analysis:
+  run-analyzer:
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write # 💡 저장소에 파일(DB, JSON) 자동 커밋을 위한 권한 부여
 
     steps:
-      - name: 1. 깃허브 코드 체크아웃
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 2. 파이썬 환경 설정
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           cache: 'pip'
 
-      - name: 3. 필수 라이브러리 직접 강제 설치
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install streamlit requests pandas streamlit-autorefresh
+          pip install -r requirements.txt
 
-      - name: 4. 업비트 AI 분석 스크립트 실행
+      - name: Run Upbit Analyzer Script
         run: |
-          python realtime_upbit.py
+          python main.py
 
-      - name: 5. 변경된 DB 및 JSON 파일을 깃허브에 자동 저장(Commit & Push)
+      - name: Commit and push updated DB & weights
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add upbit_history.db strategy_weights.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 [Bot] 업비트 AI 자가진화 데이터 및 가중치 자동 갱신" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update: Upbit analysis DB & evolved weights [skip ci]" && git push)
