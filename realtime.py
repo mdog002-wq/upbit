@@ -331,6 +331,8 @@ def main():
             width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4);
             z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }}
         .modal-box {{
             position: absolute;
@@ -442,15 +444,16 @@ def main():
             }}
         }});
 
-        function openModal(symbol) {
+        function openModal(symbol) {{
             var iframe = document.getElementById('modalIframe');
             iframe.src = 'https://upbit-a.onrender.com/?symbol=' + symbol;
-            document.getElementById('coinDetailModal').style.display = 'flex';
-            }
-        function closeModal() {
-            document.getElementById('coinDetailModal').style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }}
+
+        function closeModal() {{
+            document.getElementById('modalOverlay').style.display = 'none';
             document.getElementById('modalIframe').src = '';
-            }
+        }}
 
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
