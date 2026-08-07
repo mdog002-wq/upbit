@@ -442,16 +442,15 @@ def main():
             }}
         }});
 
-       function openModal(symbol) {
-    var iframe = document.getElementById('modalIframe');
-    iframe.src = 'https://upbit-a.onrender.com/?symbol=' + symbol;
-    document.getElementById('coinDetailModal').style.display = 'flex';
-}
-
-function closeModal() {
-    document.getElementById('coinDetailModal').style.display = 'none';
-    document.getElementById('modalIframe').src = '';
-}
+        function openModal(symbol) {
+            var iframe = document.getElementById('modalIframe');
+            iframe.src = 'https://upbit-a.onrender.com/?symbol=' + symbol;
+            document.getElementById('coinDetailModal').style.display = 'flex';
+            }
+        function closeModal() {
+            document.getElementById('coinDetailModal').style.display = 'none';
+            document.getElementById('modalIframe').src = '';
+            }
 
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
