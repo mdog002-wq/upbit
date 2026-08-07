@@ -1,7 +1,7 @@
-name: Upbit AI Evolution Cron Action
+Name: Upbit AI Evolution Cron Action
 
 on:
-  # 💡 실행 주기 설정 (UTC 기준, 아래는 예시로 매 1시간마다 실행. 한국 시간은 +9시간)
+  # 💡 실행 주기 설정 (UTC 기준, 매 1시간마다 실행. 한국 시간은 +9시간)
   schedule:
     - cron: '0 * * * *' 
   
@@ -32,11 +32,17 @@ jobs:
 
       - name: Run Upbit Analyzer Script
         run: |
+          # 실제 실행하는 파이썬 파일명에 맞춰주세요 (main.py 또는 realtime_upbit.py)
           python realtime_upbit.py
 
       - name: Commit and push updated DB & weights
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add upbit_history.db strategy_weights.json
+          
+          # 💡 파일이 실제로 생성된 경우에만 git add 하도록 예외 처리 추가
+          if [ -f "upbit_history.db" ]; then git add upbit_history.db; fi
+          if [ -f "strategy_weights.json" ]; then git add strategy_weights.json; fi
+          if [ -f "docs/index.html" ]; then git add docs/index.html; fi
+          
           git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update: Upbit analysis DB & evolved weights [skip ci]" && git push)
