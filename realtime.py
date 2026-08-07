@@ -325,11 +325,6 @@ def main():
             font-weight: normal;
             margin-left: 4px;
         }}
-        .rank-badge {{
-            color: #495057;
-            font-weight: bold;
-            margin-right: 4px;
-        }}
         .accumulation {{
             color: #d9480f; 
             font-weight: bold;
@@ -364,7 +359,6 @@ def main():
             let tbody = table.querySelector('tbody');
             let rows = Array.from(tbody.querySelectorAll('tr'));
 
-            // 정렬 방향 토글 (기본값: 내림차순, 순위와 이름 컬럼은 오름차순 기본)
             if (!(columnIndex in sortDirections)) {{
                 sortDirections[columnIndex] = (columnIndex === 0 || columnIndex === 1) ? true : false;
             }} else {{
@@ -387,7 +381,6 @@ def main():
                 }}
             }});
 
-            // DOM 정렬 적용
             rows.forEach(row => tbody.appendChild(row));
         }}
     </script>
@@ -437,7 +430,7 @@ def main():
             <tr>
                 <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
                 <td data-val="{item['name']}">
-                    <span class="rank-badge">[{item['rank']}]</span> <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
+                    <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
                 </td>
                 <td data-val="{item['current_price']}">{item['current_price']:,}</td>
                 <td data-val="{item['change_rate']}" class="{change_class}">{change_sign}{item['change_rate']}%</td>
