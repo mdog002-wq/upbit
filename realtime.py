@@ -26,12 +26,27 @@ def fetch_krw_markets():
     market_names = {m['market']: m['korean_name'] for m in markets if m['market'].startswith("KRW-")}
     return krw_markets, market_names
 
-def fetch_candles(market, count=24):
-    url = f"https://api.upbit.com/v1/candles/minutes/15?market={market}&count={count}"
-    res = requests.get(url)
-    if res.status_code != 200:
-        return []
-    return res.json()
+def fetch_candles(market, count=672):
+    """최근 1주일간의 15분봉 데이터 수집 (672개 = 7일 * 24시간 * 4회)"""
+    all_candles = []
+    to_param = ""
+    while len(all_candles) < count:
+        req_count = min(200, count - len(all_candles))
+        url = f"https://api.upbit.com/v1/candles/minutes/15?market={market}&count={req_count}"
+        if to_param:
+            url += f"&to={to_param}"
+        res = requests.get(url)
+        if res.status_code != 200:
+            break
+        data = res.json()
+        if not data:
+            break
+        all_candles.extend(data)
+        if len(data) < req_count:
+            break
+        to_param = data[-1]['candle_date_time_utc']
+        time.sleep(0.03) # API 호출 제한 준수
+    return all_candles
 
 def load_json(filepath, default):
     if os.path.exists(filepath):
@@ -51,7 +66,7 @@ def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(DOCS_DIR, exist_ok=True)
 
-    # 1. 초기 데이터 및 가중치 불러오기 (최초 실행 시 오류 방지)
+    # 1. 초기 데이터 및 가중치 불러오기
     history_db = load_json(HISTORY_FILE, {}) 
     weights = load_json(WEIGHTS_FILE, {
         "w_pattern": 0.25,
@@ -61,7 +76,6 @@ def main():
         "w_accumulation": 0.20
     })
 
-    # 학습된 과거 6개월 급등 황금 패턴 불러오기 (없으면 기본 우상향 패턴 적용)
     pattern_data = load_json(PATTERN_FILE, {})
     if "golden_pattern" in pattern_data:
         ideal_pattern = np.array(pattern_data["golden_pattern"])
@@ -76,40 +90,45 @@ def main():
 
     for market in krw_markets:
         k_name = market_names.get(market, market)
-        candles = fetch_candles(market, count=24) # 최근 6시간 15분봉
+        ticker = market.replace("KRW-", "")
         
+        # 1주일 치 15분봉 수집 (672개)
+        candles = fetch_candles(market, count=672)
         if len(candles) < 24:
             continue
 
         df = pd.DataFrame(candles)
         df = df.sort_values('timestamp').reset_index(drop=True)
 
-        current_price = df.iloc[-1]['trade_price']
-        prev_close = df.iloc[0]['opening_price']
+        # 최근 6시간 분석용 캔들 (마지막 24개)
+        df_6h = df.iloc[-24:].copy().reset_index(drop=True)
+
+        current_price = df_6h.iloc[-1]['trade_price']
+        prev_close = df_6h.iloc[0]['opening_price']
         change_rate = ((current_price - prev_close) / prev_close) * 100
 
-        # 최근 6시간 매수 우세 횟수 계산 (양봉 캔들 횟수)
-        positive_count = sum(1 for _, row in df.iterrows() if row['trade_price'] > row['opening_price'])
+        # 최근 6시간 매수 우세 횟수 (양봉 캔들)
+        positive_count = sum(1 for _, row in df_6h.iterrows() if row['trade_price'] > row['opening_price'])
 
-        # 학습된 급등 패턴과의 유사도 계산
-        prices = df['trade_price'].values
+        # 패턴 유사도 계산
+        prices = df_6h['trade_price'].values
         price_min, price_max = prices.min(), prices.max()
         norm_prices = (prices - price_min) / (price_max - price_min + 1e-8)
         distance = np.linalg.norm(norm_prices - ideal_pattern)
         pattern_similarity = max(0.0, float(1.0 - (distance / np.sqrt(len(norm_prices))))) * 100
 
-        # AI 추천용 거래량 변동성 점수
-        volume_std = df['candle_acc_trade_volume'].std()
-        volume_mean = df['candle_acc_trade_volume'].mean()
+        # AI 변동성 점수
+        volume_std = df_6h['candle_acc_trade_volume'].std()
+        volume_mean = df_6h['candle_acc_trade_volume'].mean()
         ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
 
-        # 세력 매집 추적 점수 (거래량 폭발 및 꼬리 패턴)
+        # 세력 매집 추적 점수
         accumulation_score = 0
-        df['vol_ma'] = df['candle_acc_trade_volume'].rolling(window=5).mean().fillna(0)
+        df_6h['vol_ma'] = df_6h['candle_acc_trade_volume'].rolling(window=5).mean().fillna(0)
         
-        for i in range(1, len(df)):
-            row = df.iloc[i]
-            prev_vol_ma = df.iloc[i-1]['vol_ma']
+        for i in range(1, len(df_6h)):
+            row = df_6h.iloc[i]
+            prev_vol_ma = df_6h.iloc[i-1]['vol_ma']
             if prev_vol_ma == 0: continue
             
             if row['candle_acc_trade_volume'] > prev_vol_ma * 2:
@@ -117,22 +136,32 @@ def main():
                 upper_wick = row['high_price'] - max(row['trade_price'], row['opening_price'])
                 lower_wick = min(row['trade_price'], row['opening_price']) - row['low_price']
                 
-                # 밑꼬리 수급 흡수
                 if lower_wick > (body * 1.5):
                     accumulation_score += 30
-                # 매물대 테스트 매집봉
                 if row['trade_price'] > row['opening_price'] and upper_wick > (body * 2):
                     accumulation_score += 20
 
         accumulation_score = min(100.0, accumulation_score)
 
-        # 최근 3시간 이내 TOP 10 포함 횟수 계산
+        # [신설 1] 지난 1주일간(672개 캔들) 15분 내 5% 이상 상승 / 하락 횟수 집계
+        up_5pct_count = sum(1 for _, row in df.iterrows() if ((row['high_price'] - row['opening_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
+        down_5pct_count = sum(1 for _, row in df.iterrows() if ((row['opening_price'] - row['low_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
+
+        # [신설 2] 유동성 지수 계산 (최근 24시간 96개 캔들 거래대금 기준, 로그 스케일 0~100점)
+        df_24h = df.iloc[-96:] if len(df) >= 96 else df
+        acc_24h_krw = df_24h['candle_acc_trade_price'].sum()
+        if acc_24h_krw > 0:
+            liquidity_index = round(min(100.0, max(0.0, (np.log10(acc_24h_krw) - 7) * 20)), 1)
+        else:
+            liquidity_index = 0.0
+
+        # 최근 3시간 TOP10 유지 횟수
         market_history = history_db.get(market, [])
         now_ts = time.time()
         three_hours_ago = now_ts - 3 * 3600
         recent_top10_count = sum(1 for h in market_history if h['timestamp'] >= three_hours_ago and h['rank'] <= 10)
 
-        # 가중치 기반 최종 예측 점수 산출
+        # 가중치 기반 최종 예측 점수
         score = (
             pattern_similarity * weights["w_pattern"] +
             (positive_count / 24.0 * 100) * weights["w_buy_sell"] +
@@ -143,6 +172,7 @@ def main():
 
         analysis_results.append({
             "market": market,
+            "ticker": ticker,
             "name": k_name,
             "current_price": current_price,
             "change_rate": round(change_rate, 2),
@@ -151,12 +181,13 @@ def main():
             "accumulation_score": round(accumulation_score, 1),
             "score": round(score, 2),
             "recent_top10_count": recent_top10_count,
-            "ai_volatility_score": round(ai_volatility_score, 1)
+            "ai_volatility_score": round(ai_volatility_score, 1),
+            "up_5pct_count": up_5pct_count,
+            "down_5pct_count": down_5pct_count,
+            "liquidity_index": liquidity_index
         })
-        
-        time.sleep(0.04)
 
-    # 예측 점수 순 정렬 및 순위 부여
+    # 예측 점수 정렬
     analysis_results.sort(key=lambda x: x['score'], reverse=True)
 
     for idx, item in enumerate(analysis_results):
@@ -170,10 +201,9 @@ def main():
             "rank": rank,
             "price": item['current_price']
         })
-        # 히스토리는 최근 24시간 데이터만 보관
         history_db[item['market']] = [h for h in history_db[item['market']] if h['timestamp'] >= time.time() - 86400]
 
-    # 진화형 AI 피드백 로직 (상위 5개 종목 추적 검증 및 가중치 재조정)
+    # 가중치 피드백 재조정
     top_5 = analysis_results[:5]
     for top in top_5:
         m = top['market']
@@ -207,14 +237,26 @@ def main():
             padding: 20px;
         }}
         .header-container {{
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
             background: #ffffff;
             padding: 15px 25px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             margin-bottom: 20px;
+        }}
+        .header-left {{
+            text-align: left;
+        }}
+        .header-center {{
+            text-align: center;
+        }}
+        .header-right {{
+            text-align: right;
+            font-size: 13px;
+            color: #495057;
+            font-weight: 500;
         }}
         .ai-btn {{
             background-color: #007bff;
@@ -224,6 +266,7 @@ def main():
             text-decoration: none;
             font-weight: bold;
             font-size: 14px;
+            display: inline-block;
             transition: background 0.2s;
         }}
         .ai-btn:hover {{
@@ -265,22 +308,18 @@ def main():
         }}
         .plus {{ color: #e03131; font-weight: bold; }}
         .minus {{ color: #1971c2; font-weight: bold; }}
-        .top-badge {{
-            background: #ffec99;
-            color: #e67700;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }}
-        .update-time {{
-            text-align: right;
+        .ticker-symbol {{
             font-size: 12px;
             color: #868e96;
-            margin-top: 10px;
+            font-weight: normal;
+            margin-left: 4px;
         }}
         .accumulation {{
             color: #d9480f; 
+            font-weight: bold;
+        }}
+        .liquidity {{
+            color: #2b8a3e;
             font-weight: bold;
         }}
     </style>
@@ -290,12 +329,10 @@ def main():
             let table = document.getElementById('coinTable');
             let tr = table.getElementsByTagName('tr');
             for (let i = 1; i < tr.length; i++) {{
-                let tdName = tr[i].getElementsByTagName('td')[1];
-                let tdCode = tr[i].getElementsByTagName('td')[0];
-                if (tdName || tdCode) {{
+                let tdName = tr[i].getElementsByTagName('td')[0];
+                if (tdName) {{
                     let textName = tdName.textContent || tdName.innerText;
-                    let textCode = tdCode.textContent || tdCode.innerText;
-                    if (textName.toLowerCase().indexOf(input) > -1 || textCode.toLowerCase().indexOf(input) > -1) {{
+                    if (textName.toLowerCase().indexOf(input) > -1) {{
                         tr[i].style.display = "";
                     }} else {{
                         tr[i].style.display = "none";
@@ -308,18 +345,24 @@ def main():
 <body>
 
     <div class="header-container">
-        <a href="http://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a>
-        <h2 style="margin: 0; font-size: 20px; color: #343a40;">🚀 업비트 실시간 급등주 포착 대시보드</h2>
+        <div class="header-left">
+            <a href="http://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a>
+        </div>
+        <div class="header-center">
+            <h2 style="margin: 0; font-size: 20px; color: #343a40;">🚀 업비트 실시간 급등주 포착 대시보드</h2>
+        </div>
+        <div class="header-right">
+            마지막 업데이트 (KST): <b>{current_time_str}</b>
+        </div>
     </div>
 
     <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색 (예: 비트코인, KRW-BTC)...">
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색 (예: 비트코인, BTC)...">
     </div>
 
     <table id="coinTable">
         <thead>
             <tr>
-                <th>종목코드</th>
                 <th>한글코인명</th>
                 <th>현재가격 (KRW)</th>
                 <th>전일대비등락율</th>
@@ -328,6 +371,8 @@ def main():
                 <th>세력매집강도</th>
                 <th>예측점수</th>
                 <th>최근 3시간 TOP10</th>
+                <th>1주일 5% 변동 (15분봉)</th>
+                <th>유동성지수</th>
             </tr>
         </thead>
         <tbody>
@@ -336,27 +381,25 @@ def main():
     for item in analysis_results:
         change_class = "plus" if item['change_rate'] > 0 else ("minus" if item['change_rate'] < 0 else "")
         change_sign = "+" if item['change_rate'] > 0 else ""
-        rank_badge = f'<span class="top-badge">{item["rank"]}위</span>' if item['rank'] <= 5 else f'{item["rank"]}위'
 
         html_content += f"""
             <tr>
-                <td><b>{item['market']}</b></td>
-                <td>{item['name']}</td>
+                <td><b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span></td>
                 <td>{item['current_price']:,}</td>
                 <td class="{change_class}">{change_sign}{item['change_rate']}%</td>
                 <td>{item['pattern_similarity']}%</td>
                 <td>{item['positive_count']}회</td>
                 <td class="accumulation">{item['accumulation_score']}점</td>
-                <td><b>{item['score']}점</b> {rank_badge}</td>
+                <td><b>{item['score']}점</b></td>
                 <td>{item['recent_top10_count']}회</td>
+                <td><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
+                <td class="liquidity">{item['liquidity_index']}점</td>
             </tr>
 """
 
     html_content += f"""
         </tbody>
     </table>
-
-    <div class="update-time">마지막 업데이트 (KST): {current_time_str}</div>
 
 </body>
 </html>
