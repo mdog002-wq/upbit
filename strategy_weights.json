@@ -1,0 +1,14 @@
+{
+    "vol_up_weight": 9.6,
+    "power_70_weight": 9.6,
+    "net_buy_weight": 9.6,
+    "generation": 125,
+    "consecutive_bullish_weight": 9.6,
+    "volume_spike_weight": 9.6,
+    "iceberg_accumulation_weight": 4.5,
+    "rank_change_weight": 1.0,
+    "cryptoquant_weight": 5.0,
+    "new_listing_boost": 5.0,
+    "volume_surge_weight": 6.0,
+    "breakout_weight": 7.0
+}
