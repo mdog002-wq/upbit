@@ -246,8 +246,32 @@ def run_analysis_process():
     
     return records, evolved_weights['generation']
 
-# UI 헤더 구성
-st.markdown("<h1 style='text-align: center; color: #093687;'>🧬 업비트 AI 자가진화형 실시간 분석 대시보드</h1>", unsafe_allow_html=True)
+# 상단 레이아웃 설정 (AI리포트 이동 버튼과 타이틀 배치)
+top_col1, top_col2 = st.columns([1, 5])
+with top_col1:
+    st.markdown(
+        """
+        <a href="https://upbit-a.onrender.com/" target="_blank">
+            <button style="
+                background-color: #093687; 
+                color: white; 
+                padding: 10px 15px; 
+                border: none; 
+                border-radius: 8px; 
+                font-weight: bold; 
+                cursor: pointer;
+                width: 100%;
+                margin-top: 10px;
+            ">
+                📊 AI리포트 이동
+            </button>
+        </a>
+        """,
+        unsafe_allow_html=True
+    )
+
+with top_col2:
+    st.markdown("<h1 style='color: #093687; margin-top: 0;'>🧬 업비트 AI 자가진화형 실시간 분석 대시보드</h1>", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
@@ -307,5 +331,5 @@ if st.button("🔄 데이터 새로고침 및 재분석"):
         results, generation = run_analysis_process()
         st.session_state.cached_results = results
         st.session_state.generation = generation
-        st.session_state.last_update = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        st.session_state.last_update = datetime.now().strftime("%Y-%m-d %H:%M:%S")
         st.rerun()
