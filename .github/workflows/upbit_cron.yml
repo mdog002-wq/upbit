@@ -1,4 +1,4 @@
-Name: Upbit AI Evolution Cron Action
+name: Upbit AI Evolution Cron Action
 
 on:
   # 💡 실행 주기 설정 (UTC 기준, 매 1시간마다 실행. 한국 시간은 +9시간)
