@@ -1,7 +1,7 @@
 {
-    "w_pattern": 0.248,
+    "w_pattern": 0.247,
     "w_buy_sell": 0.25,
     "w_recent_rank": 0.15,
     "w_ai_volatility": 0.15,
-    "w_accumulation": 0.198
+    "w_accumulation": 0.197
 }
