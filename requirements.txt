@@ -1,4 +1,4 @@
-streamlit
-requests
+fastapi
+uvicorn
 pandas
-streamlit-autorefresh
+requests
