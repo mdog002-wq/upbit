@@ -143,11 +143,11 @@ def main():
 
         accumulation_score = min(100.0, accumulation_score)
 
-        # [신설 1] 지난 1주일간(672개 캔들) 15분 내 5% 이상 상승 / 하락 횟수 집계
+        # 지난 1주일간 15분 내 5% 이상 변동 집계
         up_5pct_count = sum(1 for _, row in df.iterrows() if ((row['high_price'] - row['opening_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
         down_5pct_count = sum(1 for _, row in df.iterrows() if ((row['opening_price'] - row['low_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
 
-        # [신설 2] 유동성 지수 계산 (최근 24시간 96개 캔들 거래대금 기준, 로그 스케일 0~100점)
+        # 유동성 지수
         df_24h = df.iloc[-96:] if len(df) >= 96 else df
         acc_24h_krw = df_24h['candle_acc_trade_price'].sum()
         if acc_24h_krw > 0:
@@ -222,6 +222,9 @@ def main():
     save_json(HISTORY_FILE, history_db)
     save_json(WEIGHTS_FILE, weights)
 
+    # JavaScript용 분석 데이터 JSON
+    js_data_json = json.dumps(analysis_results, ensure_ascii=False)
+
     # 2. HTML 대시보드 생성
     html_content = f"""<!DOCTYPE html>
 <html lang="ko">
@@ -246,12 +249,8 @@ def main():
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }}
-        .header-left {{
-            text-align: left;
-        }}
-        .header-center {{
-            text-align: center;
-        }}
+        .header-left {{ text-align: left; }}
+        .header-center {{ text-align: center; }}
         .header-right {{
             text-align: right;
             font-size: 13px;
@@ -269,12 +268,8 @@ def main():
             display: inline-block;
             transition: background 0.2s;
         }}
-        .ai-btn:hover {{
-            background-color: #0056b3;
-        }}
-        .search-box {{
-            margin-bottom: 20px;
-        }}
+        .ai-btn:hover {{ background-color: #0056b3; }}
+        .search-box {{ margin-bottom: 20px; }}
         .search-box input {{
             width: 100%;
             padding: 12px 15px;
@@ -306,17 +301,17 @@ def main():
             user-select: none;
             transition: background-color 0.2s;
         }}
-        th:hover {{
-            background-color: #e9ecef;
-        }}
+        th:hover {{ background-color: #e9ecef; }}
         th::after {{
             content: " ↕";
             font-size: 11px;
             color: #adb5bd;
         }}
-        tr:hover {{
-            background-color: #f8f9fa;
+        tbody tr {{
+            cursor: pointer;
+            transition: background-color 0.15s;
         }}
+        tbody tr:hover {{ background-color: #e9ecef !important; }}
         .plus {{ color: #e03131; font-weight: bold; }}
         .minus {{ color: #1971c2; font-weight: bold; }}
         .ticker-symbol {{
@@ -325,17 +320,138 @@ def main():
             font-weight: normal;
             margin-left: 4px;
         }}
-        .accumulation {{
-            color: #d9480f; 
-            font-weight: bold;
+        .accumulation {{ color: #d9480f; font-weight: bold; }}
+        .liquidity {{ color: #2b8a3e; font-weight: bold; }}
+
+        /* 모달 (작은 메모장 크기 팝업) */
+        .modal-overlay {{
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
         }}
-        .liquidity {{
-            color: #2b8a3e;
-            font-weight: bold;
+        .modal-box {{
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 450px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            overflow: hidden;
         }}
+        .modal-box iframe {{
+            width: 100%;
+            height: 100%;
+            border: none;
+        }}
+
+        /* 팝업 모드 전용 스타일 (종목 상세 요약 카드) */
+        .detail-card {{
+            padding: 15px;
+            box-sizing: border-box;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #ffffff;
+            font-size: 13px;
+        }}
+        .detail-header {{
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }}
+        .detail-title {{
+            font-size: 18px;
+            font-weight: bold;
+            color: #212529;
+            margin: 0;
+        }}
+        .detail-row {{
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f1f3f5;
+        }}
+        .detail-label {{ color: #495057; font-weight: 500; }}
+        .detail-value {{ font-weight: bold; }}
     </style>
     <script>
+        const analysisData = {js_data_json};
         let sortDirections = {{}};
+
+        window.addEventListener('DOMContentLoaded', () => {{
+            const urlParams = new URLSearchParams(window.location.search);
+            const symbol = urlParams.get('symbol');
+
+            // 팝업으로 전달된 경우 해당 종목 요약 카드만 렌더링
+            if (symbol) {{
+                const item = analysisData.find(d => d.market === symbol || d.ticker === symbol);
+                if (item) {{
+                    const changeClass = item.change_rate > 0 ? "plus" : (item.change_rate < 0 ? "minus" : "");
+                    const changeSign = item.change_rate > 0 ? "+" : "";
+                    
+                    document.body.innerHTML = `
+                        <div class="detail-card">
+                            <div>
+                                <div class="detail-header">
+                                    <h3 class="detail-title">${{item.name}} <span style="font-size:12px; color:#6c757d;">(${{item.ticker}})</span></h3>
+                                    <span style="font-size: 11px; color: #868e96;">실시간 상세 리포트</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">현재 가격</span>
+                                    <span class="detail-value">${{item.current_price.toLocaleString()}} KRW</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">전일 대비</span>
+                                    <span class="detail-value ${{changeClass}}">${{changeSign}}${{item.change_rate}}%</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">예측 점수</span>
+                                    <span class="detail-value" style="color:#007bff;">${{item.score}}점 (순위: ${{item.rank}}위)</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">패턴 유사율</span>
+                                    <span class="detail-value">${{item.pattern_similarity}}%</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">세력 매집 강도</span>
+                                    <span class="detail-value accumulation">${{item.accumulation_score}}점</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">유동성 지수</span>
+                                    <span class="detail-value liquidity">${{item.liquidity_index}}점</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">1주일 5% 변동</span>
+                                    <span class="detail-value"><span class="plus">▲${{item.up_5pct_count}}</span> / <span class="minus">▼${{item.down_5pct_count}}</span></span>
+                                </div>
+                            </div>
+                            <div style="text-align: center; font-size: 11px; color: #adb5bd; border-top: 1px solid #e9ecef; pt-2;">
+                                Upbit 실시간 분석 시스템
+                            </div>
+                        </div>
+                    `;
+                    document.body.style.padding = '0';
+                    document.body.style.background = '#fff';
+                }}
+            }}
+        }});
+
+        function openModal(symbol) {{
+            const iframe = document.getElementById('modalIframe');
+            iframe.src = `https://upbit-a.onrender.com/index.html?symbol=${{symbol}}`;
+            document.getElementById('modalOverlay').style.display = 'block';
+        }}
+
+        function closeModal() {{
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('modalIframe').src = '';
+        }}
 
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
@@ -389,7 +505,7 @@ def main():
 
     <div class="header-container">
         <div class="header-left">
-            <a href="http://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a>
+            <a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a>
         </div>
         <div class="header-center">
             <h2 style="margin: 0; font-size: 20px; color: #343a40;">🚀 업비트 실시간 급등주 포착 대시보드</h2>
@@ -427,7 +543,7 @@ def main():
         change_sign = "+" if item['change_rate'] > 0 else ""
 
         html_content += f"""
-            <tr>
+            <tr onclick="openModal('{item['market']}')">
                 <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
                 <td data-val="{item['name']}">
                     <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
@@ -447,6 +563,13 @@ def main():
     html_content += f"""
         </tbody>
     </table>
+
+    <!-- 모달 오버레이 및 팝업 창 -->
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-box" onclick="event.stopPropagation();">
+            <iframe id="modalIframe" src=""></iframe>
+        </div>
+    </div>
 
 </body>
 </html>
