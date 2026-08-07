@@ -2,10 +2,8 @@ name: Upbit AI Auto Evolution Cron
 
 on:
   schedule:
-    # ⏱️ 실행 주기 설정 (UTC 기준이므로 한국 시간보다 9시간 느립니다)
-    # 아래 예시는 5분마다 실행되도록 설정한 것입니다. (스팀릿 클라우드와 연동하려면 보통 1시간 단위나 스케줄 주기로 맞춥니다)
     - cron: '*/5 * * * *'
-  workflow_dispatch: # 웹에서 수동으로도 실행할 수 있게 설정
+  workflow_dispatch:
 
 jobs:
   run-analysis:
@@ -21,14 +19,14 @@ jobs:
           python-version: '3.10'
           cache: 'pip'
 
-      - name: 3. 필수 라이브러리 설치
+      - name: 3. 필수 라이브러리 직접 강제 설치
         run: |
           python -m pip install --upgrade pip
-          pip install requests pandas
+          pip install streamlit requests pandas streamlit-autorefresh
 
       - name: 4. 업비트 AI 분석 스크립트 실행
         run: |
-          python realtime_upbit.py  # 본인의 메인 파이썬 파일명으로 수정하세요
+          python realtime_upbit.py
 
       - name: 5. 변경된 DB 및 JSON 파일을 깃허브에 자동 저장(Commit & Push)
         run: |
