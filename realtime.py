@@ -442,16 +442,20 @@ def main():
             }}
         }});
 
-        function openModal(symbol) {{
-            const iframe = document.getElementById('modalIframe');
-            iframe.src = `https://upbit-a.onrender.com/index.html?symbol=${{symbol}}`;
-            document.getElementById('modalOverlay').style.display = 'block';
-        }}
+       function openModal(symbol) {
+           const iframe = document.getElementById('modalIframe');
+           // index.html 제거 후 루트 경로로 설정
+           iframe.src = `https://upbit-a.onrender.com/?symbol=${symbol}`;
+    
+          // coinDetailModal ID 사용 및 display 속성을 'flex'로 지정
+          document.getElementById('coinDetailModal').style.display = 'flex';
+       }
 
-        function closeModal() {{
-            document.getElementById('modalOverlay').style.display = 'none';
-            document.getElementById('modalIframe').src = '';
-        }}
+       function closeModal() {
+           // 열 때 사용한 ID와 동일하게 coinDetailModal 적용
+           document.getElementById('coinDetailModal').style.display = 'none';
+           document.getElementById('modalIframe').src = '';
+       }
 
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
