@@ -40,9 +40,12 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 💡 파일이 실제로 생성된 경우에만 git add 하도록 예외 처리 추가
+          # 💡 파일별로 올바르게 예외 처리 및 git add 수행
           if [ -f "upbit_history.db" ]; then git add upbit_history.db; fi
           if [ -f "strategy_weights.json" ]; then git add strategy_weights.json; fi
           if [ -f "docs/index.html" ]; then git add docs/index.html; fi
+          
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update: Upbit analysis DB & evolved weights [skip ci]" && git push)
+
           
           git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update: Upbit analysis DB & evolved weights [skip ci]" && git push)
