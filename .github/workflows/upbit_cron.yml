@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Upbit Analyzer Script
         run: |
-          python main.py
+          python realtime_upbit.py
 
       - name: Commit and push updated DB & weights
         run: |
