@@ -1,10 +1,9 @@
-import os
-import json
-import time
 from datetime import datetime
+import json
+import os
 import sqlite3
-import requests
 import pandas as pd
+import requests
 
 # 💡 경로 설정: GitHub 저장소 루트와 docs 폴더
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,16 +14,18 @@ HTML_FILE = os.path.join(DOCS_DIR, "index.html")
 
 # 폴더가 없으면 생성
 if not os.path.exists(DOCS_DIR):
-    os.makedirs(DOCS_DIR)
+  os.makedirs(DOCS_DIR)
 
-# (이전 코드의 DB, 로직 함수들은 유지)
-# ... [init_db, save_to_db, load_weights, save_weights, evolve_weights, UpbitEvolutionAnalyzer 등 동일] ...
 
 def update_dashboard_html(records, generation):
-    """분석 데이터를 바탕으로 docs/index.html 파일을 업데이트"""
-    data_json = json.dumps({"time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "generation": generation, "results": records})
-    
-    html_content = f"""<!DOCTYPE html>
+  """분석 데이터를 바탕으로 docs/index.html 파일을 업데이트"""
+  data_json = json.dumps({
+      "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+      "generation": generation,
+      "results": records,
+  })
+
+  html_content = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -57,14 +58,36 @@ def update_dashboard_html(records, generation):
     </script>
 </body>
 </html>"""
-    with open(HTML_FILE, "w", encoding="utf-8") as f:
-        f.write(html_content)
+  with open(HTML_FILE, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
 
 def run_analysis_process():
-    # ... [기존 분석 로직 실행] ...
-    # ... records, evolved_weights 반환 후 ...
-    update_dashboard_html(records, evolved_weights['generation'])
-    return records, evolved_weights['generation']
+  """기존 분석 로직 실행 및 데이터 정의"""
+  # 예시용 더미 데이터 구조 (실제 분석 로직 결과물로 대체해야 합니다)
+  # 만약 기존에 사용하던 분석기 클래스나 함수가 있다면 이 부분을 해당 로직으로 채워넣으세요.
+  evolved_weights = {"generation": 1}
+
+  # 예시 records 데이터 (실제 수집된 코인 분석 결과 딕셔너리 리스트)
+  records = [
+      {
+          "korean_name": "비트코인",
+          "trade_price": 95000000,
+          "signed_change_rate": 2.5,
+          "score": 88.5,
+      },
+      {
+          "korean_name": "이더리움",
+          "trade_price": 3500000,
+          "signed_change_rate": -1.2,
+          "score": 75.0,
+      },
+  ]
+
+  # 💡 필수: update_dashboard_html 호출 전에 records와 evolved_weights가 반드시 정의되어야 합니다.
+  update_dashboard_html(records, evolved_weights["generation"])
+  return records, evolved_weights["generation"]
+
 
 if __name__ == "__main__":
-    run_analysis_process()
+  run_analysis_process()
