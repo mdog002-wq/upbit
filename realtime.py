@@ -314,6 +314,11 @@ def main():
             font-weight: normal;
             margin-left: 4px;
         }}
+        .rank-badge {{
+            color: #495057;
+            font-weight: bold;
+            margin-right: 4px;
+        }}
         .accumulation {{
             color: #d9480f; 
             font-weight: bold;
@@ -329,7 +334,7 @@ def main():
             let table = document.getElementById('coinTable');
             let tr = table.getElementsByTagName('tr');
             for (let i = 1; i < tr.length; i++) {{
-                let tdName = tr[i].getElementsByTagName('td')[0];
+                let tdName = tr[i].getElementsByTagName('td')[1]; // 한글코인명 컬럼 검색 (index 1)
                 if (tdName) {{
                     let textName = tdName.textContent || tdName.innerText;
                     if (textName.toLowerCase().indexOf(input) > -1) {{
@@ -363,16 +368,17 @@ def main():
     <table id="coinTable">
         <thead>
             <tr>
+                <th>순위</th>
                 <th>한글코인명</th>
                 <th>현재가격 (KRW)</th>
                 <th>전일대비등락율</th>
                 <th>패턴유사율</th>
-                <th>매수우세 (6시간/15분)</th>
                 <th>세력매집강도</th>
-                <th>예측점수</th>
-                <th>최근 3시간 TOP10</th>
-                <th>1주일 5% 변동 (15분봉)</th>
                 <th>유동성지수</th>
+                <th>최근 3시간 TOP10</th>
+                <th>매수우세 (6시간/15분)</th>
+                <th>1주일 5% 변동 (15분봉)</th>
+                <th>예측점수</th>
             </tr>
         </thead>
         <tbody>
@@ -384,16 +390,17 @@ def main():
 
         html_content += f"""
             <tr>
-                <td><b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span></td>
+                <td><b>{item['rank']}</b></td>
+                <td><span class="rank-badge">[{item['rank']}]</span> <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span></td>
                 <td>{item['current_price']:,}</td>
                 <td class="{change_class}">{change_sign}{item['change_rate']}%</td>
                 <td>{item['pattern_similarity']}%</td>
-                <td>{item['positive_count']}회</td>
                 <td class="accumulation">{item['accumulation_score']}점</td>
-                <td><b>{item['score']}점</b></td>
-                <td>{item['recent_top10_count']}회</td>
-                <td><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
                 <td class="liquidity">{item['liquidity_index']}점</td>
+                <td>{item['recent_top10_count']}회</td>
+                <td>{item['positive_count']}회</td>
+                <td><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
+                <td><b>{item['score']}점</b></td>
             </tr>
 """
 
