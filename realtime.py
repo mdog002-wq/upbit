@@ -226,6 +226,19 @@ def main():
     js_data_json = json.dumps(analysis_results, ensure_ascii=False)
 
     # 2. HTML 대시보드 생성
+    def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="docs/index.html"):
+    os.makedirs(os.path.dirname(html_path), exist_ok=True)
+    
+    # 데이터를 JS 연동용 딕셔너리로 변환 (symbol 또는 market 기준 매핑)
+    coins_dict = {}
+    for item in analysis_results:
+        key = item.get('market') or item.get('ticker')
+        if key:
+            coins_dict[key] = item
+
+    js_data_json = json.dumps(analysis_results, ensure_ascii=False)
+    coins_map_json = json.dumps(coins_dict, ensure_ascii=False)
+
     html_content = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -323,136 +336,116 @@ def main():
         .accumulation {{ color: #d9480f; font-weight: bold; }}
         .liquidity {{ color: #2b8a3e; font-weight: bold; }}
 
-        /* 모달 (작은 메모장 크기 팝업) */
+        /* 좌우 분할 모달 스타일 */
         .modal-overlay {{
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
         }}
-        .modal-box {{
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 350px;
-            height: 450px;
+        .modal-memo {{
+            width: 950px;
+            height: 650px;
             background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
+            position: relative;
+            animation: modalPop 0.2s ease-out;
         }}
-        .modal-box iframe {{
+        @keyframes modalPop {{
+            from {{ transform: scale(0.92); opacity: 0; }}
+            to {{ transform: scale(1); opacity: 1; }}
+        }}
+        .modal-header-memo {{
+            background-color: #f8fafc;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }}
+        .modal-frames-container {{
+            display: flex;
             width: 100%;
+            height: 100%;
+            flex: 1;
+        }}
+        .modal-frame-pane {{
+            width: 50%;
             height: 100%;
             border: none;
         }}
-
-        /* 팝업 모드 전용 스타일 (종목 상세 요약 카드) */
-        .detail-card {{
-            padding: 15px;
-            box-sizing: border-box;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background: #ffffff;
-            font-size: 13px;
+        .modal-frame-pane:first-child {{
+            border-right: 1px solid #e2e8f0;
         }}
-        .detail-header {{
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
+        .close-memo-btn {{
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            font-size: 1.25rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.15s;
         }}
-        .detail-title {{
-            font-size: 18px;
-            font-weight: bold;
-            color: #212529;
-            margin: 0;
-        }}
-        .detail-row {{
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid #f1f3f5;
-        }}
-        .detail-label {{ color: #495057; font-weight: 500; }}
-        .detail-value {{ font-weight: bold; }}
+        .close-memo-btn:hover {{ color: #0f172a; }}
     </style>
     <script>
         const analysisData = {js_data_json};
+        const allCoinsMap = {coins_map_json};
         let sortDirections = {{}};
 
         window.addEventListener('DOMContentLoaded', () => {{
             const urlParams = new URLSearchParams(window.location.search);
             const symbol = urlParams.get('symbol');
 
-            // 팝업으로 전달된 경우 해당 종목 요약 카드만 렌더링
+            // 만약 단독 링크로 접근된 경우(필요시 기존 요약 카드 로직 유지 또는 대시보드 표시)
             if (symbol) {{
-                const item = analysisData.find(d => d.market === symbol || d.ticker === symbol);
-                if (item) {{
-                    const changeClass = item.change_rate > 0 ? "plus" : (item.change_rate < 0 ? "minus" : "");
-                    const changeSign = item.change_rate > 0 ? "+" : "";
-                    
-                    document.body.innerHTML = `
-                        <div class="detail-card">
-                            <div>
-                                <div class="detail-header">
-                                    <h3 class="detail-title">${{item.name}} <span style="font-size:12px; color:#6c757d;">(${{item.ticker}})</span></h3>
-                                    <span style="font-size: 11px; color: #868e96;">실시간 상세 리포트</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">현재 가격</span>
-                                    <span class="detail-value">${{item.current_price.toLocaleString()}} KRW</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">전일 대비</span>
-                                    <span class="detail-value ${{changeClass}}">${{changeSign}}${{item.change_rate}}%</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">예측 점수</span>
-                                    <span class="detail-value" style="color:#007bff;">${{item.score}}점 (순위: ${{item.rank}}위)</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">패턴 유사율</span>
-                                    <span class="detail-value">${{item.pattern_similarity}}%</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">세력 매집 강도</span>
-                                    <span class="detail-value accumulation">${{item.accumulation_score}}점</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">유동성 지수</span>
-                                    <span class="detail-value liquidity">${{item.liquidity_index}}점</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">1주일 5% 변동</span>
-                                    <span class="detail-value"><span class="plus">▲${{item.up_5pct_count}}</span> / <span class="minus">▼${{item.down_5pct_count}}</span></span>
-                                </div>
-                            </div>
-                            <div style="text-align: center; font-size: 11px; color: #adb5bd; border-top: 1px solid #e9ecef; pt-2;">
-                                Upbit 실시간 분석 시스템
-                            </div>
-                        </div>
-                    `;
-                    document.body.style.padding = '0';
-                    document.body.style.background = '#fff';
-                }}
+                const targetMarket = symbol.toUpperCase().startsWith('KRW-') ? symbol.toUpperCase() : `KRW-${{symbol.toUpperCase()}}`;
+                openModal(targetMarket);
             }}
         }});
 
-        function openModal(symbol) {{
-            var iframe = document.getElementById('modalIframe');
-            iframe.src = 'https://upbit-a.onrender.com/?symbol=' + symbol;
+        function openModal(marketCode) {{
+            const modalTitle = document.getElementById('modalCoinTitle');
+            const modalSub = document.getElementById('modalCoinSub');
+
+            // KRW-BTC 형태 혹은 일반 티커 대응
+            let coinData = allCoinsMap[marketCode];
+            if (!coinData) {{
+                coinData = analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
+            }}
+
+            if (coinData) {{
+                modalTitle.innerText = `${{coinData.name || coinData.kor_name || '종목'}} (${{coinData.ticker || coinData.symbol || marketCode}}) - 양방향 상세 비교`;
+                modalSub.innerText = `Market: ${{marketCode}}`;
+            }} else {{
+                modalTitle.innerText = "종목 상세 비교";
+                modalSub.innerText = marketCode;
+            }}
+
+            // 좌측: 1번 사이트, 우측: 2번 사이트
+            const leftUrl = `https://upbit-r.onrender.com/?symbol=${{marketCode}}`;
+            const rightUrl = `https://upbit-a.onrender.com/?symbol=${{marketCode}}`;
+
+            document.getElementById('modalIframeLeft').src = leftUrl;
+            document.getElementById('modalIframeRight').src = rightUrl;
+
             document.getElementById('coinDetailModal').style.display = 'flex';
         }}
 
         function closeModal() {{
             document.getElementById('coinDetailModal').style.display = 'none';
-            document.getElementById('modalIframe').src = '';
+            document.getElementById('modalIframeLeft').src = '';
+            document.getElementById('modalIframeRight').src = '';
         }}
 
         function filterTable() {{
@@ -543,9 +536,10 @@ def main():
     for item in analysis_results:
         change_class = "plus" if item['change_rate'] > 0 else ("minus" if item['change_rate'] < 0 else "")
         change_sign = "+" if item['change_rate'] > 0 else ""
+        market_code = item.get('market') or f"KRW-{item.get('ticker')}"
 
         html_content += f"""
-            <tr onclick="openModal('{item['market']}')">
+            <tr onclick="openModal('{market_code}')">
                 <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
                 <td data-val="{item['name']}">
                     <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
@@ -566,15 +560,30 @@ def main():
         </tbody>
     </table>
 
-    <!-- 모달 오버레이 및 팝업 창 -->
+    <!-- 모달 오버레이 및 좌우 프레임 팝업 창 -->
     <div id="coinDetailModal" class="modal-overlay" onclick="closeModal()">
-        <div class="modal-box" onclick="event.stopPropagation();">
-            <iframe id="modalIframe" src=""></iframe>
+        <div class="modal-memo" onclick="event.stopPropagation();">
+            <div class="modal-header-memo">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark" id="modalCoinTitle">종목 상세 정보 (1번 & 2번 비교)</h6>
+                    <small class="text-muted" id="modalCoinSub" style="font-size: 0.75rem;">upbit-r & upbit-a 양방향 비교</small>
+                </div>
+                <button type="button" class="close-memo-btn" onclick="closeModal()"><i class="fa-solid fa-xmark">✕</i></button>
+            </div>
+            <div class="modal-frames-container">
+                <iframe id="modalIframeLeft" class="modal-frame-pane" title="1번 사이트 상세"></iframe>
+                <iframe id="modalIframeRight" class="modal-frame-pane" title="2번 사이트 상세"></iframe>
+            </div>
         </div>
     </div>
 
 </body>
 </html>
+"""
+    with open(html_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"🎨 [1번 대시보드] HTML 생성 완료 (`{html_path}`)!")
+    return html_content
 """
 
     with open(HTML_OUTPUT, 'w', encoding='utf-8') as f:
