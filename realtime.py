@@ -384,123 +384,85 @@ def main():
     </style>
     <script>
         const analysisData = {js_data_json};
-        let sortDirections = {{}};
+        let sortDirections = {};
 
-        window.addEventListener('DOMContentLoaded', () => {{
+        window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const symbol = urlParams.get('symbol');
 
             // 팝업으로 전달된 경우 해당 종목 요약 카드만 렌더링
-            if (symbol) {{
-                const item = analysisData.find(d => d.market === symbol || d.ticker === symbol);
-                if (item) {{
+            if (symbol) {
+                const targetMarket = symbol.toUpperCase().startsWith('KRW-') ? symbol.toUpperCase() : `KRW-${symbol.toUpperCase()}`;
+                const item = analysisData.find(d => d.market === targetMarket || d.ticker === symbol.toUpperCase());
+                
+                if (item) {
                     const changeClass = item.change_rate > 0 ? "plus" : (item.change_rate < 0 ? "minus" : "");
                     const changeSign = item.change_rate > 0 ? "+" : "";
                     
                     document.body.innerHTML = `
-                        <div class="detail-card">
-                            <div>
-                                <div class="detail-header">
-                                    <h3 class="detail-title">${{item.name}} <span style="font-size:12px; color:#6c757d;">(${{item.ticker}})</span></h3>
-                                    <span style="font-size: 11px; color: #868e96;">실시간 상세 리포트</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">현재 가격</span>
-                                    <span class="detail-value">${{item.current_price.toLocaleString()}} KRW</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">전일 대비</span>
-                                    <span class="detail-value ${{changeClass}}">${{changeSign}}${{item.change_rate}}%</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">예측 점수</span>
-                                    <span class="detail-value" style="color:#007bff;">${{item.score}}점 (순위: ${{item.rank}}위)</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">패턴 유사율</span>
-                                    <span class="detail-value">${{item.pattern_similarity}}%</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">세력 매집 강도</span>
-                                    <span class="detail-value accumulation">${{item.accumulation_score}}점</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">유동성 지수</span>
-                                    <span class="detail-value liquidity">${{item.liquidity_index}}점</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">1주일 5% 변동</span>
-                                    <span class="detail-value"><span class="plus">▲${{item.up_5pct_count}}</span> / <span class="minus">▼${{item.down_5pct_count}}</span></span>
-                                </div>
-                            </div>
-                            <div style="text-align: center; font-size: 11px; color: #adb5bd; border-top: 1px solid #e9ecef; pt-2;">
-                                Upbit 실시간 분석 시스템
-                            </div>
+                        <div style="padding: 15px; font-family: sans-serif; background: #fff; height: 100%; box-sizing: border-box;">
+                          <h6 style="margin-top:0; margin-bottom: 12px; font-weight: bold; color: #007bff;">⚡ R사이트 (실시간 급등)</h6>
+                          <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">현재 가격</span><span class="detail-value">${item.current_price.toLocaleString()} KRW</span></div>
+                          <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">전일 대비</span><span class="detail-value ${changeClass}">${changeSign}${item.change_rate}%</span></div>
+                          <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">예측 점수</span><span class="detail-value" style="color:#007bff;">${item.score}점 (${item.rank}위)</span></div>
+                          <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">패턴 유사율</span><span class="detail-value">${item.pattern_similarity}%</span></div>
+                          <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">세력 매집 강도</span><span class="detail-value accumulation">${item.accumulation_score}점</span></div>
+                          <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">유동성 지수</span><span class="detail-value liquidity">${item.liquidity_index}점</span></div>
+                          <div style="display:flex; justify-content:space-between; padding: 6px 0; font-size: 13px;"><span class="detail-label">1주일 5% 변동</span><span class="detail-value"><span class="plus">▲${item.up_5pct_count}</span> / <span class="minus">▼${item.down_5pct_count}</span></span></div>
                         </div>
                     `;
                     document.body.style.padding = '0';
                     document.body.style.background = '#fff';
-                }}
-            }}
-        }});
+                }
+            }
+        });
 
-        function openModal(symbol) {{
-            var iframe = document.getElementById('modalIframe');
-            iframe.src = 'https://upbit-a.onrender.com/?symbol=' + symbol;
-            document.getElementById('coinDetailModal').style.display = 'flex';
-        }}
-
-        function closeModal() {{
-            document.getElementById('coinDetailModal').style.display = 'none';
-            document.getElementById('modalIframe').src = '';
-        }}
-
-        function filterTable() {{
+        function filterTable() {
             let input = document.getElementById('searchInput').value.toLowerCase();
             let table = document.getElementById('coinTable');
             let tr = table.getElementsByTagName('tr');
-            for (let i = 1; i < tr.length; i++) {{
+            for (let i = 1; i < tr.length; i++) {
                 let tdName = tr[i].getElementsByTagName('td')[1];
-                if (tdName) {{
+                if (tdName) {
                     let textName = tdName.textContent || tdName.innerText;
-                    if (textName.toLowerCase().indexOf(input) > -1) {{
+                    if (textName.toLowerCase().indexOf(input) > -1) {
                         tr[i].style.display = "";
-                    }} else {{
+                    } else {
                         tr[i].style.display = "none";
-                    }}
-                }}
-            }}
-        }}
+                    }
+                }
+            }
+        }
 
-        function sortTable(columnIndex) {{
+        function sortTable(columnIndex) {
             let table = document.getElementById('coinTable');
             let tbody = table.querySelector('tbody');
             let rows = Array.from(tbody.querySelectorAll('tr'));
 
-            if (!(columnIndex in sortDirections)) {{
+            if (!(columnIndex in sortDirections)) {
                 sortDirections[columnIndex] = (columnIndex === 0 || columnIndex === 1) ? true : false;
-            }} else {{
+            } else {
                 sortDirections[columnIndex] = !sortDirections[columnIndex];
-            }}
+            }
 
             let isAscending = sortDirections[columnIndex];
 
-            rows.sort((a, b) => {{
+            rows.sort((a, b) => {
                 let valA = a.children[columnIndex].getAttribute('data-val') || a.children[columnIndex].innerText.trim();
                 let valB = b.children[columnIndex].getAttribute('data-val') || b.children[columnIndex].innerText.trim();
 
                 let numA = parseFloat(valA.replace(/[^0-9.-]/g, ''));
                 let numB = parseFloat(valB.replace(/[^0-9.-]/g, ''));
 
-                if (!isNaN(numA) && !isNaN(numB)) {{
+                if (!isNaN(numA) && !isNaN(numB)) {
                     return isAscending ? numA - numB : numB - numA;
-                }} else {{
+                } else {
                     return isAscending ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                }}
-            }});
+                }
+            });
 
             rows.forEach(row => tbody.appendChild(row));
-        }}
+        }
     </script>
 </head>
 <body>
@@ -566,13 +528,68 @@ def main():
         </tbody>
     </table>
 
-    <!-- 모달 오버레이 및 팝업 창 -->
+    <!-- 모달 HTML 영역 수정 -->
     <div id="coinDetailModal" class="modal-overlay" onclick="closeModal()">
-        <div class="modal-box" onclick="event.stopPropagation();">
-            <iframe id="modalIframe" src=""></iframe>
+      <div class="modal-box" onclick="event.stopPropagation();" style="width: 820px; max-width: 95vw; height: 500px; padding: 20px; display: flex; flex-direction: column;">
+        
+        <!-- 모달 Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 15px; border-bottom: 1px solid #dee2e6;">
+          <h4 id="rModalTitle" style="margin: 0; font-size: 18px; font-weight: bold;">종목 상세 정보</h4>
+          <button onclick="closeModal()" style="border:none; background:none; font-size: 20px; cursor:pointer;">✕</button>
         </div>
+
+        <!-- 2열 동시 표시 레이아웃 -->
+        <div style="display: flex; gap: 15px; flex: 1; min-height: 0;">
+          <!-- 좌측: R사이트 정보 -->
+          <div style="flex: 1; background: #f8f9fa; border-radius: 8px; padding: 15px; overflow-y: auto;">
+            <h5 style="margin-top:0; margin-bottom: 12px; font-size: 14px; color: #007bff; font-weight: bold;">⚡ R사이트 (실시간 급등)</h5>
+            <div id="rModalContentR"></div>
+          </div>
+
+          <!-- 우측: A사이트 iframe -->
+          <div style="flex: 1; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
+            <iframe id="modalIframeA" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+          </div>
+        </div>
+
+      </div>
     </div>
 
+    <script>
+    function openModal(symbol) {
+      const targetMarket = symbol.toUpperCase().startsWith('KRW-') ? symbol.toUpperCase() : `KRW-${symbol.toUpperCase()}`;
+      const item = analysisData.find(d => d.market === targetMarket || d.ticker === symbol.toUpperCase());
+      const titleEl = document.getElementById('rModalTitle');
+      const contentR = document.getElementById('rModalContentR');
+      const iframeA = document.getElementById('modalIframeA');
+
+      if (item) {
+        const changeClass = item.change_rate > 0 ? "plus" : (item.change_rate < 0 ? "minus" : "");
+        const changeSign = item.change_rate > 0 ? "+" : "";
+
+        titleEl.innerText = `${item.name} (${item.ticker})`;
+        contentR.innerHTML = `
+          <div class="detail-row" style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom:1px solid #eee; font-size: 13px;"><span class="detail-label">현재 가격</span><span class="detail-value">${item.current_price.toLocaleString()} KRW</span></div>
+          <div class="detail-row" style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom:1px solid #eee; font-size: 13px;"><span class="detail-label">전일 대비</span><span class="detail-value ${changeClass}">${changeSign}${item.change_rate}%</span></div>
+          <div class="detail-row" style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom:1px solid #eee; font-size: 13px;"><span class="detail-label">예측 점수</span><span class="detail-value" style="color:#007bff;">${item.score}점 (${item.rank}위)</span></div>
+          <div class="detail-row" style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom:1px solid #eee; font-size: 13px;"><span class="detail-label">패턴 유사율</span><span class="detail-value">${item.pattern_similarity}%</span></div>
+          <div class="detail-row" style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom:1px solid #eee; font-size: 13px;"><span class="detail-label">세력 매집 강도</span><span class="detail-value accumulation">${item.accumulation_score}점</span></div>
+          <div class="detail-row" style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom:1px solid #eee; font-size: 13px;"><span class="detail-label">유동성 지수</span><span class="detail-value liquidity">${item.liquidity_index}점</span></div>
+          <div class="detail-row" style="display:flex; justify-content:space-between; padding: 6px 0; font-size: 13px;"><span class="detail-label">1주일 5% 변동</span><span class="detail-value"><span class="plus">▲${item.up_5pct_count}</span> / <span class="minus">▼${item.down_5pct_count}</span></span></div>
+        `;
+        
+        // A사이트 iframe 호출
+        iframeA.src = `https://upbit-a.onrender.com/?symbol=${item.market}`;
+      }
+
+      document.getElementById('coinDetailModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('coinDetailModal').style.display = 'none';
+      document.getElementById('modalIframeA').src = '';
+    }
+    </script>
 </body>
 </html>
 """
