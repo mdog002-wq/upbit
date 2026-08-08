@@ -1,4 +1,3 @@
-import os
 import json
 import time
 from datetime import datetime, timezone, timedelta
@@ -447,11 +446,11 @@ def main():
         function openModal(symbol) {{
             var iframe = document.getElementById('modalIframe');
             iframe.src = 'https://upbit-a.onrender.com/?symbol=' + symbol;
-            document.getElementById('modalOverlay').style.display = 'flex';
+            document.getElementById('coinDetailModal').style.display = 'flex';
         }}
 
         function closeModal() {{
-            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('coinDetailModal').style.display = 'none';
             document.getElementById('modalIframe').src = '';
         }}
 
@@ -567,7 +566,7 @@ def main():
     </table>
 
     <!-- 모달 오버레이 및 팝업 창 -->
-    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+    <div id="coinDetailModal" class="modal-overlay" onclick="closeModal()">
         <div class="modal-box" onclick="event.stopPropagation();">
             <iframe id="modalIframe" src=""></iframe>
         </div>
