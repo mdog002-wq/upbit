@@ -4,3 +4,4 @@ numpy
 feedparser
 pyupbit
 openpyxl
+redis
