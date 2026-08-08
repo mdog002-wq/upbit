@@ -22,30 +22,48 @@ KST = timezone(timedelta(hours=9))
 
 
 def fetch_ai_recommendations():
-    """GitHub 저장소의 ai_recommend_tracker.json 파일을 가져오는 함수"""
+    """GitHub 저장소의 ai_recommend_tracker.json 파싱 함수 (딕셔너리 Key 파싱 대응)"""
     url = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json"
+    refined_set = set()
     try:
         res = requests.get(url, timeout=5)
         if res.status_code == 200:
             data = res.json()
-            tickers = data.get("recommended_tickers", [])
-            print(
-                f"🤖 [AI 추천 연동] 수집 성공 ({data.get('updated_at')} 기준): {tickers}"
-            )
-            # 티커에서 KRW- 가 붙어있거나 떼어져있을 경우를 둘 다 대응하도록 set으로 정제
-            refined_set = set()
-            for t in tickers:
-                refined_set.add(t.upper())
-                refined_set.add(
-                    t.replace("KRW-", "").upper()
-                )  # 'BTC' 형태로도 탐색 가능하게 추가
+            raw_tickers = []
+            
+            if isinstance(data, dict):
+                # 1. JSON 구조가 { "BLEND": {...}, "MOCA": {...} } 형태인 경우 (최상위 Key 추출)
+                # "recommended_tickers" 등의 특정 키가 존재하지 않으면 Dict의 모든 Key를 추출
+                if "recommended_tickers" in data:
+                    raw_tickers = data.get("recommended_tickers", [])
+                elif "recommended_coins" in data:
+                    raw_tickers = data.get("recommended_coins", [])
+                else:
+                    raw_tickers = list(data.keys())  # "BLEND", "MOCA", "W", "STX" 등 최상위 키 모두 가져옴
+                    
+            elif isinstance(data, list):
+                raw_tickers = data
+
+            print(f"🤖 [AI 추천 연동] 원본 수집 심볼 목록: {raw_tickers}")
+
+            # 티커 정제 (KRW-W, W, krw-w 모두 파싱 가능하도록 저장)
+            for t in raw_tickers:
+                if not t or not isinstance(t, str):
+                    continue
+                t_str = t.strip().upper()
+                refined_set.add(t_str)
+                refined_set.add(t_str.replace("KRW-", ""))
+                refined_set.add(f"KRW-{t_str.replace('KRW-', '')}")
+
+            print(f"✅ [AI 추천 연동] 정제된 매핑 심볼 수: {len(refined_set)}개")
             return refined_set
         else:
             print(f"⚠️ [AI 추천 연동] HTTP 응답 코드 오류: {res.status_code}")
     except Exception as e:
-        print(f"⚠️ [AI 추천 연동] JSON 불러오기 실패 (기본값 진행): {e}")
+        print(f"⚠️ [AI 추천 연동] JSON 불러오기 실패: {e}")
 
     return set()
+
 
 
 def fetch_krw_markets():
