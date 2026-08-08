@@ -596,7 +596,6 @@ def main():
         f.write(html_content)
     print(f"🎨 [1번 대시보드] HTML 생성 완료 (`{html_path}`)!")
     return html_content
-"""
 
     with open(HTML_OUTPUT, 'w', encoding='utf-8') as f:
         f.write(html_content)
