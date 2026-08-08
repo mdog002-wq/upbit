@@ -6,4 +6,4 @@ pyupbit
 openpyxl
 redis
 paramiko
-BeautifulSoup
+beautifulsoup4
