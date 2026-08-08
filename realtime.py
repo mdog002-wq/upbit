@@ -421,7 +421,7 @@ def main():
                     
                     document.body.innerHTML = `
                         <div style="padding: 15px; font-family: sans-serif; background: #fff; height: 100%; box-sizing: border-box;">
-                          <h6 style="margin-top:0; margin-bottom: 12px; font-weight: bold; color: #007bff;">⚡ R사이트 (실시간 급등)</h6>
+                          <h6 style="margin-top:0; margin-bottom: 12px; font-weight: bold; color: #007bff;">⚡ AI실시간 </h6>
                           <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">현재 가격</span><span class="detail-value">${item.current_price.toLocaleString()} KRW</span></div>
                           <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">전일 대비</span><span class="detail-value ${changeClass}">${changeSign}${item.change_rate}%</span></div>
                           <div style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px;"><span class="detail-label">예측 점수</span><span class="detail-value" style="color:#007bff;">${item.score}점 (${item.rank}위)</span></div>
@@ -534,7 +534,7 @@ def main():
 
         <div style="display: flex; gap: 15px; flex: 1; min-height: 0;">
           <div style="flex: 1; background: #f8f9fa; border-radius: 8px; padding: 15px; overflow-y: auto;">
-            <h5 style="margin-top:0; margin-bottom: 12px; font-size: 14px; color: #007bff; font-weight: bold;">⚡ R사이트 (실시간 급등)</h5>
+            <h5 style="margin-top:0; margin-bottom: 12px; font-size: 14px; color: #007bff; font-weight: bold;">⚡ AI실시간 </h5>
             <div id="rModalContentR"></div>
           </div>
 
