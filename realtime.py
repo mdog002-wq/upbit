@@ -7,12 +7,6 @@ import numpy as np
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
-
-app = FastAPI(title="Upbit AI Quantitative Dashboard Server")
-
 # 경로 및 상수 설정
 DATA_DIR = "data"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
@@ -22,27 +16,6 @@ DOCS_DIR = "docs"
 HTML_OUTPUT = os.path.join(DOCS_DIR, "index.html")
 
 KST = timezone(timedelta(hours=9))
-
-os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(DOCS_DIR, exist_ok=True)
-
-
-# ==============================================================================
-# [헬퍼 및 데이터 수집 함수]
-# ==============================================================================
-def load_json(filepath, default):
-    if os.path.exists(filepath):
-        try:
-            with open(filepath, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return default
-
-def save_json(filepath, data):
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
 
 def fetch_krw_markets():
     url = "https://api.upbit.com/v1/market/all"
@@ -55,6 +28,7 @@ def fetch_krw_markets():
     return krw_markets, market_names
 
 def fetch_candles(market, count=672):
+    """최근 1주일간의 15분봉 데이터 수집 (병렬 처리 지원을 위한 최적화)"""
     all_candles = []
     to_param = ""
     while len(all_candles) < count:
@@ -62,7 +36,7 @@ def fetch_candles(market, count=672):
         url = f"https://api.upbit.com/v1/candles/minutes/15?market={market}&count={req_count}"
         if to_param:
             url += f"&to={to_param}"
-        
+       
         try:
             res = requests.get(url, timeout=5)
             if res.status_code != 200:
@@ -78,12 +52,27 @@ def fetch_candles(market, count=672):
         except Exception:
             time.sleep(0.2)
             continue
-            
+             
     return all_candles
 
+def load_json(filepath, default):
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return default
+
+def save_json(filepath, data):
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
 def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
+    """개별 코인 분석 함수 (스레드 병렬 처리를 위해 분리)"""
     ticker = market.replace("KRW-", "")
-    
+   
     candles = fetch_candles(market, count=672)
     if len(candles) < 24:
         return None
@@ -111,17 +100,18 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
 
     accumulation_score = 0
     df_6h['vol_ma'] = df_6h['candle_acc_trade_volume'].rolling(window=5).mean().fillna(0)
-    
+   
     for i in range(1, len(df_6h)):
         row = df_6h.iloc[i]
         prev_vol_ma = df_6h.iloc[i-1]['vol_ma']
-        if prev_vol_ma == 0: continue
-        
+        if prev_vol_ma == 0: 
+            continue
+       
         if row['candle_acc_trade_volume'] > prev_vol_ma * 2:
             body = abs(row['trade_price'] - row['opening_price'])
             upper_wick = row['high_price'] - max(row['trade_price'], row['opening_price'])
             lower_wick = min(row['trade_price'], row['opening_price']) - row['low_price']
-            
+           
             if lower_wick > (body * 1.5):
                 accumulation_score += 30
             if row['trade_price'] > row['opening_price'] and upper_wick > (body * 2):
@@ -169,104 +159,140 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
         "liquidity_index": liquidity_index
     }
 
+def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="docs/index.html"):
+    os.makedirs(os.path.dirname(html_path), exist_ok=True)
 
-# ==============================================================================
-# [FastAPI 라우터 설정]
-# ==============================================================================
+    html_content = f"""<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>업비트 실시간 급등주 포착 대시보드</title>
+    <style>
+        body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }}
+        .header-container {{ display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }}
+        .header-left {{ text-align: left; }} .header-center {{ text-align: center; }} .header-right {{ text-align: right; font-size: 13px; color: #495057; font-weight: 500; }}
+        .ai-btn {{ background-color: #007bff; color: white; padding: 10px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; transition: background 0.2s; }}
+        .ai-btn:hover {{ background-color: #0056b3; }}
+        .search-box {{ margin-bottom: 20px; }}
+        .search-box input {{ width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }}
+        table {{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
+        th, td {{ padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }}
+        th {{ background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; }}
+        th:hover {{ background-color: #e9ecef; }}
+        tbody tr {{ transition: background-color 0.15s; }}
+        tbody tr:hover {{ background-color: #e9ecef !important; }}
+        .plus {{ color: #e03131; font-weight: bold; }}
+        .minus {{ color: #1971c2; font-weight: bold; }}
+        .ticker-symbol {{ font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }}
+        .accumulation {{ color: #d9480f; font-weight: bold; }}
+        .liquidity {{ color: #2b8a3e; font-weight: bold; }}
+    </style>
+    <script>
+        function filterTable() {{
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let tr = document.getElementById('coinTable').getElementsByTagName('tr');
+            for (let i = 1; i < tr.length; i++) {{
+                let td = tr[i].getElementsByTagName('td')[1];
+                tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().indexOf(input) > -1) ? "" : "none";
+            }}
+        }}
+    </script>
+</head>
+<body>
+    <div class="header-container">
+        <div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
+        <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
+        <div class="header-right">마지막 업데이트: <b>{current_time_str}</b></div>
+    </div>
+    <div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
+    <table id="coinTable">
+        <thead>
+            <tr>
+                <th>순위</th><th>한글코인명</th><th>현재가격 (KRW)</th><th>전일대비등락율</th>
+                <th>패턴유사율</th><th>세력매집강도</th><th>유동성지수</th><th>최근 3시간 TOP10</th>
+                <th>매수우세</th><th>1주일 5% 변동</th><th>예측점수</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
 
-@app.get("/", response_class=HTMLResponse)
-async def get_dashboard():
-    """메인 대시보드 페이지 반환"""
-    if os.path.exists(HTML_OUTPUT):
-        with open(HTML_OUTPUT, "r", encoding="utf-8") as f:
-            return f.read()
-    return "<h3>대시보드가 아직 생성되지 않았습니다. 잠시 후 다시 시도해 주세요.</h3>"
+    for item in analysis_results:
+        change_class = "plus" if item['change_rate'] > 0 else ("minus" if item['change_rate'] < 0 else "")
+        change_sign = "+" if item['change_rate'] > 0 else ""
+        html_content += f"""
+            <tr>
+                <td><b>{item['rank']}</b></td>
+                <td><b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span></td>
+                <td>{item['current_price']:,}</td>
+                <td class="{change_class}">{change_sign}{item['change_rate']}%</td>
+                <td>{item['pattern_similarity']}%</td>
+                <td class="accumulation">{item['accumulation_score']}점</td>
+                <td class="liquidity">{item['liquidity_index']}점</td>
+                <td>{item['recent_top10_count']}회</td>
+                <td>{item['positive_count']}회</td>
+                <td><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
+                <td><b>{item['score']}점</b></td>
+            </tr>
+"""
 
+    html_content += """
+        </tbody>
+    </table>
+</body>
+</html>
+"""
+    with open(html_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"🎨 [대시보드] HTML 생성 완료 (`{html_path}`)!")
 
-@app.get("/detail", response_class=HTMLResponse)
-async def get_1st_site_detail_view(request: Request, symbol: str = "KRW-BTC"):
-    """
-    모달 내 iframe 전용 종목 상세 분석 라우터
-    실제 분석 함수를 즉시 실행하여 실시간 데이터를 랜더링합니다.
-    """
-    symbol_upper = symbol.upper()
-    market = symbol_upper if symbol_upper.startswith("KRW-") else f"KRW-{symbol_upper}"
-    ticker = market.replace("KRW-", "")
+def main():
+    os.makedirs(DATA_DIR, exist_ok=True)
+    os.makedirs(DOCS_DIR, exist_ok=True)
 
     history_db = load_json(HISTORY_FILE, {})
     weights = load_json(WEIGHTS_FILE, {
         "w_pattern": 0.25, "w_buy_sell": 0.25, "w_recent_rank": 0.15,
         "w_ai_volatility": 0.15, "w_accumulation": 0.20
     })
+
     pattern_data = load_json(PATTERN_FILE, {})
     ideal_pattern = np.array(pattern_data["golden_pattern"]) if "golden_pattern" in pattern_data else np.linspace(0.2, 1.0, 24)
 
-    # 해당 코인 단일 실시간 분석 실행
-    analyzed_data = analyze_single_coin(market, ticker, ideal_pattern, history_db, weights)
+    krw_markets, market_names = fetch_krw_markets()
+    current_time_str = datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S')
+    analysis_results = []
 
-    if analyzed_data:
-        coin_info = {
-            "symbol": ticker,
-            "price": f"{analyzed_data['current_price']:,}",
-            "score": analyzed_data['score'],
-            "pattern_match": f"{analyzed_data['pattern_similarity']}%",
-            "volume_power": f"{analyzed_data['accumulation_score']} 점"
-        }
-    else:
-        coin_info = {
-            "symbol": ticker,
-            "price": "N/A",
-            "score": 0.0,
-            "pattern_match": "0.0%",
-            "volume_power": "0 점"
-        }
+    print(f"[{current_time_str}] 멀티스레딩 데이터 수집 및 분석 시작 (총 {len(krw_markets)}개 종목)...")
 
-    html_content = f"""
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body {{ background-color: #ffffff; padding: 15px; font-family: sans-serif; }}
-            .card {{ border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
-            .metric-row {{ display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }}
-        </style>
-    </head>
-    <body>
-        <div class="card p-3">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold m-0 text-primary">📊 1번 사이트 지표 요약</h6>
-                <span class="badge bg-primary">{coin_info['symbol']}</span>
-            </div>
-            <hr class="my-2">
-            
-            <div class="metric-row">
-                <span class="text-secondary">현재 가격</span>
-                <span class="fw-bold">{coin_info['price']} 원</span>
-            </div>
-            <div class="metric-row">
-                <span class="text-secondary">예측 점수</span>
-                <span class="fw-bold text-primary">{coin_info['score']} 점</span>
-            </div>
-            <div class="metric-row">
-                <span class="text-secondary">패턴 유사율</span>
-                <span class="fw-bold">{coin_info['pattern_match']}</span>
-            </div>
-            <div class="metric-row">
-                <span class="text-secondary">세력 매집 강도</span>
-                <span class="fw-bold text-success">{coin_info['volume_power']}</span>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    return HTMLResponse(content=html_content)
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = {executor.submit(analyze_single_coin, market, market_names.get(market, market), ideal_pattern, history_db, weights): market for market in krw_markets}
+       
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                analysis_results.append(result)
 
+    analysis_results.sort(key=lambda x: x['score'], reverse=True)
 
-# ==============================================================================
-# [실행 진입점]
-# ==============================================================================
+    for idx, item in enumerate(analysis_results):
+        rank = idx + 1
+        item['rank'] = rank
+        m_code = item['market']
+        if m_code not in history_db:
+            history_db[m_code] = []
+        history_db[m_code].append({
+            "timestamp": time.time(),
+            "score": item['score'],
+            "rank": rank,
+            "price": item['current_price']
+        })
+        history_db[m_code] = [h for h in history_db[m_code] if h['timestamp'] >= time.time() - 86400]
+
+    save_json(HISTORY_FILE, history_db)
+    save_json(WEIGHTS_FILE, weights)
+
+    generate_upbit_r_dashboard(analysis_results, current_time_str, HTML_OUTPUT)
+    print("대시보드 HTML 생성 및 업데이트 완료.")
+
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    main()
