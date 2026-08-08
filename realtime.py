@@ -506,6 +506,9 @@ def main():
         change_class = "plus" if item['change_rate'] > 0 else ("minus" if item['change_rate'] < 0 else "")
         change_sign = "+" if item['change_rate'] > 0 else ""
 
+        price_formatted = f"{item['current_price']:,}"
+        market_id = item['market']
+
         html_content += f"""
             <tr onclick="openModal('{item["market"]}')">
                 <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
