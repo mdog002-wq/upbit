@@ -62,172 +62,8 @@ def save_json(filepath, data):
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-def main():
-    os.makedirs(DATA_DIR, exist_ok=True)
-    os.makedirs(DOCS_DIR, exist_ok=True)
-
-    # 1. 초기 데이터 및 가중치 불러오기
-    history_db = load_json(HISTORY_FILE, {}) 
-    weights = load_json(WEIGHTS_FILE, {
-        "w_pattern": 0.25,
-        "w_buy_sell": 0.25,
-        "w_recent_rank": 0.15,
-        "w_ai_volatility": 0.15,
-        "w_accumulation": 0.20
-    })
-
-    pattern_data = load_json(PATTERN_FILE, {})
-    if "golden_pattern" in pattern_data:
-        ideal_pattern = np.array(pattern_data["golden_pattern"])
-    else:
-        ideal_pattern = np.linspace(0.2, 1.0, 24)
-
-    krw_markets, market_names = fetch_krw_markets()
-    current_time_str = datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S')
-    analysis_results = []
-
-    print(f"[{current_time_str}] 데이터 수집 및 분석 시작 (총 {len(krw_markets)}개 종목)...")
-
-    for market in krw_markets:
-        k_name = market_names.get(market, market)
-        ticker = market.replace("KRW-", "")
-        
-        # 1주일 치 15분봉 수집 (672개)
-        candles = fetch_candles(market, count=672)
-        if len(candles) < 24:
-            continue
-
-        df = pd.DataFrame(candles)
-        df = df.sort_values('timestamp').reset_index(drop=True)
-
-        # 최근 6시간 분석용 캔들 (마지막 24개)
-        df_6h = df.iloc[-24:].copy().reset_index(drop=True)
-
-        current_price = df_6h.iloc[-1]['trade_price']
-        prev_close = df_6h.iloc[0]['opening_price']
-        change_rate = ((current_price - prev_close) / prev_close) * 100
-
-        # 최근 6시간 매수 우세 횟수 (양봉 캔들)
-        positive_count = sum(1 for _, row in df_6h.iterrows() if row['trade_price'] > row['opening_price'])
-
-        # 패턴 유사도 계산
-        prices = df_6h['trade_price'].values
-        price_min, price_max = prices.min(), prices.max()
-        norm_prices = (prices - price_min) / (price_max - price_min + 1e-8)
-        distance = np.linalg.norm(norm_prices - ideal_pattern)
-        pattern_similarity = max(0.0, float(1.0 - (distance / np.sqrt(len(norm_prices))))) * 100
-
-        # AI 변동성 점수
-        volume_std = df_6h['candle_acc_trade_volume'].std()
-        volume_mean = df_6h['candle_acc_trade_volume'].mean()
-        ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
-
-        # 세력 매집 추적 점수
-        accumulation_score = 0
-        df_6h['vol_ma'] = df_6h['candle_acc_trade_volume'].rolling(window=5).mean().fillna(0)
-        
-        for i in range(1, len(df_6h)):
-            row = df_6h.iloc[i]
-            prev_vol_ma = df_6h.iloc[i-1]['vol_ma']
-            if prev_vol_ma == 0: continue
-            
-            if row['candle_acc_trade_volume'] > prev_vol_ma * 2:
-                body = abs(row['trade_price'] - row['opening_price'])
-                upper_wick = row['high_price'] - max(row['trade_price'], row['opening_price'])
-                lower_wick = min(row['trade_price'], row['opening_price']) - row['low_price']
-                
-                if lower_wick > (body * 1.5):
-                    accumulation_score += 30
-                if row['trade_price'] > row['opening_price'] and upper_wick > (body * 2):
-                    accumulation_score += 20
-
-        accumulation_score = min(100.0, accumulation_score)
-
-        # 지난 1주일간 15분 내 5% 이상 변동 집계
-        up_5pct_count = sum(1 for _, row in df.iterrows() if ((row['high_price'] - row['opening_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
-        down_5pct_count = sum(1 for _, row in df.iterrows() if ((row['opening_price'] - row['low_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
-
-        # 유동성 지수
-        df_24h = df.iloc[-96:] if len(df) >= 96 else df
-        acc_24h_krw = df_24h['candle_acc_trade_price'].sum()
-        if acc_24h_krw > 0:
-            liquidity_index = round(min(100.0, max(0.0, (np.log10(acc_24h_krw) - 7) * 20)), 1)
-        else:
-            liquidity_index = 0.0
-
-        # 최근 3시간 TOP10 유지 횟수
-        market_history = history_db.get(market, [])
-        now_ts = time.time()
-        three_hours_ago = now_ts - 3 * 3600
-        recent_top10_count = sum(1 for h in market_history if h['timestamp'] >= three_hours_ago and h['rank'] <= 10)
-
-        # 가중치 기반 최종 예측 점수
-        score = (
-            pattern_similarity * weights["w_pattern"] +
-            (positive_count / 24.0 * 100) * weights["w_buy_sell"] +
-            min(100.0, recent_top10_count * 20) * weights["w_recent_rank"] +
-            ai_volatility_score * weights["w_ai_volatility"] +
-            accumulation_score * weights["w_accumulation"]
-        )
-
-        analysis_results.append({
-            "market": market,
-            "ticker": ticker,
-            "name": k_name,
-            "current_price": current_price,
-            "change_rate": round(change_rate, 2),
-            "pattern_similarity": round(pattern_similarity, 1),
-            "positive_count": positive_count,
-            "accumulation_score": round(accumulation_score, 1),
-            "score": round(score, 2),
-            "recent_top10_count": recent_top10_count,
-            "ai_volatility_score": round(ai_volatility_score, 1),
-            "up_5pct_count": up_5pct_count,
-            "down_5pct_count": down_5pct_count,
-            "liquidity_index": liquidity_index
-        })
-
-    # 예측 점수 정렬
-    analysis_results.sort(key=lambda x: x['score'], reverse=True)
-
-    for idx, item in enumerate(analysis_results):
-        rank = idx + 1
-        item['rank'] = rank
-        if item['market'] not in history_db:
-            history_db[item['market']] = []
-        history_db[item['market']].append({
-            "timestamp": time.time(),
-            "score": item['score'],
-            "rank": rank,
-            "price": item['current_price']
-        })
-        history_db[item['market']] = [h for h in history_db[item['market']] if h['timestamp'] >= time.time() - 86400]
-
-    # 가중치 피드백 재조정
-    top_5 = analysis_results[:5]
-    for top in top_5:
-        m = top['market']
-        past_records = history_db.get(m, [])
-        if len(past_records) >= 2:
-            initial_price = past_records[0]['price']
-            latest_price = top['current_price']
-            perf = (latest_price - initial_price) / (initial_price + 1e-8)
-            if perf > 0.01:
-                weights["w_pattern"] = min(0.4, weights["w_pattern"] + 0.001)
-                weights["w_accumulation"] = min(0.3, weights["w_accumulation"] + 0.001)
-            elif perf < -0.01:
-                weights["w_pattern"] = max(0.1, weights["w_pattern"] - 0.001)
-                weights["w_accumulation"] = max(0.1, weights["w_accumulation"] - 0.001)
-
-    save_json(HISTORY_FILE, history_db)
-    save_json(WEIGHTS_FILE, weights)
-
-    # JavaScript용 분석 데이터 JSON
-    js_data_json = json.dumps(analysis_results, ensure_ascii=False)
-
-    # 2. HTML 대시보드 생성
-    def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="docs/index.html"):
-        os.makedirs(os.path.dirname(html_path), exist_ok=True)
+def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="docs/index.html"):
+    os.makedirs(os.path.dirname(html_path), exist_ok=True)
     
     # 데이터를 JS 연동용 딕셔너리로 변환 (symbol 또는 market 기준 매핑)
     coins_dict = {}
@@ -403,50 +239,37 @@ def main():
         const allCoinsMap = {coins_map_json};
         let sortDirections = {{}};
 
-        window.addEventListener('DOMContentLoaded', () => {
-            // 만약 현재 페이지가 iframe 내부에 갇힌 상태라면, 좌우 분할 코드를 실행하지 않고 통과시킵니다.
-            if (window.self !== window.top) {
-                return; // iframe 안에서는 모달 팝업 로직 실행 금지
-            }
-
+        window.addEventListener('DOMContentLoaded', () => {{
+            if (window.self !== window.top) {{
+                return;
+            }}
             const urlParams = new URLSearchParams(window.location.search);
             const symbolParam = urlParams.get('symbol');
-
-            if (symbolParam) {
-                const targetMarket = symbolParam.toUpperCase().startsWith('KRW-') ? symbolParam.toUpperCase() : `KRW-${{symbol.toUpperCase()}}`;
+            if (symbolParam) {{
+                const targetMarket = symbolParam.toUpperCase().startsWith('KRW-') ? symbolParam.toUpperCase() : 'KRW-' + symbolParam.toUpperCase();
                 openModal(targetMarket);
-            }
-        });
-
-        function openModal(marketCode) {
-            const modalTitle = document.getElementById('modalCoinTitle');
-            const modalSub = document.getElementById('modalCoinSub');
-            
-            // 이후 내용...
-        }
-    </script>
+            }}
+        }});
 
         function openModal(marketCode) {{
             const modalTitle = document.getElementById('modalCoinTitle');
             const modalSub = document.getElementById('modalCoinSub');
-
-            // KRW-BTC 형태 혹은 일반 티커 대응
+            
             let coinData = allCoinsMap[marketCode];
             if (!coinData) {{
                 coinData = analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
             }}
 
             if (coinData) {{
-                modalTitle.innerText = `${{coinData.name || coinData.kor_name || '종목'}} (${{coinData.ticker || coinData.symbol || marketCode}}) - 양방향 상세 비교`;
-                modalSub.innerText = `Market: ${{marketCode}}`;
+                modalTitle.innerText = (coinData.name || coinData.kor_name || '종목') + ' (' + (coinData.ticker || coinData.symbol || marketCode) + ') - 양방향 상세 비교';
+                modalSub.innerText = 'Market: ' + marketCode;
             }} else {{
                 modalTitle.innerText = "종목 상세 비교";
                 modalSub.innerText = marketCode;
             }}
 
-            // 좌측: 1번 사이트, 우측: 2번 사이트
-            const leftUrl = `https://upbit-r.onrender.com/?symbol=${{marketCode}}`;
-            const rightUrl = `https://upbit-a.onrender.com/?symbol=${{marketCode}}`;
+            const leftUrl = 'https://upbit-r.onrender.com/?symbol=' + marketCode;
+            const rightUrl = 'https://upbit-a.onrender.com/?symbol=' + marketCode;
 
             document.getElementById('modalIframeLeft').src = leftUrl;
             document.getElementById('modalIframeRight').src = rightUrl;
@@ -580,7 +403,7 @@ def main():
                     <h6 class="fw-bold mb-0 text-dark" id="modalCoinTitle">종목 상세 정보 (1번 & 2번 비교)</h6>
                     <small class="text-muted" id="modalCoinSub" style="font-size: 0.75rem;">upbit-r & upbit-a 양방향 비교</small>
                 </div>
-                <button type="button" class="close-memo-btn" onclick="closeModal()"><i class="fa-solid fa-xmark">✕</i></button>
+                <button type="button" class="close-memo-btn" onclick="closeModal()">✕</button>
             </div>
             <div class="modal-frames-container">
                 <iframe id="modalIframeLeft" class="modal-frame-pane" title="1번 사이트 상세"></iframe>
@@ -597,8 +420,168 @@ def main():
     print(f"🎨 [1번 대시보드] HTML 생성 완료 (`{html_path}`)!")
     return html_content
 
-    with open(HTML_OUTPUT, 'w', encoding='utf-8') as f:
-        f.write(html_content)
+def main():
+    os.makedirs(DATA_DIR, exist_ok=True)
+    os.makedirs(DOCS_DIR, exist_ok=True)
+
+    # 1. 초기 데이터 및 가중치 불러오기
+    history_db = load_json(HISTORY_FILE, {}) 
+    weights = load_json(WEIGHTS_FILE, {
+        "w_pattern": 0.25,
+        "w_buy_sell": 0.25,
+        "w_recent_rank": 0.15,
+        "w_ai_volatility": 0.15,
+        "w_accumulation": 0.20
+    })
+
+    pattern_data = load_json(PATTERN_FILE, {})
+    if "golden_pattern" in pattern_data:
+        ideal_pattern = np.array(pattern_data["golden_pattern"])
+    else:
+        ideal_pattern = np.linspace(0.2, 1.0, 24)
+
+    krw_markets, market_names = fetch_krw_markets()
+    current_time_str = datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S')
+    analysis_results = []
+
+    print(f"[{current_time_str}] 데이터 수집 및 분석 시작 (총 {len(krw_markets)}개 종목)...")
+
+    for market in krw_markets:
+        k_name = market_names.get(market, market)
+        ticker = market.replace("KRW-", "")
+        
+        # 1주일 치 15분봉 수집 (672개)
+        candles = fetch_candles(market, count=672)
+        if len(candles) < 24:
+            continue
+
+        df = pd.DataFrame(candles)
+        df = df.sort_values('timestamp').reset_index(drop=True)
+
+        # 최근 6시간 분석용 캔들 (마지막 24개)
+        df_6h = df.iloc[-24:].copy().reset_index(drop=True)
+
+        current_price = df_6h.iloc[-1]['trade_price']
+        prev_close = df_6h.iloc[0]['opening_price']
+        change_rate = ((current_price - prev_close) / prev_close) * 100
+
+        # 최근 6시간 매수 우세 횟수 (양봉 캔들)
+        positive_count = sum(1 for _, row in df_6h.iterrows() if row['trade_price'] > row['opening_price'])
+
+        # 패턴 유사도 계산
+        prices = df_6h['trade_price'].values
+        price_min, price_max = prices.min(), prices.max()
+        norm_prices = (prices - price_min) / (price_max - price_min + 1e-8)
+        distance = np.linalg.norm(norm_prices - ideal_pattern)
+        pattern_similarity = max(0.0, float(1.0 - (distance / np.sqrt(len(norm_prices))))) * 100
+
+        # AI 변동성 점수
+        volume_std = df_6h['candle_acc_trade_volume'].std()
+        volume_mean = df_6h['candle_acc_trade_volume'].mean()
+        ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
+
+        # 세력 매집 추적 점수
+        accumulation_score = 0
+        df_6h['vol_ma'] = df_6h['candle_acc_trade_volume'].rolling(window=5).mean().fillna(0)
+        
+        for i in range(1, len(df_6h)):
+            row = df_6h.iloc[i]
+            prev_vol_ma = df_6h.iloc[i-1]['vol_ma']
+            if prev_vol_ma == 0: continue
+            
+            if row['candle_acc_trade_volume'] > prev_vol_ma * 2:
+                body = abs(row['trade_price'] - row['opening_price'])
+                upper_wick = row['high_price'] - max(row['trade_price'], row['opening_price'])
+                lower_wick = min(row['trade_price'], row['opening_price']) - row['low_price']
+                
+                if lower_wick > (body * 1.5):
+                    accumulation_score += 30
+                if row['trade_price'] > row['opening_price'] and upper_wick > (body * 2):
+                    accumulation_score += 20
+
+        accumulation_score = min(100.0, accumulation_score)
+
+        # 지난 1주일간 15분 내 5% 이상 변동 집계
+        up_5pct_count = sum(1 for _, row in df.iterrows() if ((row['high_price'] - row['opening_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
+        down_5pct_count = sum(1 for _, row in df.iterrows() if ((row['opening_price'] - row['low_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
+
+        # 유동성 지수
+        df_24h = df.iloc[-96:] if len(df) >= 96 else df
+        acc_24h_krw = df_24h['candle_acc_trade_price'].sum()
+        if acc_24h_krw > 0:
+            liquidity_index = round(min(100.0, max(0.0, (np.log10(acc_24h_krw) - 7) * 20)), 1)
+        else:
+            liquidity_index = 0.0
+
+        # 최근 3시간 TOP10 유지 횟수
+        market_history = history_db.get(market, [])
+        now_ts = time.time()
+        three_hours_ago = now_ts - 3 * 3600
+        recent_top10_count = sum(1 for h in market_history if h['timestamp'] >= three_hours_ago and h['rank'] <= 10)
+
+        # 가중치 기반 최종 예측 점수
+        score = (
+            pattern_similarity * weights["w_pattern"] +
+            (positive_count / 24.0 * 100) * weights["w_buy_sell"] +
+            min(100.0, recent_top10_count * 20) * weights["w_recent_rank"] +
+            ai_volatility_score * weights["w_ai_volatility"] +
+            accumulation_score * weights["w_accumulation"]
+        )
+
+        analysis_results.append({
+            "market": market,
+            "ticker": ticker,
+            "name": k_name,
+            "current_price": current_price,
+            "change_rate": round(change_rate, 2),
+            "pattern_similarity": round(pattern_similarity, 1),
+            "positive_count": positive_count,
+            "accumulation_score": round(accumulation_score, 1),
+            "score": round(score, 2),
+            "recent_top10_count": recent_top10_count,
+            "ai_volatility_score": round(ai_volatility_score, 1),
+            "up_5pct_count": up_5pct_count,
+            "down_5pct_count": down_5pct_count,
+            "liquidity_index": liquidity_index
+        })
+
+    # 예측 점수 정렬
+    analysis_results.sort(key=lambda x: x['score'], reverse=True)
+
+    for idx, item in enumerate(analysis_results):
+        rank = idx + 1
+        item['rank'] = rank
+        if item['market'] not in history_db:
+            history_db[item['market']] = []
+        history_db[item['market']].append({
+            "timestamp": time.time(),
+            "score": item['score'],
+            "rank": rank,
+            "price": item['current_price']
+        })
+        history_db[item['market']] = [h for h in history_db[item['market']] if h['timestamp'] >= time.time() - 86400]
+
+    # 가중치 피드백 재조정
+    top_5 = analysis_results[:5]
+    for top in top_5:
+        m = top['market']
+        past_records = history_db.get(m, [])
+        if len(past_records) >= 2:
+            initial_price = past_records[0]['price']
+            latest_price = top['current_price']
+            perf = (latest_price - initial_price) / (initial_price + 1e-8)
+            if perf > 0.01:
+                weights["w_pattern"] = min(0.4, weights["w_pattern"] + 0.001)
+                weights["w_accumulation"] = min(0.3, weights["w_accumulation"] + 0.001)
+            elif perf < -0.01:
+                weights["w_pattern"] = max(0.1, weights["w_pattern"] - 0.001)
+                weights["w_accumulation"] = max(0.1, weights["w_accumulation"] - 0.001)
+
+    save_json(HISTORY_FILE, history_db)
+    save_json(WEIGHTS_FILE, weights)
+
+    # 대시보드 HTML 생성 호출
+    generate_upbit_r_dashboard(analysis_results, current_time_str, HTML_OUTPUT)
 
     print("대시보드 HTML 생성 및 자가진화 업데이트 완료.")
 
