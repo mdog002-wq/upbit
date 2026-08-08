@@ -160,7 +160,7 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
 
 def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="docs/index.html"):
     os.makedirs(os.path.dirname(html_path), exist_ok=True)
-    
+   
     coins_dict = {}
     for item in analysis_results:
         key = item.get('market') or item.get('ticker')
@@ -194,30 +194,63 @@ def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="do
         .ticker-symbol {{ font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }}
         .accumulation {{ color: #d9480f; font-weight: bold; }}
         .liquidity {{ color: #2b8a3e; font-weight: bold; }}
+        
+        /* 텍스트 카드 요약형 모달 스타일 */
         .modal-overlay {{ display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }}
-        .modal-memo {{ width: 950px; height: 650px; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; position: relative; }}
-        .modal-header-memo {{ background-color: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }}
-        .modal-frames-container {{ display: flex; width: 100%; height: 100%; flex: 1; }}
-        .modal-frame-pane {{ width: 50%; height: 100%; border: none; }}
-        .modal-frame-pane:first-child {{ border-right: 1px solid #e2e8f0; }}
+        .modal-memo {{ width: 850px; max-height: 85vh; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; }}
+        .modal-header-memo {{ background-color: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }}
+        .modal-summary-container {{ display: flex; width: 100%; padding: 20px; gap: 20px; box-sizing: border-box; overflow-y: auto; }}
+        .summary-card {{ flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }}
+        .summary-card h4 {{ margin-top: 0; margin-bottom: 15px; color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 8px; font-size: 15px; }}
+        .summary-card.right h4 {{ color: #28a745; border-bottom-color: #28a745; }}
+        .info-row {{ display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; border-bottom: 1px dashed #e9ecef; padding-bottom: 6px; }}
+        .info-label {{ color: #6c757d; font-weight: 500; }}
+        .info-value {{ font-weight: bold; color: #212529; }}
         .close-memo-btn {{ border: none; background: transparent; color: #94a3b8; font-size: 1.25rem; cursor: pointer; line-height: 1; }}
     </style>
     <script>
         const analysisData = {js_data_json};
         const allCoinsMap = {coins_map_json};
-        let sortDirections = {{}};
+
         function openModal(marketCode) {{
-            let coinData = allCoinsMap[marketCode] || analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
-            document.getElementById('modalCoinTitle').innerText = (coinData ? (coinData.name || coinData.ticker) : marketCode) + ' - 상세 비교';
-            document.getElementById('modalIframeLeft').src = 'https://upbit-r.onrender.com/?symbol=' + marketCode;
-            document.getElementById('modalIframeRight').src = 'https://upbit-a.onrender.com/?symbol=' + marketCode;
+            let coin = allCoinsMap[marketCode] || analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
+            if (!coin) {{
+                alert("해당 종목의 정보를 찾을 수 없습니다.");
+                return;
+            }}
+
+            document.getElementById('modalCoinTitle').innerText = `${{coin.name}} (${{coin.ticker}}) - 핵심 요약 비교`;
+
+            // 1번 사이트 요약 정보
+            let leftHtml = `
+                <div class="info-row"><span class="info-label">현재 가격</span><span class="info-value">${{coin.current_price.toLocaleString()}} 원</span></div>
+                <div class="info-row"><span class="info-label">전일 대비 등락률</span><span class="info-value ${{coin.change_rate > 0 ? 'plus' : (coin.change_rate < 0 ? 'minus' : '')}}">${{coin.change_rate > 0 ? '+' : ''}}${{coin.change_rate}}%</span></div>
+                <div class="info-row"><span class="info-label">예측 점수</span><span class="info-value">${{coin.score}} 점</span></div>
+                <div class="info-row"><span class="info-label">패턴 유사율</span><span class="info-value">${{coin.pattern_similarity}}%</span></div>
+                <div class="info-row"><span class="info-label">세력 매집 강도</span><span class="info-value">${{coin.accumulation_score}} 점</span></div>
+                <div class="info-row"><span class="info-label">유동성 지수</span><span class="info-value">${{coin.liquidity_index}} 점</span></div>
+                <div class="info-row"><span class="info-label">최근 3h TOP10</span><span class="info-value">${{coin.recent_top10_count}} 회</span></div>
+                <div class="info-row"><span class="info-label">AI 변동성 점수</span><span class="info-value">${{coin.ai_volatility_score}} 점</span></div>
+            `;
+            document.getElementById('leftSummaryContent').innerHTML = leftHtml;
+
+            // 2번 사이트 이동 및 안내 정보
+            let rightHtml = `
+                <div class="info-row"><span class="info-label">대상 종목</span><span class="info-value">${{coin.name}} (${{coin.ticker}})</span></div>
+                <div class="info-row"><span class="info-label">상세 리포트 이동</span><span class="info-value"><a href="https://upbit-a.onrender.com" target="_self" style="color:#28a745; font-weight:bold; text-decoration:none;">2번 대시보드로 이동 ➔</a></span></div>
+                <p style="font-size:13px; color:#6c757d; margin-top:20px; line-height:1.5;">
+                    * 2번 사이트의 AI 덤핑 위험도(STGT), CMF/RSI 지표 및 머신러닝 리포트는 <b>2번 AI 대시보드</b>에서 확인할 수 있습니다.
+                </p>
+            `;
+            document.getElementById('rightSummaryContent').innerHTML = rightHtml;
+
             document.getElementById('coinDetailModal').style.display = 'flex';
         }}
+
         function closeModal() {{
             document.getElementById('coinDetailModal').style.display = 'none';
-            document.getElementById('modalIframeLeft').src = '';
-            document.getElementById('modalIframeRight').src = '';
         }}
+
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
             let tr = document.getElementById('coinTable').getElementsByTagName('tr');
@@ -269,15 +302,23 @@ def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="do
     html_content += """
         </tbody>
     </table>
+    
+    <!-- 요약 정보 모달 구조 -->
     <div id="coinDetailModal" class="modal-overlay" onclick="closeModal()">
         <div class="modal-memo" onclick="event.stopPropagation();">
             <div class="modal-header-memo">
-                <h6 id="modalCoinTitle" class="mb-0">종목 상세 정보</h6>
+                <h3 id="modalCoinTitle" style="margin:0; font-size:18px;">종목 상세 정보 요약</h3>
                 <button type="button" class="close-memo-btn" onclick="closeModal()">✕</button>
             </div>
-            <div class="modal-frames-container">
-                <iframe id="modalIframeLeft" class="modal-frame-pane"></iframe>
-                <iframe id="modalIframeRight" class="modal-frame-pane"></iframe>
+            <div class="modal-summary-container">
+                <div class="summary-card">
+                    <h4>📊 1번 사이트 지표 요약</h4>
+                    <div id="leftSummaryContent">로딩 중...</div>
+                </div>
+                <div class="summary-card right">
+                    <h4>🤖 2번 AI 사이트 연결</h4>
+                    <div id="rightSummaryContent">로딩 중...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -287,7 +328,6 @@ def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="do
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_content)
     print(f"🎨 [대시보드] HTML 생성 완료 (`{html_path}`)!")
-
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(DOCS_DIR, exist_ok=True)
