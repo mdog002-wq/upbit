@@ -278,7 +278,7 @@ def generate_upbit_r_dashboard(
 <tr>
 <td><b>{item['rank']}</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('{item['ticker']}'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('{item['ticker']}', '{item['name']}'); return false;" class="coin-link">
         <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
     </a>{ai_badge_html}
 </td>
@@ -296,7 +296,7 @@ def generate_upbit_r_dashboard(
 
     rows_html = "".join(rows_list)
 
-    # 2. HTML 전체 템플릿 (일반 멀티라인 문자열로 f-string 중괄호 파싱 에러 차단)
+    # 2. HTML 전체 템플릿 (모달 구조 및 트레이딩뷰 위젯 포함)
     html_template = """<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -346,7 +346,52 @@ tbody tr:hover { background-color: #e9ecef !important; }
 .ticker-symbol { font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }
 .accumulation { color: #d9480f; font-weight: bold; }
 .liquidity { color: #2b8a3e; font-weight: bold; }
+
+/* --------- 모달(Modal) CSS --------- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 1000px;
+    height: 650px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.modal-header {
+    padding: 15px 20px;
+    background: #1e222d;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-title { font-size: 18px; font-weight: bold; }
+.modal-close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #cccccc;
+    line-height: 1;
+}
+.modal-close:hover { color: #ffffff; }
+.modal-body {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    background: #131722;
+}
 </style>
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script>
 function filterTable() {
     let input = document.getElementById('searchInput').value.toLowerCase();
@@ -357,11 +402,42 @@ function filterTable() {
     }
 }
 
-// 업비트 차트 팝업 오픈 함수
-function openUpbitChart(ticker) {
-    const url = 'https://upbit.com/exchange?code=CRIX.UPBIT.KRW-' + ticker;
-    window.open(url, 'upbitChart', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+// 모달 오픈 및 트레이딩뷰 차트 로드 함수
+function openChartModal(ticker, name) {
+    document.getElementById('modalTitle').innerText = name + ' (' + ticker + ') 실시간 차트';
+    document.getElementById('chartModal').style.display = 'flex';
+    
+    // 이전 차트 초기화
+    document.getElementById('tvChartContainer').innerHTML = '';
+    
+    // 트레이딩뷰 위젯 생성 (업비트 KRW 마켓)
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": "UPBIT:" + ticker + "KRW",
+        "interval": "15",
+        "timezone": "Asia/Seoul",
+        "theme": "dark",
+        "style": "1",
+        "locale": "kr",
+        "toolbar_bg": "#f1f3f5",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "container_id": "tvChartContainer"
+    });
 }
+
+// 모달 닫기 함수
+function closeChartModal() {
+    document.getElementById('chartModal').style.display = 'none';
+    document.getElementById('tvChartContainer').innerHTML = '';
+}
+
+// ESC 키로 모달 닫기
+window.onkeydown = function(event) {
+    if (event.keyCode === 27) {
+        closeChartModal();
+    }
+};
 </script>
 </head>
 <body>
@@ -383,6 +459,18 @@ function openUpbitChart(ticker) {
 {{ROWS}}
 </tbody>
 </table>
+
+<!-- 차트 모달 레이어 -->
+<div id="chartModal" class="modal-overlay" onclick="if(event.target === this) closeChartModal();">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="modalTitle" class="modal-title">코인 차트</span>
+            <span class="modal-close" onclick="closeChartModal()">&times;</span>
+        </div>
+        <div class="modal-body" id="tvChartContainer"></div>
+    </div>
+</div>
+
 </body>
 </html>
 """
