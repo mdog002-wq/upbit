@@ -227,7 +227,7 @@ def main():
 
     # 2. HTML 대시보드 생성
     def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="docs/index.html"):
-    os.makedirs(os.path.dirname(html_path), exist_ok=True)
+        os.makedirs(os.path.dirname(html_path), exist_ok=True)
     
     # 데이터를 JS 연동용 딕셔너리로 변환 (symbol 또는 market 기준 매핑)
     coins_dict = {}
