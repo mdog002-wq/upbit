@@ -47,7 +47,52 @@ tbody tr:hover { background-color: #e9ecef !important; }
 .ticker-symbol { font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }
 .accumulation { color: #d9480f; font-weight: bold; }
 .liquidity { color: #2b8a3e; font-weight: bold; }
+
+/* --------- 모달(Modal) CSS --------- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 1000px;
+    height: 650px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.modal-header {
+    padding: 15px 20px;
+    background: #1e222d;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-title { font-size: 18px; font-weight: bold; }
+.modal-close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #cccccc;
+    line-height: 1;
+}
+.modal-close:hover { color: #ffffff; }
+.modal-body {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    background: #131722;
+}
 </style>
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script>
 function filterTable() {
     let input = document.getElementById('searchInput').value.toLowerCase();
@@ -58,18 +103,49 @@ function filterTable() {
     }
 }
 
-// 업비트 차트 팝업 오픈 함수
-function openUpbitChart(ticker) {
-    const url = 'https://upbit.com/exchange?code=CRIX.UPBIT.KRW-' + ticker;
-    window.open(url, 'upbitChart', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+// 모달 오픈 및 트레이딩뷰 차트 로드 함수
+function openChartModal(ticker, name) {
+    document.getElementById('modalTitle').innerText = name + ' (' + ticker + ') 실시간 차트';
+    document.getElementById('chartModal').style.display = 'flex';
+    
+    // 이전 차트 초기화
+    document.getElementById('tvChartContainer').innerHTML = '';
+    
+    // 트레이딩뷰 위젯 생성 (업비트 KRW 마켓)
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": "UPBIT:" + ticker + "KRW",
+        "interval": "15",
+        "timezone": "Asia/Seoul",
+        "theme": "dark",
+        "style": "1",
+        "locale": "kr",
+        "toolbar_bg": "#f1f3f5",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "container_id": "tvChartContainer"
+    });
 }
+
+// 모달 닫기 함수
+function closeChartModal() {
+    document.getElementById('chartModal').style.display = 'none';
+    document.getElementById('tvChartContainer').innerHTML = '';
+}
+
+// ESC 키로 모달 닫기
+window.onkeydown = function(event) {
+    if (event.keyCode === 27) {
+        closeChartModal();
+    }
+};
 </script>
 </head>
 <body>
 <div class="header-container">
 <div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
 <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
-<div class="header-right">마지막 업데이트: <b>2026-08-09 06:55:42</b></div>
+<div class="header-right">마지막 업데이트: <b>2026-08-09 07:00:59</b></div>
 </div>
 <div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
 <table id="coinTable">
@@ -85,58 +161,24 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>1</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ETH'); return false;" class="coin-link">
-        <b>이더리움</b> <span class="ticker-symbol">(ETH)</span>
+    <a href="#" onclick="openChartModal('ONDO', '온도파이낸스'); return false;" class="coin-link">
+        <b>온도파이낸스</b> <span class="ticker-symbol">(ONDO)</span>
     </a>
 </td>
-<td>2,698,000.0</td>
-<td class="minus">-0.07%</td>
-<td>74.0%</td>
-<td class="accumulation">90점</td>
-<td class="liquidity">62.3점</td>
-<td>26회</td>
-<td>10회</td>
+<td>496.0</td>
+<td class="minus">-1.39%</td>
+<td>75.4%</td>
+<td class="accumulation">100.0점</td>
+<td class="liquidity">56.7점</td>
+<td>13회</td>
+<td>5회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>81.87점</b></td>
+<td><b>77.67점</b></td>
 </tr>
 <tr>
 <td><b>2</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ONDO'); return false;" class="coin-link">
-        <b>온도파이낸스</b> <span class="ticker-symbol">(ONDO)</span>
-    </a>
-</td>
-<td>497.0</td>
-<td class="minus">-1.0%</td>
-<td>72.4%</td>
-<td class="accumulation">100.0점</td>
-<td class="liquidity">56.8점</td>
-<td>12회</td>
-<td>6회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>77.33점</b></td>
-</tr>
-<tr>
-<td><b>3</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('ADA'); return false;" class="coin-link">
-        <b>에이다</b> <span class="ticker-symbol">(ADA)</span>
-    </a>
-</td>
-<td>281.0</td>
-<td class="">0.0%</td>
-<td>66.5%</td>
-<td class="accumulation">90점</td>
-<td class="liquidity">48.1점</td>
-<td>29회</td>
-<td>3회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>76.16점</b></td>
-</tr>
-<tr>
-<td><b>4</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('W'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('W', '웜홀'); return false;" class="coin-link">
         <b>웜홀</b> <span class="ticker-symbol">(W)</span>
     </a>
 </td>
@@ -145,15 +187,32 @@ function openUpbitChart(ticker) {
 <td>78.0%</td>
 <td class="accumulation">60점</td>
 <td class="liquidity">29.2점</td>
-<td>7회</td>
+<td>8회</td>
 <td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>75.05점</b></td>
 </tr>
 <tr>
-<td><b>5</b></td>
+<td><b>3</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ONG'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ETH', '이더리움'); return false;" class="coin-link">
+        <b>이더리움</b> <span class="ticker-symbol">(ETH)</span>
+    </a>
+</td>
+<td>2,698,000.0</td>
+<td class="minus">-0.11%</td>
+<td>73.8%</td>
+<td class="accumulation">60점</td>
+<td class="liquidity">62.3점</td>
+<td>27회</td>
+<td>9회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>73.0점</b></td>
+</tr>
+<tr>
+<td><b>4</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ONG', '온톨로지가스'); return false;" class="coin-link">
         <b>온톨로지가스</b> <span class="ticker-symbol">(ONG)</span>
     </a>
 </td>
@@ -162,32 +221,32 @@ function openUpbitChart(ticker) {
 <td>75.1%</td>
 <td class="accumulation">60점</td>
 <td class="liquidity">24.2점</td>
-<td>31회</td>
+<td>30회</td>
 <td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>72.38점</b></td>
 </tr>
 <tr>
-<td><b>6</b></td>
+<td><b>5</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ICP'); return false;" class="coin-link">
-        <b>인터넷컴퓨터</b> <span class="ticker-symbol">(ICP)</span>
-    </a><span class="ai-badge">AI추천</span>
+    <a href="#" onclick="openChartModal('ADA', '에이다'); return false;" class="coin-link">
+        <b>에이다</b> <span class="ticker-symbol">(ADA)</span>
+    </a>
 </td>
-<td>3,067.0</td>
-<td class="plus">+2.17%</td>
-<td>68.4%</td>
+<td>281.0</td>
+<td class="minus">-0.35%</td>
+<td>64.6%</td>
 <td class="accumulation">60점</td>
-<td class="liquidity">27.1점</td>
-<td>30회</td>
-<td>9회</td>
+<td class="liquidity">48.4점</td>
+<td>29회</td>
+<td>3회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>72.21점</b></td>
+<td><b>68.71점</b></td>
 </tr>
 <tr>
-<td><b>7</b></td>
+<td><b>6</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BIO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BIO', '바이오프로토콜'); return false;" class="coin-link">
         <b>바이오프로토콜</b> <span class="ticker-symbol">(BIO)</span>
     </a>
 </td>
@@ -196,32 +255,66 @@ function openUpbitChart(ticker) {
 <td>71.4%</td>
 <td class="accumulation">30점</td>
 <td class="liquidity">36.3점</td>
-<td>24회</td>
+<td>25회</td>
 <td>6회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>66.82점</b></td>
 </tr>
 <tr>
+<td><b>7</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ICP', '인터넷컴퓨터'); return false;" class="coin-link">
+        <b>인터넷컴퓨터</b> <span class="ticker-symbol">(ICP)</span>
+    </a><span class="ai-badge">AI추천</span>
+</td>
+<td>3,085.0</td>
+<td class="plus">+2.46%</td>
+<td>69.4%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">27.1점</td>
+<td>30회</td>
+<td>8회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>63.49점</b></td>
+</tr>
+<tr>
 <td><b>8</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('KAT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('KAT', '카타나'); return false;" class="coin-link">
         <b>카타나</b> <span class="ticker-symbol">(KAT)</span>
     </a>
 </td>
-<td>6.48</td>
-<td class="plus">+0.15%</td>
-<td>75.2%</td>
+<td>6.47</td>
+<td class="">0.0%</td>
+<td>74.4%</td>
 <td class="accumulation">30점</td>
-<td class="liquidity">54.3점</td>
-<td>18회</td>
+<td class="liquidity">54.4점</td>
+<td>19회</td>
 <td>5회</td>
 <td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
-<td><b>62.95점</b></td>
+<td><b>62.65점</b></td>
 </tr>
 <tr>
 <td><b>9</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('QTUM'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('T', '쓰레스홀드'); return false;" class="coin-link">
+        <b>쓰레스홀드</b> <span class="ticker-symbol">(T)</span>
+    </a><span class="ai-badge">AI추천</span>
+</td>
+<td>5.23</td>
+<td class="plus">+3.16%</td>
+<td>69.1%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">27.1점</td>
+<td>29회</td>
+<td>9회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>59.7점</b></td>
+</tr>
+<tr>
+<td><b>10</b></td>
+<td>
+    <a href="#" onclick="openChartModal('QTUM', '퀀텀'); return false;" class="coin-link">
         <b>퀀텀</b> <span class="ticker-symbol">(QTUM)</span>
     </a>
 </td>
@@ -233,114 +326,63 @@ function openUpbitChart(ticker) {
 <td>28회</td>
 <td>7회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>59.74점</b></td>
-</tr>
-<tr>
-<td><b>10</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('BORA'); return false;" class="coin-link">
-        <b>보라</b> <span class="ticker-symbol">(BORA)</span>
-    </a>
-</td>
-<td>28.3</td>
-<td class="plus">+1.07%</td>
-<td>75.9%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">54.2점</td>
-<td>17회</td>
-<td>8회</td>
-<td><span class="plus">▲4회</span> / <span class="minus">▼4회</span></td>
-<td><b>58.76점</b></td>
+<td><b>59.65점</b></td>
 </tr>
 <tr>
 <td><b>11</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('T'); return false;" class="coin-link">
-        <b>쓰레스홀드</b> <span class="ticker-symbol">(T)</span>
-    </a><span class="ai-badge">AI추천</span>
+    <a href="#" onclick="openChartModal('BORA', '보라'); return false;" class="coin-link">
+        <b>보라</b> <span class="ticker-symbol">(BORA)</span>
+    </a>
 </td>
-<td>5.22</td>
-<td class="plus">+2.96%</td>
-<td>69.2%</td>
+<td>28.2</td>
+<td class="minus">-0.35%</td>
+<td>77.0%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">27.1점</td>
-<td>30회</td>
-<td>8회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>58.75점</b></td>
+<td class="liquidity">54.2점</td>
+<td>17회</td>
+<td>6회</td>
+<td><span class="plus">▲4회</span> / <span class="minus">▼4회</span></td>
+<td><b>57.75점</b></td>
 </tr>
 <tr>
 <td><b>12</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('APT'); return false;" class="coin-link">
-        <b>앱토스</b> <span class="ticker-symbol">(APT)</span>
-    </a>
-</td>
-<td>851.0</td>
-<td class="minus">-0.23%</td>
-<td>70.1%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">33.5점</td>
-<td>23회</td>
-<td>5회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>57.49점</b></td>
-</tr>
-<tr>
-<td><b>13</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('SLX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SLX', '솔스티스'); return false;" class="coin-link">
         <b>솔스티스</b> <span class="ticker-symbol">(SLX)</span>
     </a>
 </td>
-<td>121.0</td>
-<td class="minus">-4.72%</td>
-<td>63.7%</td>
+<td>120.0</td>
+<td class="minus">-5.51%</td>
+<td>63.2%</td>
 <td class="accumulation">90점</td>
 <td class="liquidity">66.6점</td>
 <td>0회</td>
 <td>5회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>57.26점</b></td>
+<td><b>57.04점</b></td>
+</tr>
+<tr>
+<td><b>13</b></td>
+<td>
+    <a href="#" onclick="openChartModal('APT', '앱토스'); return false;" class="coin-link">
+        <b>앱토스</b> <span class="ticker-symbol">(APT)</span>
+    </a>
+</td>
+<td>850.0</td>
+<td class="minus">-0.82%</td>
+<td>68.4%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">33.5점</td>
+<td>22회</td>
+<td>4회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>55.59점</b></td>
 </tr>
 <tr>
 <td><b>14</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('HYPER'); return false;" class="coin-link">
-        <b>하이퍼레인</b> <span class="ticker-symbol">(HYPER)</span>
-    </a>
-</td>
-<td>90.9</td>
-<td class="plus">+0.78%</td>
-<td>75.8%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">42.9점</td>
-<td>5회</td>
-<td>7회</td>
-<td><span class="plus">▲6회</span> / <span class="minus">▼5회</span></td>
-<td><b>56.58점</b></td>
-</tr>
-<tr>
-<td><b>15</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('ORCA'); return false;" class="coin-link">
-        <b>오르카</b> <span class="ticker-symbol">(ORCA)</span>
-    </a>
-</td>
-<td>1,536.0</td>
-<td class="minus">-0.9%</td>
-<td>60.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">39.2점</td>
-<td>16회</td>
-<td>6회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
-<td><b>55.56점</b></td>
-</tr>
-<tr>
-<td><b>16</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('JST'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('JST', '저스트'); return false;" class="coin-link">
         <b>저스트</b> <span class="ticker-symbol">(JST)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -355,9 +397,9 @@ function openUpbitChart(ticker) {
 <td><b>55.45점</b></td>
 </tr>
 <tr>
-<td><b>17</b></td>
+<td><b>15</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TAO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TAO', '비트텐서'); return false;" class="coin-link">
         <b>비트텐서</b> <span class="ticker-symbol">(TAO)</span>
     </a>
 </td>
@@ -372,26 +414,43 @@ function openUpbitChart(ticker) {
 <td><b>55.28점</b></td>
 </tr>
 <tr>
-<td><b>18</b></td>
+<td><b>16</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('RENDER'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('RENDER', '렌더토큰'); return false;" class="coin-link">
         <b>렌더토큰</b> <span class="ticker-symbol">(RENDER)</span>
     </a>
 </td>
-<td>1,857.0</td>
-<td class="plus">+0.11%</td>
-<td>75.3%</td>
+<td>1,855.0</td>
+<td class="plus">+0.16%</td>
+<td>75.8%</td>
 <td class="accumulation">60점</td>
-<td class="liquidity">27.4점</td>
+<td class="liquidity">27.1점</td>
 <td>0회</td>
 <td>2회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>54.19점</b></td>
+<td><b>55.12점</b></td>
 </tr>
 <tr>
-<td><b>19</b></td>
+<td><b>17</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('QUID'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ZBT', '제로베이스'); return false;" class="coin-link">
+        <b>제로베이스</b> <span class="ticker-symbol">(ZBT)</span>
+    </a>
+</td>
+<td>145.0</td>
+<td class="minus">-1.36%</td>
+<td>73.8%</td>
+<td class="accumulation">60점</td>
+<td class="liquidity">65.6점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲7회</span> / <span class="minus">▼9회</span></td>
+<td><b>53.87점</b></td>
+</tr>
+<tr>
+<td><b>18</b></td>
+<td>
+    <a href="#" onclick="openChartModal('QUID', '스퀴드'); return false;" class="coin-link">
         <b>스퀴드</b> <span class="ticker-symbol">(QUID)</span>
     </a>
 </td>
@@ -406,9 +465,26 @@ function openUpbitChart(ticker) {
 <td><b>53.73점</b></td>
 </tr>
 <tr>
+<td><b>19</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ORCA', '오르카'); return false;" class="coin-link">
+        <b>오르카</b> <span class="ticker-symbol">(ORCA)</span>
+    </a>
+</td>
+<td>1,540.0</td>
+<td class="minus">-3.08%</td>
+<td>61.7%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">39.3점</td>
+<td>15회</td>
+<td>4회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
+<td><b>53.28점</b></td>
+</tr>
+<tr>
 <td><b>20</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ELSA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ELSA', '헤이엘사'); return false;" class="coin-link">
         <b>헤이엘사</b> <span class="ticker-symbol">(ELSA)</span>
     </a>
 </td>
@@ -425,7 +501,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>21</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('HP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('HP', '히포프로토콜'); return false;" class="coin-link">
         <b>히포프로토콜</b> <span class="ticker-symbol">(HP)</span>
     </a>
 </td>
@@ -442,24 +518,41 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>22</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZBT'); return false;" class="coin-link">
-        <b>제로베이스</b> <span class="ticker-symbol">(ZBT)</span>
+    <a href="#" onclick="openChartModal('HYPER', '하이퍼레인'); return false;" class="coin-link">
+        <b>하이퍼레인</b> <span class="ticker-symbol">(HYPER)</span>
     </a>
 </td>
-<td>145.0</td>
-<td class="minus">-1.36%</td>
-<td>74.1%</td>
-<td class="accumulation">60점</td>
-<td class="liquidity">65.7점</td>
-<td>0회</td>
+<td>90.7</td>
+<td class="plus">+0.67%</td>
+<td>70.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">42.9점</td>
+<td>4회</td>
 <td>7회</td>
-<td><span class="plus">▲7회</span> / <span class="minus">▼9회</span></td>
-<td><b>52.51점</b></td>
+<td><span class="plus">▲6회</span> / <span class="minus">▼5회</span></td>
+<td><b>52.37점</b></td>
 </tr>
 <tr>
 <td><b>23</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('WAXP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ETC', '이더리움클래식'); return false;" class="coin-link">
+        <b>이더리움클래식</b> <span class="ticker-symbol">(ETC)</span>
+    </a>
+</td>
+<td>9,180.0</td>
+<td class="">0.0%</td>
+<td>70.6%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">36.2점</td>
+<td>4회</td>
+<td>9회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>52.23점</b></td>
+</tr>
+<tr>
+<td><b>24</b></td>
+<td>
+    <a href="#" onclick="openChartModal('WAXP', '왁스'); return false;" class="coin-link">
         <b>왁스</b> <span class="ticker-symbol">(WAXP)</span>
     </a>
 </td>
@@ -474,60 +567,26 @@ function openUpbitChart(ticker) {
 <td><b>51.63점</b></td>
 </tr>
 <tr>
-<td><b>24</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('BSV'); return false;" class="coin-link">
-        <b>비트코인에스브이</b> <span class="ticker-symbol">(BSV)</span>
-    </a>
-</td>
-<td>20,320.0</td>
-<td class="plus">+3.41%</td>
-<td>72.2%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">38.9점</td>
-<td>0회</td>
-<td>13회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>51.5점</b></td>
-</tr>
-<tr>
 <td><b>25</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MMT'); return false;" class="coin-link">
-        <b>모멘텀</b> <span class="ticker-symbol">(MMT)</span>
+    <a href="#" onclick="openChartModal('LINK', '체인링크'); return false;" class="coin-link">
+        <b>체인링크</b> <span class="ticker-symbol">(LINK)</span>
     </a>
 </td>
-<td>290.0</td>
-<td class="minus">-2.68%</td>
-<td>79.5%</td>
+<td>11,730.0</td>
+<td class="plus">+0.09%</td>
+<td>75.2%</td>
 <td class="accumulation">30점</td>
-<td class="liquidity">74.0점</td>
+<td class="liquidity">39.2점</td>
 <td>0회</td>
-<td>9회</td>
-<td><span class="plus">▲2회</span> / <span class="minus">▼5회</span></td>
-<td><b>51.35점</b></td>
+<td>7회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>51.55점</b></td>
 </tr>
 <tr>
 <td><b>26</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ETC'); return false;" class="coin-link">
-        <b>이더리움클래식</b> <span class="ticker-symbol">(ETC)</span>
-    </a>
-</td>
-<td>9,185.0</td>
-<td class="minus">-0.11%</td>
-<td>70.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">36.3점</td>
-<td>4회</td>
-<td>8회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>51.22점</b></td>
-</tr>
-<tr>
-<td><b>27</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('PENGU'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('PENGU', '펏지펭귄'); return false;" class="coin-link">
         <b>펏지펭귄</b> <span class="ticker-symbol">(PENGU)</span>
     </a>
 </td>
@@ -542,9 +601,9 @@ function openUpbitChart(ticker) {
 <td><b>51.2점</b></td>
 </tr>
 <tr>
-<td><b>28</b></td>
+<td><b>27</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('FCT2'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('FCT2', '피르마체인'); return false;" class="coin-link">
         <b>피르마체인</b> <span class="ticker-symbol">(FCT2)</span>
     </a>
 </td>
@@ -559,9 +618,26 @@ function openUpbitChart(ticker) {
 <td><b>51.2점</b></td>
 </tr>
 <tr>
+<td><b>28</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BSV', '비트코인에스브이'); return false;" class="coin-link">
+        <b>비트코인에스브이</b> <span class="ticker-symbol">(BSV)</span>
+    </a>
+</td>
+<td>20,320.0</td>
+<td class="plus">+3.09%</td>
+<td>71.1%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">38.9점</td>
+<td>0회</td>
+<td>13회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>51.16점</b></td>
+</tr>
+<tr>
 <td><b>29</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TRUMP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TRUMP', '오피셜트럼프'); return false;" class="coin-link">
         <b>오피셜트럼프</b> <span class="ticker-symbol">(TRUMP)</span>
     </a>
 </td>
@@ -578,24 +654,58 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>30</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SONIC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SONIC', '소닉SVM'); return false;" class="coin-link">
         <b>소닉SVM</b> <span class="ticker-symbol">(SONIC)</span>
     </a>
 </td>
-<td>26.1</td>
-<td class="plus">+1.56%</td>
-<td>72.9%</td>
+<td>26.0</td>
+<td class="plus">+1.17%</td>
+<td>73.3%</td>
 <td class="accumulation">30점</td>
 <td class="liquidity">25.6점</td>
 <td>0회</td>
 <td>5회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>50.87점</b></td>
+<td><b>50.9점</b></td>
 </tr>
 <tr>
 <td><b>31</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('DOT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('KAITO', '카이토'); return false;" class="coin-link">
+        <b>카이토</b> <span class="ticker-symbol">(KAITO)</span>
+    </a>
+</td>
+<td>1,011.0</td>
+<td class="plus">+1.81%</td>
+<td>70.9%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">61.1점</td>
+<td>0회</td>
+<td>14회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
+<td><b>50.88점</b></td>
+</tr>
+<tr>
+<td><b>32</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MMT', '모멘텀'); return false;" class="coin-link">
+        <b>모멘텀</b> <span class="ticker-symbol">(MMT)</span>
+    </a>
+</td>
+<td>288.0</td>
+<td class="minus">-1.03%</td>
+<td>78.8%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">74.0점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲2회</span> / <span class="minus">▼5회</span></td>
+<td><b>50.8점</b></td>
+</tr>
+<tr>
+<td><b>33</b></td>
+<td>
+    <a href="#" onclick="openChartModal('DOT', '폴카닷'); return false;" class="coin-link">
         <b>폴카닷</b> <span class="ticker-symbol">(DOT)</span>
     </a>
 </td>
@@ -610,9 +720,9 @@ function openUpbitChart(ticker) {
 <td><b>50.69점</b></td>
 </tr>
 <tr>
-<td><b>32</b></td>
+<td><b>34</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('META'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('META', '메타디움'); return false;" class="coin-link">
         <b>메타디움</b> <span class="ticker-symbol">(META)</span>
     </a>
 </td>
@@ -627,26 +737,26 @@ function openUpbitChart(ticker) {
 <td><b>50.69점</b></td>
 </tr>
 <tr>
-<td><b>33</b></td>
+<td><b>35</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('KAITO'); return false;" class="coin-link">
-        <b>카이토</b> <span class="ticker-symbol">(KAITO)</span>
+    <a href="#" onclick="openChartModal('BTC', '비트코인'); return false;" class="coin-link">
+        <b>비트코인</b> <span class="ticker-symbol">(BTC)</span>
     </a>
 </td>
-<td>1,019.0</td>
-<td class="plus">+2.41%</td>
-<td>70.8%</td>
+<td>91,377,000.0</td>
+<td class="minus">-0.01%</td>
+<td>69.2%</td>
 <td class="accumulation">30점</td>
-<td class="liquidity">61.1점</td>
+<td class="liquidity">63.7점</td>
 <td>0회</td>
-<td>14회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
-<td><b>50.44점</b></td>
+<td>11회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>50.54점</b></td>
 </tr>
 <tr>
-<td><b>34</b></td>
+<td><b>36</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ENA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ENA', '에테나'); return false;" class="coin-link">
         <b>에테나</b> <span class="ticker-symbol">(ENA)</span>
     </a>
 </td>
@@ -654,33 +764,16 @@ function openUpbitChart(ticker) {
 <td class="minus">-1.55%</td>
 <td>75.0%</td>
 <td class="accumulation">30점</td>
-<td class="liquidity">51.5점</td>
+<td class="liquidity">51.6점</td>
 <td>0회</td>
 <td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>50.3점</b></td>
+<td><b>50.03점</b></td>
 </tr>
 <tr>
-<td><b>35</b></td>
+<td><b>37</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BTC'); return false;" class="coin-link">
-        <b>비트코인</b> <span class="ticker-symbol">(BTC)</span>
-    </a>
-</td>
-<td>91,400,000.0</td>
-<td class="minus">-0.03%</td>
-<td>69.8%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">63.7점</td>
-<td>0회</td>
-<td>11회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>50.19점</b></td>
-</tr>
-<tr>
-<td><b>36</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('FIL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('FIL', '파일코인'); return false;" class="coin-link">
         <b>파일코인</b> <span class="ticker-symbol">(FIL)</span>
     </a>
 </td>
@@ -695,26 +788,43 @@ function openUpbitChart(ticker) {
 <td><b>49.72점</b></td>
 </tr>
 <tr>
-<td><b>37</b></td>
+<td><b>38</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BSB'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('POWR', '파워렛저'); return false;" class="coin-link">
+        <b>파워렛저</b> <span class="ticker-symbol">(POWR)</span>
+    </a>
+</td>
+<td>55.1</td>
+<td class="plus">+1.85%</td>
+<td>70.1%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">39.8점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲3회</span> / <span class="minus">▼2회</span></td>
+<td><b>49.63점</b></td>
+</tr>
+<tr>
+<td><b>39</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BSB', '블록스트리트'); return false;" class="coin-link">
         <b>블록스트리트</b> <span class="ticker-symbol">(BSB)</span>
     </a>
 </td>
 <td>224.0</td>
-<td class="minus">-1.32%</td>
-<td>69.8%</td>
+<td class="minus">-1.75%</td>
+<td>70.5%</td>
 <td class="accumulation">30점</td>
 <td class="liquidity">66.1점</td>
 <td>0회</td>
 <td>11회</td>
 <td><span class="plus">▲2회</span> / <span class="minus">▼3회</span></td>
-<td><b>49.55점</b></td>
+<td><b>49.53점</b></td>
 </tr>
 <tr>
-<td><b>38</b></td>
+<td><b>40</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CFG'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CFG', '센트리퓨즈'); return false;" class="coin-link">
         <b>센트리퓨즈</b> <span class="ticker-symbol">(CFG)</span>
     </a>
 </td>
@@ -726,29 +836,12 @@ function openUpbitChart(ticker) {
 <td>0회</td>
 <td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>49.43점</b></td>
+<td><b>49.49점</b></td>
 </tr>
 <tr>
-<td><b>39</b></td>
+<td><b>41</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ARX'); return false;" class="coin-link">
-        <b>아르키움</b> <span class="ticker-symbol">(ARX)</span>
-    </a>
-</td>
-<td>189.0</td>
-<td class="minus">-1.56%</td>
-<td>62.2%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">51.4점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼1회</span></td>
-<td><b>49.23점</b></td>
-</tr>
-<tr>
-<td><b>40</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('SIGN'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SIGN', '사인'); return false;" class="coin-link">
         <b>사인</b> <span class="ticker-symbol">(SIGN)</span>
     </a>
 </td>
@@ -763,77 +856,43 @@ function openUpbitChart(ticker) {
 <td><b>48.89점</b></td>
 </tr>
 <tr>
-<td><b>41</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('SNT'); return false;" class="coin-link">
-        <b>스테이터스네트워크토큰</b> <span class="ticker-symbol">(SNT)</span>
-    </a>
-</td>
-<td>7.77</td>
-<td class="">0.0%</td>
-<td>65.3%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">23.3점</td>
-<td>5회</td>
-<td>4회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
-<td><b>48.78점</b></td>
-</tr>
-<tr>
 <td><b>42</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('XEC'); return false;" class="coin-link">
-        <b>이캐시</b> <span class="ticker-symbol">(XEC)</span>
+    <a href="#" onclick="openChartModal('WLD', '월드코인'); return false;" class="coin-link">
+        <b>월드코인</b> <span class="ticker-symbol">(WLD)</span>
     </a>
 </td>
-<td>0.00961</td>
-<td class="minus">-0.21%</td>
-<td>70.7%</td>
+<td>431.0</td>
+<td class="minus">-0.46%</td>
+<td>71.6%</td>
 <td class="accumulation">30점</td>
-<td class="liquidity">51.5점</td>
+<td class="liquidity">47.9점</td>
 <td>0회</td>
-<td>9회</td>
-<td><span class="plus">▲4회</span> / <span class="minus">▼0회</span></td>
-<td><b>48.78점</b></td>
+<td>6회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>48.76점</b></td>
 </tr>
 <tr>
 <td><b>43</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('PIEVERSE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('PIEVERSE', '파이버스'); return false;" class="coin-link">
         <b>파이버스</b> <span class="ticker-symbol">(PIEVERSE)</span>
     </a>
 </td>
-<td>1,121.0</td>
-<td class="minus">-1.15%</td>
-<td>75.9%</td>
+<td>1,124.0</td>
+<td class="minus">-0.53%</td>
+<td>76.0%</td>
 <td class="accumulation">30점</td>
 <td class="liquidity">58.4점</td>
 <td>0회</td>
 <td>9회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>48.53점</b></td>
+<td><b>48.72점</b></td>
 </tr>
 <tr>
 <td><b>44</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AXS'); return false;" class="coin-link">
-        <b>엑시인피니티</b> <span class="ticker-symbol">(AXS)</span>
-    </a>
-</td>
-<td>1,297.0</td>
-<td class="plus">+2.69%</td>
-<td>72.0%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">36.9점</td>
-<td>0회</td>
-<td>8회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
-<td><b>48.48점</b></td>
-</tr>
-<tr>
-<td><b>45</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('STX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('STX', '스택스'); return false;" class="coin-link">
         <b>스택스</b> <span class="ticker-symbol">(STX)</span>
     </a>
 </td>
@@ -848,9 +907,60 @@ function openUpbitChart(ticker) {
 <td><b>48.48점</b></td>
 </tr>
 <tr>
+<td><b>45</b></td>
+<td>
+    <a href="#" onclick="openChartModal('AXS', '엑시인피니티'); return false;" class="coin-link">
+        <b>엑시인피니티</b> <span class="ticker-symbol">(AXS)</span>
+    </a>
+</td>
+<td>1,294.0</td>
+<td class="plus">+2.29%</td>
+<td>71.3%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">36.6점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
+<td><b>48.23점</b></td>
+</tr>
+<tr>
 <td><b>46</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('THETA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ARX', '아르키움'); return false;" class="coin-link">
+        <b>아르키움</b> <span class="ticker-symbol">(ARX)</span>
+    </a>
+</td>
+<td>188.0</td>
+<td class="minus">-2.08%</td>
+<td>60.3%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">51.4점</td>
+<td>0회</td>
+<td>6회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼1회</span></td>
+<td><b>48.13점</b></td>
+</tr>
+<tr>
+<td><b>47</b></td>
+<td>
+    <a href="#" onclick="openChartModal('USDC', '유에스디코인'); return false;" class="coin-link">
+        <b>유에스디코인</b> <span class="ticker-symbol">(USDC)</span>
+    </a>
+</td>
+<td>1,406.0</td>
+<td class="">0.0%</td>
+<td>74.4%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">36.1점</td>
+<td>0회</td>
+<td>4회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>48.11점</b></td>
+</tr>
+<tr>
+<td><b>48</b></td>
+<td>
+    <a href="#" onclick="openChartModal('THETA', '쎄타토큰'); return false;" class="coin-link">
         <b>쎄타토큰</b> <span class="ticker-symbol">(THETA)</span>
     </a>
 </td>
@@ -865,9 +975,9 @@ function openUpbitChart(ticker) {
 <td><b>48.08점</b></td>
 </tr>
 <tr>
-<td><b>47</b></td>
+<td><b>49</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SOPH'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SOPH', '소폰'); return false;" class="coin-link">
         <b>소폰</b> <span class="ticker-symbol">(SOPH)</span>
     </a>
 </td>
@@ -882,43 +992,26 @@ function openUpbitChart(ticker) {
 <td><b>48.03점</b></td>
 </tr>
 <tr>
-<td><b>48</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('SAHARA'); return false;" class="coin-link">
-        <b>사하라에이아이</b> <span class="ticker-symbol">(SAHARA)</span>
-    </a>
-</td>
-<td>12.1</td>
-<td class="plus">+0.83%</td>
-<td>64.8%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">47.5점</td>
-<td>0회</td>
-<td>6회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>47.6점</b></td>
-</tr>
-<tr>
-<td><b>49</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('BIRB'); return false;" class="coin-link">
-        <b>문버드</b> <span class="ticker-symbol">(BIRB)</span>
-    </a>
-</td>
-<td>71.8</td>
-<td class="plus">+0.98%</td>
-<td>63.7%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">41.5점</td>
-<td>0회</td>
-<td>11회</td>
-<td><span class="plus">▲5회</span> / <span class="minus">▼1회</span></td>
-<td><b>47.58점</b></td>
-</tr>
-<tr>
 <td><b>50</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('HBAR'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('XEC', '이캐시'); return false;" class="coin-link">
+        <b>이캐시</b> <span class="ticker-symbol">(XEC)</span>
+    </a>
+</td>
+<td>0.00957</td>
+<td class="minus">-0.1%</td>
+<td>69.9%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">51.4점</td>
+<td>0회</td>
+<td>9회</td>
+<td><span class="plus">▲4회</span> / <span class="minus">▼0회</span></td>
+<td><b>48.01점</b></td>
+</tr>
+<tr>
+<td><b>51</b></td>
+<td>
+    <a href="#" onclick="openChartModal('HBAR', '헤데라'); return false;" class="coin-link">
         <b>헤데라</b> <span class="ticker-symbol">(HBAR)</span>
     </a>
 </td>
@@ -933,9 +1026,26 @@ function openUpbitChart(ticker) {
 <td><b>47.56점</b></td>
 </tr>
 <tr>
-<td><b>51</b></td>
+<td><b>52</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('GAS'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('G', '그래비티'); return false;" class="coin-link">
+        <b>그래비티</b> <span class="ticker-symbol">(G)</span>
+    </a>
+</td>
+<td>5.02</td>
+<td class="plus">+0.4%</td>
+<td>71.6%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">31.2점</td>
+<td>0회</td>
+<td>4회</td>
+<td><span class="plus">▲2회</span> / <span class="minus">▼1회</span></td>
+<td><b>47.47점</b></td>
+</tr>
+<tr>
+<td><b>53</b></td>
+<td>
+    <a href="#" onclick="openChartModal('GAS', '가스'); return false;" class="coin-link">
         <b>가스</b> <span class="ticker-symbol">(GAS)</span>
     </a>
 </td>
@@ -950,9 +1060,43 @@ function openUpbitChart(ticker) {
 <td><b>47.2점</b></td>
 </tr>
 <tr>
-<td><b>52</b></td>
+<td><b>54</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('WET'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SAHARA', '사하라에이아이'); return false;" class="coin-link">
+        <b>사하라에이아이</b> <span class="ticker-symbol">(SAHARA)</span>
+    </a>
+</td>
+<td>12.1</td>
+<td class="">0.0%</td>
+<td>63.4%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">47.5점</td>
+<td>0회</td>
+<td>6회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>47.09점</b></td>
+</tr>
+<tr>
+<td><b>55</b></td>
+<td>
+    <a href="#" onclick="openChartModal('AGLD', '어드벤처골드'); return false;" class="coin-link">
+        <b>어드벤처골드</b> <span class="ticker-symbol">(AGLD)</span>
+    </a>
+</td>
+<td>228.0</td>
+<td class="plus">+3.64%</td>
+<td>74.9%</td>
+<td class="accumulation">20점</td>
+<td class="liquidity">26.6점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>46.83점</b></td>
+</tr>
+<tr>
+<td><b>56</b></td>
+<td>
+    <a href="#" onclick="openChartModal('WET', '휴미디파이'); return false;" class="coin-link">
         <b>휴미디파이</b> <span class="ticker-symbol">(WET)</span>
     </a>
 </td>
@@ -967,9 +1111,9 @@ function openUpbitChart(ticker) {
 <td><b>46.81점</b></td>
 </tr>
 <tr>
-<td><b>53</b></td>
+<td><b>57</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('POKT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('POKT', '포켓네트워크'); return false;" class="coin-link">
         <b>포켓네트워크</b> <span class="ticker-symbol">(POKT)</span>
     </a>
 </td>
@@ -984,26 +1128,26 @@ function openUpbitChart(ticker) {
 <td><b>46.62점</b></td>
 </tr>
 <tr>
-<td><b>54</b></td>
+<td><b>58</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AGLD'); return false;" class="coin-link">
-        <b>어드벤처골드</b> <span class="ticker-symbol">(AGLD)</span>
+    <a href="#" onclick="openChartModal('BIRB', '문버드'); return false;" class="coin-link">
+        <b>문버드</b> <span class="ticker-symbol">(BIRB)</span>
     </a>
 </td>
-<td>228.0</td>
-<td class="plus">+3.64%</td>
-<td>74.0%</td>
-<td class="accumulation">20점</td>
-<td class="liquidity">26.6점</td>
+<td>71.8</td>
+<td class="plus">+0.7%</td>
+<td>59.1%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">41.5점</td>
 <td>0회</td>
-<td>8회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>46.51점</b></td>
+<td>11회</td>
+<td><span class="plus">▲5회</span> / <span class="minus">▼1회</span></td>
+<td><b>46.07점</b></td>
 </tr>
 <tr>
-<td><b>55</b></td>
+<td><b>59</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ENS'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ENS', '이더리움네임서비스'); return false;" class="coin-link">
         <b>이더리움네임서비스</b> <span class="ticker-symbol">(ENS)</span>
     </a>
 </td>
@@ -1018,9 +1162,9 @@ function openUpbitChart(ticker) {
 <td><b>46.03점</b></td>
 </tr>
 <tr>
-<td><b>56</b></td>
+<td><b>60</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TT', '썬더코어'); return false;" class="coin-link">
         <b>썬더코어</b> <span class="ticker-symbol">(TT)</span>
     </a>
 </td>
@@ -1035,9 +1179,9 @@ function openUpbitChart(ticker) {
 <td><b>45.91점</b></td>
 </tr>
 <tr>
-<td><b>57</b></td>
+<td><b>61</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('PLUME'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('PLUME', '플룸'); return false;" class="coin-link">
         <b>플룸</b> <span class="ticker-symbol">(PLUME)</span>
     </a>
 </td>
@@ -1052,9 +1196,26 @@ function openUpbitChart(ticker) {
 <td><b>45.8점</b></td>
 </tr>
 <tr>
-<td><b>58</b></td>
+<td><b>62</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('VANA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SNT', '스테이터스네트워크토큰'); return false;" class="coin-link">
+        <b>스테이터스네트워크토큰</b> <span class="ticker-symbol">(SNT)</span>
+    </a>
+</td>
+<td>7.77</td>
+<td class="">0.0%</td>
+<td>65.3%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">23.3점</td>
+<td>4회</td>
+<td>4회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
+<td><b>45.78점</b></td>
+</tr>
+<tr>
+<td><b>63</b></td>
+<td>
+    <a href="#" onclick="openChartModal('VANA', '바나'); return false;" class="coin-link">
         <b>바나</b> <span class="ticker-symbol">(VANA)</span>
     </a>
 </td>
@@ -1069,43 +1230,43 @@ function openUpbitChart(ticker) {
 <td><b>45.65점</b></td>
 </tr>
 <tr>
-<td><b>59</b></td>
+<td><b>64</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('JTO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('GRVT', '그래비티토큰'); return false;" class="coin-link">
+        <b>그래비티토큰</b> <span class="ticker-symbol">(GRVT)</span>
+    </a>
+</td>
+<td>422.0</td>
+<td class="plus">+0.96%</td>
+<td>74.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">48.8점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼2회</span></td>
+<td><b>45.56점</b></td>
+</tr>
+<tr>
+<td><b>65</b></td>
+<td>
+    <a href="#" onclick="openChartModal('JTO', '지토'); return false;" class="coin-link">
         <b>지토</b> <span class="ticker-symbol">(JTO)</span>
     </a>
 </td>
-<td>714.0</td>
-<td class="plus">+1.13%</td>
-<td>71.8%</td>
+<td>713.0</td>
+<td class="plus">+0.99%</td>
+<td>71.9%</td>
 <td class="accumulation">0점</td>
 <td class="liquidity">32.7점</td>
 <td>0회</td>
 <td>10회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>45.57점</b></td>
+<td><b>45.51점</b></td>
 </tr>
 <tr>
-<td><b>60</b></td>
+<td><b>66</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('DEEP'); return false;" class="coin-link">
-        <b>딥북</b> <span class="ticker-symbol">(DEEP)</span>
-    </a>
-</td>
-<td>25.0</td>
-<td class="plus">+6.38%</td>
-<td>61.8%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">50.9점</td>
-<td>4회</td>
-<td>4회</td>
-<td><span class="plus">▲3회</span> / <span class="minus">▼1회</span></td>
-<td><b>45.53점</b></td>
-</tr>
-<tr>
-<td><b>61</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('AKT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('AKT', '아카시네트워크'); return false;" class="coin-link">
         <b>아카시네트워크</b> <span class="ticker-symbol">(AKT)</span>
     </a>
 </td>
@@ -1120,9 +1281,9 @@ function openUpbitChart(ticker) {
 <td><b>45.39점</b></td>
 </tr>
 <tr>
-<td><b>62</b></td>
+<td><b>67</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TREE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TREE', '트리하우스'); return false;" class="coin-link">
         <b>트리하우스</b> <span class="ticker-symbol">(TREE)</span>
     </a>
 </td>
@@ -1137,9 +1298,9 @@ function openUpbitChart(ticker) {
 <td><b>45.09점</b></td>
 </tr>
 <tr>
-<td><b>63</b></td>
+<td><b>68</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZKC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ZKC', '바운드리스'); return false;" class="coin-link">
         <b>바운드리스</b> <span class="ticker-symbol">(ZKC)</span>
     </a>
 </td>
@@ -1154,43 +1315,9 @@ function openUpbitChart(ticker) {
 <td><b>45.08점</b></td>
 </tr>
 <tr>
-<td><b>64</b></td>
+<td><b>69</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ORBS'); return false;" class="coin-link">
-        <b>오브스</b> <span class="ticker-symbol">(ORBS)</span>
-    </a>
-</td>
-<td>7.68</td>
-<td class="minus">-0.9%</td>
-<td>65.9%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">17.4점</td>
-<td>0회</td>
-<td>1회</td>
-<td><span class="plus">▲4회</span> / <span class="minus">▼2회</span></td>
-<td><b>45.03점</b></td>
-</tr>
-<tr>
-<td><b>65</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('GRVT'); return false;" class="coin-link">
-        <b>그래비티토큰</b> <span class="ticker-symbol">(GRVT)</span>
-    </a>
-</td>
-<td>419.0</td>
-<td class="minus">-0.48%</td>
-<td>74.5%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">49.0점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼2회</span></td>
-<td><b>45.02점</b></td>
-</tr>
-<tr>
-<td><b>66</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('FLUID'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('FLUID', '플루이드'); return false;" class="coin-link">
         <b>플루이드</b> <span class="ticker-symbol">(FLUID)</span>
     </a>
 </td>
@@ -1205,9 +1332,9 @@ function openUpbitChart(ticker) {
 <td><b>45.0점</b></td>
 </tr>
 <tr>
-<td><b>67</b></td>
+<td><b>70</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AXL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('AXL', '엑셀라'); return false;" class="coin-link">
         <b>엑셀라</b> <span class="ticker-symbol">(AXL)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -1222,9 +1349,9 @@ function openUpbitChart(ticker) {
 <td><b>44.81점</b></td>
 </tr>
 <tr>
-<td><b>68</b></td>
+<td><b>71</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CFX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CFX', '콘플럭스'); return false;" class="coin-link">
         <b>콘플럭스</b> <span class="ticker-symbol">(CFX)</span>
     </a>
 </td>
@@ -1239,9 +1366,26 @@ function openUpbitChart(ticker) {
 <td><b>44.8점</b></td>
 </tr>
 <tr>
-<td><b>69</b></td>
+<td><b>72</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('LAYER'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ORBS', '오브스'); return false;" class="coin-link">
+        <b>오브스</b> <span class="ticker-symbol">(ORBS)</span>
+    </a>
+</td>
+<td>7.67</td>
+<td class="minus">-0.39%</td>
+<td>65.0%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">17.4점</td>
+<td>0회</td>
+<td>1회</td>
+<td><span class="plus">▲4회</span> / <span class="minus">▼2회</span></td>
+<td><b>44.76점</b></td>
+</tr>
+<tr>
+<td><b>73</b></td>
+<td>
+    <a href="#" onclick="openChartModal('LAYER', '솔레이어'); return false;" class="coin-link">
         <b>솔레이어</b> <span class="ticker-symbol">(LAYER)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -1256,9 +1400,9 @@ function openUpbitChart(ticker) {
 <td><b>44.54점</b></td>
 </tr>
 <tr>
-<td><b>70</b></td>
+<td><b>74</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZRO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ZRO', '레이어제로'); return false;" class="coin-link">
         <b>레이어제로</b> <span class="ticker-symbol">(ZRO)</span>
     </a>
 </td>
@@ -1273,9 +1417,9 @@ function openUpbitChart(ticker) {
 <td><b>44.48점</b></td>
 </tr>
 <tr>
-<td><b>71</b></td>
+<td><b>75</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CTC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CTC', '크레딧코인'); return false;" class="coin-link">
         <b>크레딧코인</b> <span class="ticker-symbol">(CTC)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -1290,26 +1434,9 @@ function openUpbitChart(ticker) {
 <td><b>44.47점</b></td>
 </tr>
 <tr>
-<td><b>72</b></td>
+<td><b>76</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BCH'); return false;" class="coin-link">
-        <b>비트코인캐시</b> <span class="ticker-symbol">(BCH)</span>
-    </a>
-</td>
-<td>305,000.0</td>
-<td class="minus">-0.03%</td>
-<td>67.2%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">35.6점</td>
-<td>0회</td>
-<td>8회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>44.42점</b></td>
-</tr>
-<tr>
-<td><b>73</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('IOST'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('IOST', '아이오에스티'); return false;" class="coin-link">
         <b>아이오에스티</b> <span class="ticker-symbol">(IOST)</span>
     </a>
 </td>
@@ -1324,9 +1451,9 @@ function openUpbitChart(ticker) {
 <td><b>44.3점</b></td>
 </tr>
 <tr>
-<td><b>74</b></td>
+<td><b>77</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BERA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BERA', '베라체인'); return false;" class="coin-link">
         <b>베라체인</b> <span class="ticker-symbol">(BERA)</span>
     </a>
 </td>
@@ -1341,9 +1468,9 @@ function openUpbitChart(ticker) {
 <td><b>44.3점</b></td>
 </tr>
 <tr>
-<td><b>75</b></td>
+<td><b>78</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('0G'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('0G', '제로지'); return false;" class="coin-link">
         <b>제로지</b> <span class="ticker-symbol">(0G)</span>
     </a>
 </td>
@@ -1358,9 +1485,9 @@ function openUpbitChart(ticker) {
 <td><b>44.25점</b></td>
 </tr>
 <tr>
-<td><b>76</b></td>
+<td><b>79</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SYRUP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SYRUP', '메이플파이낸스'); return false;" class="coin-link">
         <b>메이플파이낸스</b> <span class="ticker-symbol">(SYRUP)</span>
     </a>
 </td>
@@ -1375,9 +1502,9 @@ function openUpbitChart(ticker) {
 <td><b>44.11점</b></td>
 </tr>
 <tr>
-<td><b>77</b></td>
+<td><b>80</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('NEO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('NEO', '네오'); return false;" class="coin-link">
         <b>네오</b> <span class="ticker-symbol">(NEO)</span>
     </a>
 </td>
@@ -1392,43 +1519,9 @@ function openUpbitChart(ticker) {
 <td><b>44.04점</b></td>
 </tr>
 <tr>
-<td><b>78</b></td>
+<td><b>81</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('G'); return false;" class="coin-link">
-        <b>그래비티</b> <span class="ticker-symbol">(G)</span>
-    </a>
-</td>
-<td>5.01</td>
-<td class="plus">+0.2%</td>
-<td>61.9%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">31.2점</td>
-<td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲2회</span> / <span class="minus">▼1회</span></td>
-<td><b>43.49점</b></td>
-</tr>
-<tr>
-<td><b>79</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('SAND'); return false;" class="coin-link">
-        <b>샌드박스</b> <span class="ticker-symbol">(SAND)</span>
-    </a>
-</td>
-<td>58.9</td>
-<td class="plus">+1.38%</td>
-<td>67.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">30.6점</td>
-<td>0회</td>
-<td>9회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>43.46점</b></td>
-</tr>
-<tr>
-<td><b>80</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('RAY'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('RAY', '레이디움'); return false;" class="coin-link">
         <b>레이디움</b> <span class="ticker-symbol">(RAY)</span>
     </a>
 </td>
@@ -1443,26 +1536,9 @@ function openUpbitChart(ticker) {
 <td><b>43.42점</b></td>
 </tr>
 <tr>
-<td><b>81</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('LINK'); return false;" class="coin-link">
-        <b>체인링크</b> <span class="ticker-symbol">(LINK)</span>
-    </a>
-</td>
-<td>11,720.0</td>
-<td class="">0.0%</td>
-<td>75.4%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">39.1점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>43.34점</b></td>
-</tr>
-<tr>
 <td><b>82</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('OPEN'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('OPEN', '오픈렛저'); return false;" class="coin-link">
         <b>오픈렛저</b> <span class="ticker-symbol">(OPEN)</span>
     </a>
 </td>
@@ -1479,24 +1555,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>83</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZAMA'); return false;" class="coin-link">
-        <b>자마</b> <span class="ticker-symbol">(ZAMA)</span>
-    </a>
-</td>
-<td>66.8</td>
-<td class="plus">+1.21%</td>
-<td>72.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">39.1점</td>
-<td>0회</td>
-<td>9회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>43.25점</b></td>
-</tr>
-<tr>
-<td><b>84</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('XCN'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('XCN', '오닉스코인'); return false;" class="coin-link">
         <b>오닉스코인</b> <span class="ticker-symbol">(XCN)</span>
     </a>
 </td>
@@ -1511,9 +1570,9 @@ function openUpbitChart(ticker) {
 <td><b>43.24점</b></td>
 </tr>
 <tr>
-<td><b>85</b></td>
+<td><b>84</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SKY'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SKY', '스카이프로토콜'); return false;" class="coin-link">
         <b>스카이프로토콜</b> <span class="ticker-symbol">(SKY)</span>
     </a>
 </td>
@@ -1528,9 +1587,9 @@ function openUpbitChart(ticker) {
 <td><b>43.22점</b></td>
 </tr>
 <tr>
-<td><b>86</b></td>
+<td><b>85</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ELF'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ELF', '엘프'); return false;" class="coin-link">
         <b>엘프</b> <span class="ticker-symbol">(ELF)</span>
     </a>
 </td>
@@ -1545,43 +1604,26 @@ function openUpbitChart(ticker) {
 <td><b>43.07점</b></td>
 </tr>
 <tr>
-<td><b>87</b></td>
+<td><b>86</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ENSO'); return false;" class="coin-link">
-        <b>엔소</b> <span class="ticker-symbol">(ENSO)</span>
+    <a href="#" onclick="openChartModal('BCH', '비트코인캐시'); return false;" class="coin-link">
+        <b>비트코인캐시</b> <span class="ticker-symbol">(BCH)</span>
     </a>
 </td>
-<td>1,357.0</td>
-<td class="plus">+0.3%</td>
-<td>74.2%</td>
+<td>304,200.0</td>
+<td class="minus">-0.29%</td>
+<td>66.0%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">43.0점</td>
+<td class="liquidity">35.7점</td>
 <td>0회</td>
-<td>11회</td>
+<td>8회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>43.07점</b></td>
-</tr>
-<tr>
-<td><b>88</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('MBL'); return false;" class="coin-link">
-        <b>무비블록</b> <span class="ticker-symbol">(MBL)</span>
-    </a>
-</td>
-<td>0.883</td>
-<td class="plus">+0.91%</td>
-<td>77.4%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">20.1점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
 <td><b>43.03점</b></td>
 </tr>
 <tr>
-<td><b>89</b></td>
+<td><b>87</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('JUP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('JUP', '주피터'); return false;" class="coin-link">
         <b>주피터</b> <span class="ticker-symbol">(JUP)</span>
     </a>
 </td>
@@ -1596,9 +1638,26 @@ function openUpbitChart(ticker) {
 <td><b>42.93점</b></td>
 </tr>
 <tr>
-<td><b>90</b></td>
+<td><b>88</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('2Z'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SAND', '샌드박스'); return false;" class="coin-link">
+        <b>샌드박스</b> <span class="ticker-symbol">(SAND)</span>
+    </a>
+</td>
+<td>59.0</td>
+<td class="plus">+1.03%</td>
+<td>68.3%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">30.5점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>42.92점</b></td>
+</tr>
+<tr>
+<td><b>89</b></td>
+<td>
+    <a href="#" onclick="openChartModal('2Z', '더블제로'); return false;" class="coin-link">
         <b>더블제로</b> <span class="ticker-symbol">(2Z)</span>
     </a>
 </td>
@@ -1613,9 +1672,9 @@ function openUpbitChart(ticker) {
 <td><b>42.89점</b></td>
 </tr>
 <tr>
-<td><b>91</b></td>
+<td><b>90</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('FLOCK'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('FLOCK', '플록'); return false;" class="coin-link">
         <b>플록</b> <span class="ticker-symbol">(FLOCK)</span>
     </a>
 </td>
@@ -1630,9 +1689,9 @@ function openUpbitChart(ticker) {
 <td><b>42.85점</b></td>
 </tr>
 <tr>
-<td><b>92</b></td>
+<td><b>91</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ANKR'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ANKR', '앵커'); return false;" class="coin-link">
         <b>앵커</b> <span class="ticker-symbol">(ANKR)</span>
     </a>
 </td>
@@ -1647,9 +1706,26 @@ function openUpbitChart(ticker) {
 <td><b>42.79점</b></td>
 </tr>
 <tr>
+<td><b>92</b></td>
+<td>
+    <a href="#" onclick="openChartModal('DEEP', '딥북'); return false;" class="coin-link">
+        <b>딥북</b> <span class="ticker-symbol">(DEEP)</span>
+    </a>
+</td>
+<td>25.0</td>
+<td class="plus">+5.93%</td>
+<td>62.1%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">51.0점</td>
+<td>3회</td>
+<td>4회</td>
+<td><span class="plus">▲3회</span> / <span class="minus">▼1회</span></td>
+<td><b>42.69점</b></td>
+</tr>
+<tr>
 <td><b>93</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AUCTION'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('AUCTION', '바운스토큰'); return false;" class="coin-link">
         <b>바운스토큰</b> <span class="ticker-symbol">(AUCTION)</span>
     </a>
 </td>
@@ -1666,7 +1742,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>94</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('STEEM'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('STEEM', '스팀'); return false;" class="coin-link">
         <b>스팀</b> <span class="ticker-symbol">(STEEM)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -1683,7 +1759,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>95</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('POL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('POL', '폴리곤에코시스템토큰'); return false;" class="coin-link">
         <b>폴리곤에코시스템토큰</b> <span class="ticker-symbol">(POL)</span>
     </a>
 </td>
@@ -1700,24 +1776,24 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>96</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('PYTH'); return false;" class="coin-link">
-        <b>피스네트워크</b> <span class="ticker-symbol">(PYTH)</span>
-    </a><span class="ai-badge">AI추천</span>
+    <a href="#" onclick="openChartModal('MBL', '무비블록'); return false;" class="coin-link">
+        <b>무비블록</b> <span class="ticker-symbol">(MBL)</span>
+    </a>
 </td>
-<td>56.6</td>
-<td class="plus">+2.72%</td>
-<td>70.3%</td>
+<td>0.883</td>
+<td class="plus">+0.91%</td>
+<td>76.2%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">25.4점</td>
+<td class="liquidity">19.4점</td>
 <td>0회</td>
-<td>6회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>42.46점</b></td>
+<td>7회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
+<td><b>42.41점</b></td>
 </tr>
 <tr>
 <td><b>97</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ME'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ME', '매직에덴'); return false;" class="coin-link">
         <b>매직에덴</b> <span class="ticker-symbol">(ME)</span>
     </a>
 </td>
@@ -1734,24 +1810,41 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>98</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('KITE'); return false;" class="coin-link">
-        <b>카이트</b> <span class="ticker-symbol">(KITE)</span>
-    </a>
+    <a href="#" onclick="openChartModal('PYTH', '피스네트워크'); return false;" class="coin-link">
+        <b>피스네트워크</b> <span class="ticker-symbol">(PYTH)</span>
+    </a><span class="ai-badge">AI추천</span>
 </td>
-<td>140.0</td>
-<td class="plus">+1.45%</td>
-<td>64.1%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">37.7점</td>
+<td>56.8</td>
+<td class="plus">+3.09%</td>
+<td>70.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">25.4점</td>
 <td>0회</td>
-<td>3회</td>
+<td>6회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>42.39점</b></td>
+<td><b>42.37점</b></td>
 </tr>
 <tr>
 <td><b>99</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('STORJ'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ZAMA', '자마'); return false;" class="coin-link">
+        <b>자마</b> <span class="ticker-symbol">(ZAMA)</span>
+    </a>
+</td>
+<td>66.7</td>
+<td class="plus">+1.06%</td>
+<td>73.0%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">39.1점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>42.31점</b></td>
+</tr>
+<tr>
+<td><b>100</b></td>
+<td>
+    <a href="#" onclick="openChartModal('STORJ', '스토리지'); return false;" class="coin-link">
         <b>스토리지</b> <span class="ticker-symbol">(STORJ)</span>
     </a>
 </td>
@@ -1766,9 +1859,9 @@ function openUpbitChart(ticker) {
 <td><b>42.23점</b></td>
 </tr>
 <tr>
-<td><b>100</b></td>
+<td><b>101</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('COMP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('COMP', '컴파운드'); return false;" class="coin-link">
         <b>컴파운드</b> <span class="ticker-symbol">(COMP)</span>
     </a>
 </td>
@@ -1783,43 +1876,26 @@ function openUpbitChart(ticker) {
 <td><b>42.22점</b></td>
 </tr>
 <tr>
-<td><b>101</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('GEOD'); return false;" class="coin-link">
-        <b>지오드넷</b> <span class="ticker-symbol">(GEOD)</span>
-    </a>
-</td>
-<td>260.0</td>
-<td class="plus">+1.96%</td>
-<td>66.3%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">20.6점</td>
-<td>0회</td>
-<td>10회</td>
-<td><span class="plus">▲5회</span> / <span class="minus">▼7회</span></td>
-<td><b>42.21점</b></td>
-</tr>
-<tr>
 <td><b>102</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('HOME'); return false;" class="coin-link">
-        <b>디파이앱</b> <span class="ticker-symbol">(HOME)</span>
+    <a href="#" onclick="openChartModal('KITE', '카이트'); return false;" class="coin-link">
+        <b>카이트</b> <span class="ticker-symbol">(KITE)</span>
     </a>
 </td>
-<td>13.0</td>
-<td class="minus">-3.7%</td>
-<td>69.0%</td>
+<td>139.0</td>
+<td class="">0.0%</td>
+<td>63.8%</td>
 <td class="accumulation">30점</td>
-<td class="liquidity">55.8점</td>
+<td class="liquidity">37.4점</td>
 <td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲18회</span> / <span class="minus">▼6회</span></td>
-<td><b>42.13점</b></td>
+<td>2회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>42.14점</b></td>
 </tr>
 <tr>
 <td><b>103</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TRAC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TRAC', '오리진트레일'); return false;" class="coin-link">
         <b>오리진트레일</b> <span class="ticker-symbol">(TRAC)</span>
     </a>
 </td>
@@ -1836,7 +1912,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>104</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ALT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ALT', '알트레이어'); return false;" class="coin-link">
         <b>알트레이어</b> <span class="ticker-symbol">(ALT)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -1853,24 +1929,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>105</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MOVE'); return false;" class="coin-link">
-        <b>무브먼트</b> <span class="ticker-symbol">(MOVE)</span>
-    </a>
-</td>
-<td>10.1</td>
-<td class="plus">+1.0%</td>
-<td>62.1%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">42.3점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>42.05점</b></td>
-</tr>
-<tr>
-<td><b>106</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('BOUNTY'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BOUNTY', '체인바운티'); return false;" class="coin-link">
         <b>체인바운티</b> <span class="ticker-symbol">(BOUNTY)</span>
     </a>
 </td>
@@ -1885,9 +1944,9 @@ function openUpbitChart(ticker) {
 <td><b>42.0점</b></td>
 </tr>
 <tr>
-<td><b>107</b></td>
+<td><b>106</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('IOTA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('IOTA', '아이오타'); return false;" class="coin-link">
         <b>아이오타</b> <span class="ticker-symbol">(IOTA)</span>
     </a>
 </td>
@@ -1899,12 +1958,12 @@ function openUpbitChart(ticker) {
 <td>0회</td>
 <td>8회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>41.95점</b></td>
+<td><b>41.92점</b></td>
 </tr>
 <tr>
-<td><b>108</b></td>
+<td><b>107</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MANTRA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MANTRA', '만트라'); return false;" class="coin-link">
         <b>만트라</b> <span class="ticker-symbol">(MANTRA)</span>
     </a>
 </td>
@@ -1919,9 +1978,9 @@ function openUpbitChart(ticker) {
 <td><b>41.87점</b></td>
 </tr>
 <tr>
-<td><b>109</b></td>
+<td><b>108</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TRX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TRX', '트론'); return false;" class="coin-link">
         <b>트론</b> <span class="ticker-symbol">(TRX)</span>
     </a>
 </td>
@@ -1936,43 +1995,60 @@ function openUpbitChart(ticker) {
 <td><b>41.83점</b></td>
 </tr>
 <tr>
-<td><b>110</b></td>
+<td><b>109</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('WLD'); return false;" class="coin-link">
-        <b>월드코인</b> <span class="ticker-symbol">(WLD)</span>
+    <a href="#" onclick="openChartModal('MOVE', '무브먼트'); return false;" class="coin-link">
+        <b>무브먼트</b> <span class="ticker-symbol">(MOVE)</span>
     </a>
 </td>
-<td>429.0</td>
-<td class="minus">-0.92%</td>
-<td>74.4%</td>
+<td>10.1</td>
+<td class="plus">+1.0%</td>
+<td>62.1%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">48.0점</td>
+<td class="liquidity">42.3점</td>
 <td>0회</td>
 <td>7회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>41.82점</b></td>
+<td><b>41.78점</b></td>
+</tr>
+<tr>
+<td><b>110</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ZKP', '지케이패스'); return false;" class="coin-link">
+        <b>지케이패스</b> <span class="ticker-symbol">(ZKP)</span>
+    </a>
+</td>
+<td>63.8</td>
+<td class="plus">+2.24%</td>
+<td>74.1%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">46.1점</td>
+<td>0회</td>
+<td>5회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼4회</span></td>
+<td><b>41.76점</b></td>
 </tr>
 <tr>
 <td><b>111</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CAP'); return false;" class="coin-link">
-        <b>캡</b> <span class="ticker-symbol">(CAP)</span>
-    </a>
+    <a href="#" onclick="openChartModal('AI', '젠신'); return false;" class="coin-link">
+        <b>젠신</b> <span class="ticker-symbol">(AI)</span>
+    </a><span class="ai-badge">AI추천</span>
 </td>
-<td>51.7</td>
-<td class="plus">+0.39%</td>
-<td>69.3%</td>
+<td>31.1</td>
+<td class="minus">-0.32%</td>
+<td>70.1%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">66.8점</td>
+<td class="liquidity">30.5점</td>
 <td>0회</td>
-<td>10회</td>
-<td><span class="plus">▲5회</span> / <span class="minus">▼3회</span></td>
-<td><b>41.8점</b></td>
+<td>5회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>41.72점</b></td>
 </tr>
 <tr>
 <td><b>112</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('NEWT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('NEWT', '뉴턴프로토콜'); return false;" class="coin-link">
         <b>뉴턴프로토콜</b> <span class="ticker-symbol">(NEWT)</span>
     </a>
 </td>
@@ -1989,41 +2065,58 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>113</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BONK'); return false;" class="coin-link">
-        <b>봉크</b> <span class="ticker-symbol">(BONK)</span>
+    <a href="#" onclick="openChartModal('GEOD', '지오드넷'); return false;" class="coin-link">
+        <b>지오드넷</b> <span class="ticker-symbol">(GEOD)</span>
     </a>
 </td>
-<td>0.00359</td>
-<td class="">0.0%</td>
-<td>76.4%</td>
+<td>256.0</td>
+<td class="plus">+0.39%</td>
+<td>67.7%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">52.2점</td>
+<td class="liquidity">20.6점</td>
 <td>0회</td>
 <td>9회</td>
-<td><span class="plus">▲7회</span> / <span class="minus">▼5회</span></td>
-<td><b>41.64점</b></td>
+<td><span class="plus">▲5회</span> / <span class="minus">▼7회</span></td>
+<td><b>41.57점</b></td>
 </tr>
 <tr>
 <td><b>114</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZKP'); return false;" class="coin-link">
-        <b>지케이패스</b> <span class="ticker-symbol">(ZKP)</span>
+    <a href="#" onclick="openChartModal('XTZ', '테조스'); return false;" class="coin-link">
+        <b>테조스</b> <span class="ticker-symbol">(XTZ)</span>
     </a>
 </td>
-<td>63.4</td>
-<td class="plus">+1.44%</td>
-<td>73.7%</td>
+<td>296.0</td>
+<td class="plus">+3.5%</td>
+<td>72.7%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">46.1점</td>
+<td class="liquidity">18.3점</td>
 <td>0회</td>
-<td>5회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼4회</span></td>
-<td><b>41.52점</b></td>
+<td>7회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>41.56점</b></td>
 </tr>
 <tr>
 <td><b>115</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AAVE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ENSO', '엔소'); return false;" class="coin-link">
+        <b>엔소</b> <span class="ticker-symbol">(ENSO)</span>
+    </a>
+</td>
+<td>1,355.0</td>
+<td class="minus">-0.07%</td>
+<td>75.8%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">42.6점</td>
+<td>0회</td>
+<td>9회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>41.49점</b></td>
+</tr>
+<tr>
+<td><b>116</b></td>
+<td>
+    <a href="#" onclick="openChartModal('AAVE', '에이브'); return false;" class="coin-link">
         <b>에이브</b> <span class="ticker-symbol">(AAVE)</span>
     </a>
 </td>
@@ -2038,26 +2131,9 @@ function openUpbitChart(ticker) {
 <td><b>41.46점</b></td>
 </tr>
 <tr>
-<td><b>116</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('AI'); return false;" class="coin-link">
-        <b>젠신</b> <span class="ticker-symbol">(AI)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>31.0</td>
-<td class="minus">-0.64%</td>
-<td>70.1%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">30.6점</td>
-<td>0회</td>
-<td>5회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>41.45점</b></td>
-</tr>
-<tr>
 <td><b>117</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('RVN'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('RVN', '레이븐코인'); return false;" class="coin-link">
         <b>레이븐코인</b> <span class="ticker-symbol">(RVN)</span>
     </a>
 </td>
@@ -2074,7 +2150,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>118</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZRX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ZRX', '제로엑스'); return false;" class="coin-link">
         <b>제로엑스</b> <span class="ticker-symbol">(ZRX)</span>
     </a>
 </td>
@@ -2091,24 +2167,41 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>119</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('POWR'); return false;" class="coin-link">
-        <b>파워렛저</b> <span class="ticker-symbol">(POWR)</span>
+    <a href="#" onclick="openChartModal('CAP', '캡'); return false;" class="coin-link">
+        <b>캡</b> <span class="ticker-symbol">(CAP)</span>
     </a>
 </td>
-<td>54.9</td>
-<td class="plus">+1.48%</td>
-<td>70.6%</td>
+<td>51.3</td>
+<td class="plus">+0.2%</td>
+<td>68.7%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">39.8점</td>
+<td class="liquidity">66.7점</td>
 <td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲3회</span> / <span class="minus">▼2회</span></td>
-<td><b>41.36점</b></td>
+<td>10회</td>
+<td><span class="plus">▲5회</span> / <span class="minus">▼3회</span></td>
+<td><b>41.38점</b></td>
 </tr>
 <tr>
 <td><b>120</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('HIVE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BONK', '봉크'); return false;" class="coin-link">
+        <b>봉크</b> <span class="ticker-symbol">(BONK)</span>
+    </a>
+</td>
+<td>0.00358</td>
+<td class="minus">-0.28%</td>
+<td>75.4%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">52.2점</td>
+<td>0회</td>
+<td>9회</td>
+<td><span class="plus">▲7회</span> / <span class="minus">▼5회</span></td>
+<td><b>41.37점</b></td>
+</tr>
+<tr>
+<td><b>121</b></td>
+<td>
+    <a href="#" onclick="openChartModal('HIVE', '하이브'); return false;" class="coin-link">
         <b>하이브</b> <span class="ticker-symbol">(HIVE)</span>
     </a>
 </td>
@@ -2123,9 +2216,9 @@ function openUpbitChart(ticker) {
 <td><b>41.34점</b></td>
 </tr>
 <tr>
-<td><b>121</b></td>
+<td><b>122</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ONT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ONT', '온톨로지'); return false;" class="coin-link">
         <b>온톨로지</b> <span class="ticker-symbol">(ONT)</span>
     </a>
 </td>
@@ -2140,9 +2233,9 @@ function openUpbitChart(ticker) {
 <td><b>41.31점</b></td>
 </tr>
 <tr>
-<td><b>122</b></td>
+<td><b>123</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('NXPC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('NXPC', '넥스페이스'); return false;" class="coin-link">
         <b>넥스페이스</b> <span class="ticker-symbol">(NXPC)</span>
     </a>
 </td>
@@ -2157,9 +2250,9 @@ function openUpbitChart(ticker) {
 <td><b>41.26점</b></td>
 </tr>
 <tr>
-<td><b>123</b></td>
+<td><b>124</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('LPT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('LPT', '라이브피어'); return false;" class="coin-link">
         <b>라이브피어</b> <span class="ticker-symbol">(LPT)</span>
     </a>
 </td>
@@ -2174,26 +2267,26 @@ function openUpbitChart(ticker) {
 <td><b>41.24점</b></td>
 </tr>
 <tr>
-<td><b>124</b></td>
+<td><b>125</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SAFE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SAFE', '세이프'); return false;" class="coin-link">
         <b>세이프</b> <span class="ticker-symbol">(SAFE)</span>
     </a>
 </td>
 <td>132.0</td>
-<td class="minus">-0.75%</td>
-<td>66.0%</td>
+<td class="minus">-2.22%</td>
+<td>69.3%</td>
 <td class="accumulation">0점</td>
 <td class="liquidity">35.7점</td>
 <td>0회</td>
-<td>5회</td>
+<td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>41.2점</b></td>
 </tr>
 <tr>
-<td><b>125</b></td>
+<td><b>126</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('IMX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('IMX', '이뮤터블엑스'); return false;" class="coin-link">
         <b>이뮤터블엑스</b> <span class="ticker-symbol">(IMX)</span>
     </a>
 </td>
@@ -2208,9 +2301,9 @@ function openUpbitChart(ticker) {
 <td><b>41.17점</b></td>
 </tr>
 <tr>
-<td><b>126</b></td>
+<td><b>127</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ETHFI'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ETHFI', '이더파이'); return false;" class="coin-link">
         <b>이더파이</b> <span class="ticker-symbol">(ETHFI)</span>
     </a>
 </td>
@@ -2225,9 +2318,9 @@ function openUpbitChart(ticker) {
 <td><b>41.15점</b></td>
 </tr>
 <tr>
-<td><b>127</b></td>
+<td><b>128</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ATOM'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ATOM', '코스모스'); return false;" class="coin-link">
         <b>코스모스</b> <span class="ticker-symbol">(ATOM)</span>
     </a>
 </td>
@@ -2242,9 +2335,9 @@ function openUpbitChart(ticker) {
 <td><b>41.15점</b></td>
 </tr>
 <tr>
-<td><b>128</b></td>
+<td><b>129</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('WAL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('WAL', '월러스'); return false;" class="coin-link">
         <b>월러스</b> <span class="ticker-symbol">(WAL)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -2259,9 +2352,9 @@ function openUpbitChart(ticker) {
 <td><b>41.15점</b></td>
 </tr>
 <tr>
-<td><b>129</b></td>
+<td><b>130</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MINA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MINA', '미나'); return false;" class="coin-link">
         <b>미나</b> <span class="ticker-symbol">(MINA)</span>
     </a>
 </td>
@@ -2276,9 +2369,9 @@ function openUpbitChart(ticker) {
 <td><b>41.15점</b></td>
 </tr>
 <tr>
-<td><b>130</b></td>
+<td><b>131</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('EGLD'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('EGLD', '멀티버스엑스'); return false;" class="coin-link">
         <b>멀티버스엑스</b> <span class="ticker-symbol">(EGLD)</span>
     </a>
 </td>
@@ -2293,9 +2386,9 @@ function openUpbitChart(ticker) {
 <td><b>41.12점</b></td>
 </tr>
 <tr>
-<td><b>131</b></td>
+<td><b>132</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('META2'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('META2', '메타다오'); return false;" class="coin-link">
         <b>메타다오</b> <span class="ticker-symbol">(META2)</span>
     </a>
 </td>
@@ -2310,43 +2403,9 @@ function openUpbitChart(ticker) {
 <td><b>41.05점</b></td>
 </tr>
 <tr>
-<td><b>132</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('XTZ'); return false;" class="coin-link">
-        <b>테조스</b> <span class="ticker-symbol">(XTZ)</span>
-    </a>
-</td>
-<td>296.0</td>
-<td class="plus">+3.5%</td>
-<td>71.8%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">18.4점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>40.99점</b></td>
-</tr>
-<tr>
 <td><b>133</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ID'); return false;" class="coin-link">
-        <b>스페이스아이디</b> <span class="ticker-symbol">(ID)</span>
-    </a>
-</td>
-<td>39.6</td>
-<td class="minus">-0.5%</td>
-<td>70.8%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">35.2점</td>
-<td>0회</td>
-<td>8회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>40.97점</b></td>
-</tr>
-<tr>
-<td><b>134</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('MORPHO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MORPHO', '모포'); return false;" class="coin-link">
         <b>모포</b> <span class="ticker-symbol">(MORPHO)</span>
     </a>
 </td>
@@ -2361,9 +2420,9 @@ function openUpbitChart(ticker) {
 <td><b>40.86점</b></td>
 </tr>
 <tr>
-<td><b>135</b></td>
+<td><b>134</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CELO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CELO', '셀로'); return false;" class="coin-link">
         <b>셀로</b> <span class="ticker-symbol">(CELO)</span>
     </a>
 </td>
@@ -2378,9 +2437,9 @@ function openUpbitChart(ticker) {
 <td><b>40.83점</b></td>
 </tr>
 <tr>
-<td><b>136</b></td>
+<td><b>135</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ANIME'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ANIME', '애니메코인'); return false;" class="coin-link">
         <b>애니메코인</b> <span class="ticker-symbol">(ANIME)</span>
     </a>
 </td>
@@ -2395,9 +2454,9 @@ function openUpbitChart(ticker) {
 <td><b>40.83점</b></td>
 </tr>
 <tr>
-<td><b>137</b></td>
+<td><b>136</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('DOOD'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('DOOD', '두들즈'); return false;" class="coin-link">
         <b>두들즈</b> <span class="ticker-symbol">(DOOD)</span>
     </a>
 </td>
@@ -2412,43 +2471,43 @@ function openUpbitChart(ticker) {
 <td><b>40.79점</b></td>
 </tr>
 <tr>
-<td><b>138</b></td>
+<td><b>137</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('USD1'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('USD1', '월드리버티파이낸셜유에스디'); return false;" class="coin-link">
         <b>월드리버티파이낸셜유에스디</b> <span class="ticker-symbol">(USD1)</span>
     </a>
 </td>
 <td>1,407.0</td>
 <td class="">0.0%</td>
-<td>48.8%</td>
+<td>48.9%</td>
 <td class="accumulation">30점</td>
-<td class="liquidity">20.1점</td>
+<td class="liquidity">20.0점</td>
 <td>0회</td>
 <td>2회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>40.65점</b></td>
+<td><b>40.66점</b></td>
+</tr>
+<tr>
+<td><b>138</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ID', '스페이스아이디'); return false;" class="coin-link">
+        <b>스페이스아이디</b> <span class="ticker-symbol">(ID)</span>
+    </a>
+</td>
+<td>39.5</td>
+<td class="minus">-0.75%</td>
+<td>70.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">35.2점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>40.64점</b></td>
 </tr>
 <tr>
 <td><b>139</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SOL'); return false;" class="coin-link">
-        <b>솔라나</b> <span class="ticker-symbol">(SOL)</span>
-    </a>
-</td>
-<td>107,100.0</td>
-<td class="minus">-0.19%</td>
-<td>70.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">59.7점</td>
-<td>0회</td>
-<td>11회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>40.47점</b></td>
-</tr>
-<tr>
-<td><b>140</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('VET'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('VET', '비체인'); return false;" class="coin-link">
         <b>비체인</b> <span class="ticker-symbol">(VET)</span>
     </a>
 </td>
@@ -2463,26 +2522,9 @@ function openUpbitChart(ticker) {
 <td><b>40.43점</b></td>
 </tr>
 <tr>
-<td><b>141</b></td>
+<td><b>140</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('IRYS'); return false;" class="coin-link">
-        <b>아이리스</b> <span class="ticker-symbol">(IRYS)</span>
-    </a>
-</td>
-<td>22.7</td>
-<td class="minus">-0.87%</td>
-<td>60.4%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">48.1점</td>
-<td>0회</td>
-<td>5회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>40.43점</b></td>
-</tr>
-<tr>
-<td><b>142</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('CARV'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CARV', '카브'); return false;" class="coin-link">
         <b>카브</b> <span class="ticker-symbol">(CARV)</span>
     </a>
 </td>
@@ -2497,9 +2539,9 @@ function openUpbitChart(ticker) {
 <td><b>40.41점</b></td>
 </tr>
 <tr>
-<td><b>143</b></td>
+<td><b>141</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MEW'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MEW', '캣인어독스월드'); return false;" class="coin-link">
         <b>캣인어독스월드</b> <span class="ticker-symbol">(MEW)</span>
     </a>
 </td>
@@ -2514,9 +2556,9 @@ function openUpbitChart(ticker) {
 <td><b>40.32점</b></td>
 </tr>
 <tr>
-<td><b>144</b></td>
+<td><b>142</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('WCT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('WCT', '월렛커넥트'); return false;" class="coin-link">
         <b>월렛커넥트</b> <span class="ticker-symbol">(WCT)</span>
     </a>
 </td>
@@ -2531,9 +2573,9 @@ function openUpbitChart(ticker) {
 <td><b>40.24점</b></td>
 </tr>
 <tr>
-<td><b>145</b></td>
+<td><b>143</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('RED'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('RED', '레드스톤'); return false;" class="coin-link">
         <b>레드스톤</b> <span class="ticker-symbol">(RED)</span>
     </a>
 </td>
@@ -2548,9 +2590,26 @@ function openUpbitChart(ticker) {
 <td><b>40.2점</b></td>
 </tr>
 <tr>
-<td><b>146</b></td>
+<td><b>144</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('GMT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TOSHI', '토시'); return false;" class="coin-link">
+        <b>토시</b> <span class="ticker-symbol">(TOSHI)</span>
+    </a>
+</td>
+<td>0.147</td>
+<td class="plus">+0.68%</td>
+<td>77.3%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">27.2점</td>
+<td>0회</td>
+<td>5회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>40.18점</b></td>
+</tr>
+<tr>
+<td><b>145</b></td>
+<td>
+    <a href="#" onclick="openChartModal('GMT', '스테픈'); return false;" class="coin-link">
         <b>스테픈</b> <span class="ticker-symbol">(GMT)</span>
     </a>
 </td>
@@ -2565,9 +2624,26 @@ function openUpbitChart(ticker) {
 <td><b>40.15점</b></td>
 </tr>
 <tr>
+<td><b>146</b></td>
+<td>
+    <a href="#" onclick="openChartModal('CRO', '크로노스'); return false;" class="coin-link">
+        <b>크로노스</b> <span class="ticker-symbol">(CRO)</span>
+    </a>
+</td>
+<td>69.7</td>
+<td class="plus">+0.72%</td>
+<td>69.1%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">49.8점</td>
+<td>0회</td>
+<td>10회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼3회</span></td>
+<td><b>40.1점</b></td>
+</tr>
+<tr>
 <td><b>147</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('USDG'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('USDG', '글로벌달러'); return false;" class="coin-link">
         <b>글로벌달러</b> <span class="ticker-symbol">(USDG)</span>
     </a>
 </td>
@@ -2584,24 +2660,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>148</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CRO'); return false;" class="coin-link">
-        <b>크로노스</b> <span class="ticker-symbol">(CRO)</span>
-    </a>
-</td>
-<td>69.7</td>
-<td class="plus">+0.72%</td>
-<td>68.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">49.8점</td>
-<td>0회</td>
-<td>10회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼3회</span></td>
-<td><b>39.99점</b></td>
-</tr>
-<tr>
-<td><b>149</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('A'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('A', '볼타'); return false;" class="coin-link">
         <b>볼타</b> <span class="ticker-symbol">(A)</span>
     </a>
 </td>
@@ -2616,9 +2675,9 @@ function openUpbitChart(ticker) {
 <td><b>39.94점</b></td>
 </tr>
 <tr>
-<td><b>150</b></td>
+<td><b>149</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CVC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CVC', '시빅'); return false;" class="coin-link">
         <b>시빅</b> <span class="ticker-symbol">(CVC)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -2633,9 +2692,26 @@ function openUpbitChart(ticker) {
 <td><b>39.86점</b></td>
 </tr>
 <tr>
+<td><b>150</b></td>
+<td>
+    <a href="#" onclick="openChartModal('PROVE', '서싱트'); return false;" class="coin-link">
+        <b>서싱트</b> <span class="ticker-symbol">(PROVE)</span>
+    </a>
+</td>
+<td>219.0</td>
+<td class="plus">+1.86%</td>
+<td>68.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">24.7점</td>
+<td>0회</td>
+<td>3회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>39.81점</b></td>
+</tr>
+<tr>
 <td><b>151</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('INJ'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('INJ', '인젝티브'); return false;" class="coin-link">
         <b>인젝티브</b> <span class="ticker-symbol">(INJ)</span>
     </a>
 </td>
@@ -2647,46 +2723,29 @@ function openUpbitChart(ticker) {
 <td>0회</td>
 <td>6회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>39.85점</b></td>
+<td><b>39.78점</b></td>
 </tr>
 <tr>
 <td><b>152</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('PROVE'); return false;" class="coin-link">
-        <b>서싱트</b> <span class="ticker-symbol">(PROVE)</span>
+    <a href="#" onclick="openChartModal('LA', '라그랑주'); return false;" class="coin-link">
+        <b>라그랑주</b> <span class="ticker-symbol">(LA)</span>
     </a>
 </td>
-<td>219.0</td>
-<td class="plus">+1.39%</td>
-<td>68.0%</td>
+<td>72.9</td>
+<td class="minus">-2.15%</td>
+<td>69.9%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">24.8점</td>
+<td class="liquidity">63.5점</td>
 <td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>39.74점</b></td>
+<td>10회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
+<td><b>39.72점</b></td>
 </tr>
 <tr>
 <td><b>153</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZK'); return false;" class="coin-link">
-        <b>지케이싱크</b> <span class="ticker-symbol">(ZK)</span>
-    </a>
-</td>
-<td>11.2</td>
-<td class="plus">+0.9%</td>
-<td>70.5%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">34.3점</td>
-<td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>39.71점</b></td>
-</tr>
-<tr>
-<td><b>154</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('ESP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ESP', '에스프레소'); return false;" class="coin-link">
         <b>에스프레소</b> <span class="ticker-symbol">(ESP)</span>
     </a>
 </td>
@@ -2701,9 +2760,9 @@ function openUpbitChart(ticker) {
 <td><b>39.69점</b></td>
 </tr>
 <tr>
-<td><b>155</b></td>
+<td><b>154</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MEGA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MEGA', '메가이더'); return false;" class="coin-link">
         <b>메가이더</b> <span class="ticker-symbol">(MEGA)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -2718,9 +2777,9 @@ function openUpbitChart(ticker) {
 <td><b>39.68점</b></td>
 </tr>
 <tr>
-<td><b>156</b></td>
+<td><b>155</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('API3'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('API3', '에이피아이쓰리'); return false;" class="coin-link">
         <b>에이피아이쓰리</b> <span class="ticker-symbol">(API3)</span>
     </a>
 </td>
@@ -2735,60 +2794,26 @@ function openUpbitChart(ticker) {
 <td><b>39.64점</b></td>
 </tr>
 <tr>
-<td><b>157</b></td>
+<td><b>156</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TOSHI'); return false;" class="coin-link">
-        <b>토시</b> <span class="ticker-symbol">(TOSHI)</span>
+    <a href="#" onclick="openChartModal('CYBER', '사이버'); return false;" class="coin-link">
+        <b>사이버</b> <span class="ticker-symbol">(CYBER)</span>
     </a>
 </td>
-<td>0.147</td>
-<td class="plus">+0.68%</td>
-<td>76.9%</td>
+<td>439.0</td>
+<td class="plus">+1.62%</td>
+<td>67.4%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">27.2점</td>
+<td class="liquidity">14.1점</td>
 <td>0회</td>
-<td>5회</td>
+<td>3회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>39.44점</b></td>
 </tr>
 <tr>
-<td><b>158</b></td>
+<td><b>157</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('NEAR'); return false;" class="coin-link">
-        <b>니어프로토콜</b> <span class="ticker-symbol">(NEAR)</span>
-    </a>
-</td>
-<td>2,283.0</td>
-<td class="minus">-0.17%</td>
-<td>75.0%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">43.6점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>39.42점</b></td>
-</tr>
-<tr>
-<td><b>159</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('AWE'); return false;" class="coin-link">
-        <b>에이더블유이</b> <span class="ticker-symbol">(AWE)</span>
-    </a>
-</td>
-<td>82.5</td>
-<td class="plus">+0.49%</td>
-<td>73.8%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">28.2점</td>
-<td>0회</td>
-<td>2회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>39.41점</b></td>
-</tr>
-<tr>
-<td><b>160</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('ASTR'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ASTR', '아스타'); return false;" class="coin-link">
         <b>아스타</b> <span class="ticker-symbol">(ASTR)</span>
     </a>
 </td>
@@ -2803,9 +2828,9 @@ function openUpbitChart(ticker) {
 <td><b>39.4점</b></td>
 </tr>
 <tr>
-<td><b>161</b></td>
+<td><b>158</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('IQ'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('IQ', '아이큐'); return false;" class="coin-link">
         <b>아이큐</b> <span class="ticker-symbol">(IQ)</span>
     </a>
 </td>
@@ -2820,9 +2845,9 @@ function openUpbitChart(ticker) {
 <td><b>39.39점</b></td>
 </tr>
 <tr>
-<td><b>162</b></td>
+<td><b>159</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MANA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MANA', '디센트럴랜드'); return false;" class="coin-link">
         <b>디센트럴랜드</b> <span class="ticker-symbol">(MANA)</span>
     </a>
 </td>
@@ -2837,26 +2862,9 @@ function openUpbitChart(ticker) {
 <td><b>39.36점</b></td>
 </tr>
 <tr>
-<td><b>163</b></td>
+<td><b>160</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MOCA'); return false;" class="coin-link">
-        <b>모카네트워크</b> <span class="ticker-symbol">(MOCA)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>10.9</td>
-<td class="plus">+0.93%</td>
-<td>68.2%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">24.3점</td>
-<td>0회</td>
-<td>6회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>39.33점</b></td>
-</tr>
-<tr>
-<td><b>164</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('CC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CC', '캔톤'); return false;" class="coin-link">
         <b>캔톤</b> <span class="ticker-symbol">(CC)</span>
     </a>
 </td>
@@ -2871,60 +2879,43 @@ function openUpbitChart(ticker) {
 <td><b>39.32점</b></td>
 </tr>
 <tr>
-<td><b>165</b></td>
+<td><b>161</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ALGO'); return false;" class="coin-link">
-        <b>알고랜드</b> <span class="ticker-symbol">(ALGO)</span>
+    <a href="#" onclick="openChartModal('ZK', '지케이싱크'); return false;" class="coin-link">
+        <b>지케이싱크</b> <span class="ticker-symbol">(ZK)</span>
     </a>
 </td>
-<td>123.0</td>
-<td class="">0.0%</td>
-<td>73.1%</td>
+<td>11.2</td>
+<td class="plus">+0.9%</td>
+<td>68.9%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">34.1점</td>
+<td class="liquidity">34.2점</td>
 <td>0회</td>
-<td>1회</td>
+<td>3회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>39.3점</b></td>
+<td><b>39.26점</b></td>
 </tr>
 <tr>
-<td><b>166</b></td>
+<td><b>162</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SEI'); return false;" class="coin-link">
-        <b>세이</b> <span class="ticker-symbol">(SEI)</span>
+    <a href="#" onclick="openChartModal('NEAR', '니어프로토콜'); return false;" class="coin-link">
+        <b>니어프로토콜</b> <span class="ticker-symbol">(NEAR)</span>
     </a>
 </td>
-<td>58.5</td>
-<td class="minus">-0.34%</td>
-<td>67.2%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">35.6점</td>
-<td>0회</td>
-<td>1회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>39.23점</b></td>
-</tr>
-<tr>
-<td><b>167</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('WLFI'); return false;" class="coin-link">
-        <b>월드리버티파이낸셜</b> <span class="ticker-symbol">(WLFI)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>72.1</td>
-<td class="">0.0%</td>
-<td>74.1%</td>
+<td>2,277.0</td>
+<td class="minus">-0.31%</td>
+<td>73.5%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">37.8점</td>
+<td class="liquidity">43.5점</td>
 <td>0회</td>
-<td>2회</td>
+<td>7회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>39.2점</b></td>
 </tr>
 <tr>
-<td><b>168</b></td>
+<td><b>163</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('FF'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('FF', '팔콘파이낸스'); return false;" class="coin-link">
         <b>팔콘파이낸스</b> <span class="ticker-symbol">(FF)</span>
     </a>
 </td>
@@ -2939,9 +2930,9 @@ function openUpbitChart(ticker) {
 <td><b>39.18점</b></td>
 </tr>
 <tr>
-<td><b>169</b></td>
+<td><b>164</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('COW'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('COW', '카우프로토콜'); return false;" class="coin-link">
         <b>카우프로토콜</b> <span class="ticker-symbol">(COW)</span>
     </a>
 </td>
@@ -2956,9 +2947,9 @@ function openUpbitChart(ticker) {
 <td><b>39.1점</b></td>
 </tr>
 <tr>
-<td><b>170</b></td>
+<td><b>165</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('OP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('OP', '옵티미즘'); return false;" class="coin-link">
         <b>옵티미즘</b> <span class="ticker-symbol">(OP)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -2973,26 +2964,26 @@ function openUpbitChart(ticker) {
 <td><b>39.1점</b></td>
 </tr>
 <tr>
-<td><b>171</b></td>
+<td><b>166</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('LA'); return false;" class="coin-link">
-        <b>라그랑주</b> <span class="ticker-symbol">(LA)</span>
+    <a href="#" onclick="openChartModal('AWE', '에이더블유이'); return false;" class="coin-link">
+        <b>에이더블유이</b> <span class="ticker-symbol">(AWE)</span>
     </a>
 </td>
-<td>73.0</td>
-<td class="minus">-2.28%</td>
-<td>69.4%</td>
+<td>82.4</td>
+<td class="plus">+0.49%</td>
+<td>73.2%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">63.6점</td>
+<td class="liquidity">28.1점</td>
 <td>0회</td>
-<td>10회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
+<td>2회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>39.05점</b></td>
 </tr>
 <tr>
-<td><b>172</b></td>
+<td><b>167</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AVNT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('AVNT', '아반티스'); return false;" class="coin-link">
         <b>아반티스</b> <span class="ticker-symbol">(AVNT)</span>
     </a>
 </td>
@@ -3007,60 +2998,77 @@ function openUpbitChart(ticker) {
 <td><b>38.99점</b></td>
 </tr>
 <tr>
-<td><b>173</b></td>
+<td><b>168</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MET2'); return false;" class="coin-link">
-        <b>메테오라</b> <span class="ticker-symbol">(MET2)</span>
+    <a href="#" onclick="openChartModal('SEI', '세이'); return false;" class="coin-link">
+        <b>세이</b> <span class="ticker-symbol">(SEI)</span>
     </a>
 </td>
-<td>236.0</td>
-<td class="plus">+0.85%</td>
-<td>67.5%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">32.9점</td>
+<td>58.4</td>
+<td class="minus">-0.51%</td>
+<td>66.6%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">35.6점</td>
 <td>0회</td>
-<td>9회</td>
+<td>1회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>38.98점</b></td>
 </tr>
 <tr>
-<td><b>174</b></td>
+<td><b>169</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('DOGE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('DOGE', '도지코인'); return false;" class="coin-link">
         <b>도지코인</b> <span class="ticker-symbol">(DOGE)</span>
     </a>
 </td>
 <td>99.7</td>
 <td class="minus">-0.3%</td>
-<td>60.9%</td>
+<td>61.5%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">53.1점</td>
+<td class="liquidity">53.0점</td>
 <td>0회</td>
 <td>10회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>38.95점</b></td>
+<td><b>38.89점</b></td>
 </tr>
 <tr>
-<td><b>175</b></td>
+<td><b>170</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TRUST'); return false;" class="coin-link">
-        <b>인튜이션</b> <span class="ticker-symbol">(TRUST)</span>
-    </a>
+    <a href="#" onclick="openChartModal('MOCA', '모카네트워크'); return false;" class="coin-link">
+        <b>모카네트워크</b> <span class="ticker-symbol">(MOCA)</span>
+    </a><span class="ai-badge">AI추천</span>
 </td>
-<td>73.5</td>
-<td class="minus">-0.14%</td>
-<td>72.3%</td>
+<td>10.9</td>
+<td class="plus">+0.93%</td>
+<td>67.7%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">26.9점</td>
+<td class="liquidity">24.3점</td>
 <td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
+<td>6회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>38.88점</b></td>
 </tr>
 <tr>
-<td><b>176</b></td>
+<td><b>171</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('HUNT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SUI', '수이'); return false;" class="coin-link">
+        <b>수이</b> <span class="ticker-symbol">(SUI)</span>
+    </a>
+</td>
+<td>977.0</td>
+<td class="minus">-0.51%</td>
+<td>68.9%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">51.0점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>38.83점</b></td>
+</tr>
+<tr>
+<td><b>172</b></td>
+<td>
+    <a href="#" onclick="openChartModal('HUNT', '헌트'); return false;" class="coin-link">
         <b>헌트</b> <span class="ticker-symbol">(HUNT)</span>
     </a>
 </td>
@@ -3075,9 +3083,9 @@ function openUpbitChart(ticker) {
 <td><b>38.8점</b></td>
 </tr>
 <tr>
-<td><b>177</b></td>
+<td><b>173</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('KERNEL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('KERNEL', '커널다오'); return false;" class="coin-link">
         <b>커널다오</b> <span class="ticker-symbol">(KERNEL)</span>
     </a>
 </td>
@@ -3092,26 +3100,77 @@ function openUpbitChart(ticker) {
 <td><b>38.79점</b></td>
 </tr>
 <tr>
-<td><b>178</b></td>
+<td><b>174</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('PROS'); return false;" class="coin-link">
-        <b>파로스</b> <span class="ticker-symbol">(PROS)</span>
-    </a><span class="ai-badge">AI추천</span>
+    <a href="#" onclick="openChartModal('SOON', '쑨'); return false;" class="coin-link">
+        <b>쑨</b> <span class="ticker-symbol">(SOON)</span>
+    </a>
 </td>
-<td>552.0</td>
-<td class="plus">+0.73%</td>
-<td>76.2%</td>
+<td>306.0</td>
+<td class="plus">+0.33%</td>
+<td>74.4%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">21.6점</td>
+<td class="liquidity">48.2점</td>
 <td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>38.67점</b></td>
+<td>8회</td>
+<td><span class="plus">▲2회</span> / <span class="minus">▼0회</span></td>
+<td><b>38.75점</b></td>
 </tr>
 <tr>
-<td><b>179</b></td>
+<td><b>175</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('YGG'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('WLFI', '월드리버티파이낸셜'); return false;" class="coin-link">
+        <b>월드리버티파이낸셜</b> <span class="ticker-symbol">(WLFI)</span>
+    </a><span class="ai-badge">AI추천</span>
+</td>
+<td>72.0</td>
+<td class="">0.0%</td>
+<td>73.5%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">37.9점</td>
+<td>0회</td>
+<td>2회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>38.71점</b></td>
+</tr>
+<tr>
+<td><b>176</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ALGO', '알고랜드'); return false;" class="coin-link">
+        <b>알고랜드</b> <span class="ticker-symbol">(ALGO)</span>
+    </a>
+</td>
+<td>124.0</td>
+<td class="plus">+0.81%</td>
+<td>71.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">34.0점</td>
+<td>0회</td>
+<td>1회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>38.7점</b></td>
+</tr>
+<tr>
+<td><b>177</b></td>
+<td>
+    <a href="#" onclick="openChartModal('TRUST', '인튜이션'); return false;" class="coin-link">
+        <b>인튜이션</b> <span class="ticker-symbol">(TRUST)</span>
+    </a>
+</td>
+<td>73.6</td>
+<td class="">0.0%</td>
+<td>71.4%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">26.8점</td>
+<td>0회</td>
+<td>4회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
+<td><b>38.66점</b></td>
+</tr>
+<tr>
+<td><b>178</b></td>
+<td>
+    <a href="#" onclick="openChartModal('YGG', '일드길드게임즈'); return false;" class="coin-link">
         <b>일드길드게임즈</b> <span class="ticker-symbol">(YGG)</span>
     </a>
 </td>
@@ -3126,9 +3185,9 @@ function openUpbitChart(ticker) {
 <td><b>38.65점</b></td>
 </tr>
 <tr>
-<td><b>180</b></td>
+<td><b>179</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MNT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MNT', '맨틀'); return false;" class="coin-link">
         <b>맨틀</b> <span class="ticker-symbol">(MNT)</span>
     </a>
 </td>
@@ -3143,94 +3202,43 @@ function openUpbitChart(ticker) {
 <td><b>38.63점</b></td>
 </tr>
 <tr>
-<td><b>181</b></td>
+<td><b>180</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('LINEA'); return false;" class="coin-link">
-        <b>리네아</b> <span class="ticker-symbol">(LINEA)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>3.11</td>
-<td class="">0.0%</td>
-<td>72.6%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">23.8점</td>
-<td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>38.6점</b></td>
-</tr>
-<tr>
-<td><b>182</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('USDC'); return false;" class="coin-link">
-        <b>유에스디코인</b> <span class="ticker-symbol">(USDC)</span>
-    </a>
-</td>
-<td>1,405.0</td>
-<td class="minus">-0.07%</td>
-<td>74.3%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">36.0점</td>
-<td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>38.57점</b></td>
-</tr>
-<tr>
-<td><b>183</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('SOON'); return false;" class="coin-link">
-        <b>쑨</b> <span class="ticker-symbol">(SOON)</span>
-    </a>
-</td>
-<td>306.0</td>
-<td class="">0.0%</td>
-<td>74.2%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">48.2점</td>
-<td>0회</td>
-<td>8회</td>
-<td><span class="plus">▲2회</span> / <span class="minus">▼0회</span></td>
-<td><b>38.53점</b></td>
-</tr>
-<tr>
-<td><b>184</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('BIGTIME'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BIGTIME', '빅타임'); return false;" class="coin-link">
         <b>빅타임</b> <span class="ticker-symbol">(BIGTIME)</span>
     </a>
 </td>
-<td>7.49</td>
-<td class="minus">-0.4%</td>
-<td>68.7%</td>
+<td>7.5</td>
+<td class="minus">-0.27%</td>
+<td>69.0%</td>
 <td class="accumulation">0점</td>
 <td class="liquidity">28.9점</td>
 <td>0회</td>
 <td>8회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>38.37점</b></td>
+<td><b>38.46점</b></td>
 </tr>
 <tr>
-<td><b>185</b></td>
+<td><b>181</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('GLM'); return false;" class="coin-link">
-        <b>골렘</b> <span class="ticker-symbol">(GLM)</span>
-    </a>
+    <a href="#" onclick="openChartModal('PROS', '파로스'); return false;" class="coin-link">
+        <b>파로스</b> <span class="ticker-symbol">(PROS)</span>
+    </a><span class="ai-badge">AI추천</span>
 </td>
-<td>131.0</td>
-<td class="plus">+2.34%</td>
-<td>71.6%</td>
+<td>551.0</td>
+<td class="plus">+0.73%</td>
+<td>74.8%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">25.3점</td>
+<td class="liquidity">21.6점</td>
 <td>0회</td>
-<td>2회</td>
+<td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>38.35점</b></td>
+<td><b>38.42점</b></td>
 </tr>
 <tr>
-<td><b>186</b></td>
+<td><b>182</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SENT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SENT', '센티언트'); return false;" class="coin-link">
         <b>센티언트</b> <span class="ticker-symbol">(SENT)</span>
     </a>
 </td>
@@ -3245,9 +3253,26 @@ function openUpbitChart(ticker) {
 <td><b>38.34점</b></td>
 </tr>
 <tr>
-<td><b>187</b></td>
+<td><b>183</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MVL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SOL', '솔라나'); return false;" class="coin-link">
+        <b>솔라나</b> <span class="ticker-symbol">(SOL)</span>
+    </a>
+</td>
+<td>107,100.0</td>
+<td class="minus">-0.19%</td>
+<td>71.7%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">59.7점</td>
+<td>0회</td>
+<td>10회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>38.33점</b></td>
+</tr>
+<tr>
+<td><b>184</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MVL', '엠블'); return false;" class="coin-link">
         <b>엠블</b> <span class="ticker-symbol">(MVL)</span>
     </a>
 </td>
@@ -3262,9 +3287,26 @@ function openUpbitChart(ticker) {
 <td><b>38.29점</b></td>
 </tr>
 <tr>
-<td><b>188</b></td>
+<td><b>185</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZORA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('GLM', '골렘'); return false;" class="coin-link">
+        <b>골렘</b> <span class="ticker-symbol">(GLM)</span>
+    </a>
+</td>
+<td>131.0</td>
+<td class="plus">+2.34%</td>
+<td>71.4%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">25.3점</td>
+<td>0회</td>
+<td>2회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>38.26점</b></td>
+</tr>
+<tr>
+<td><b>186</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ZORA', '조라'); return false;" class="coin-link">
         <b>조라</b> <span class="ticker-symbol">(ZORA)</span>
     </a>
 </td>
@@ -3279,9 +3321,9 @@ function openUpbitChart(ticker) {
 <td><b>38.26점</b></td>
 </tr>
 <tr>
-<td><b>189</b></td>
+<td><b>187</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('VVV'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('VVV', '베니스토큰'); return false;" class="coin-link">
         <b>베니스토큰</b> <span class="ticker-symbol">(VVV)</span>
     </a>
 </td>
@@ -3296,9 +3338,9 @@ function openUpbitChart(ticker) {
 <td><b>38.22점</b></td>
 </tr>
 <tr>
-<td><b>190</b></td>
+<td><b>188</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CPOOL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CPOOL', '클리어풀'); return false;" class="coin-link">
         <b>클리어풀</b> <span class="ticker-symbol">(CPOOL)</span>
     </a>
 </td>
@@ -3313,26 +3355,9 @@ function openUpbitChart(ticker) {
 <td><b>38.21점</b></td>
 </tr>
 <tr>
-<td><b>191</b></td>
+<td><b>189</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('DATA'); return false;" class="coin-link">
-        <b>데이터네트워크</b> <span class="ticker-symbol">(DATA)</span>
-    </a>
-</td>
-<td>294.0</td>
-<td class="minus">-0.34%</td>
-<td>58.0%</td>
-<td class="accumulation">30점</td>
-<td class="liquidity">38.3점</td>
-<td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>38.14점</b></td>
-</tr>
-<tr>
-<td><b>192</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('SPK'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SPK', '스파크'); return false;" class="coin-link">
         <b>스파크</b> <span class="ticker-symbol">(SPK)</span>
     </a>
 </td>
@@ -3347,9 +3372,9 @@ function openUpbitChart(ticker) {
 <td><b>38.12점</b></td>
 </tr>
 <tr>
-<td><b>193</b></td>
+<td><b>190</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BTT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BTT', '비트토렌트'); return false;" class="coin-link">
         <b>비트토렌트</b> <span class="ticker-symbol">(BTT)</span>
     </a>
 </td>
@@ -3364,9 +3389,43 @@ function openUpbitChart(ticker) {
 <td><b>38.12점</b></td>
 </tr>
 <tr>
-<td><b>194</b></td>
+<td><b>191</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ORDER'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('B3', '비쓰리'); return false;" class="coin-link">
+        <b>비쓰리</b> <span class="ticker-symbol">(B3)</span>
+    </a>
+</td>
+<td>0.636</td>
+<td class="plus">+0.47%</td>
+<td>71.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">24.8점</td>
+<td>0회</td>
+<td>5회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>38.03점</b></td>
+</tr>
+<tr>
+<td><b>192</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MET2', '메테오라'); return false;" class="coin-link">
+        <b>메테오라</b> <span class="ticker-symbol">(MET2)</span>
+    </a>
+</td>
+<td>236.0</td>
+<td class="plus">+0.43%</td>
+<td>67.5%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">32.8점</td>
+<td>0회</td>
+<td>8회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>38.01점</b></td>
+</tr>
+<tr>
+<td><b>193</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ORDER', '오덜리'); return false;" class="coin-link">
         <b>오덜리</b> <span class="ticker-symbol">(ORDER)</span>
     </a>
 </td>
@@ -3381,9 +3440,9 @@ function openUpbitChart(ticker) {
 <td><b>37.98점</b></td>
 </tr>
 <tr>
-<td><b>195</b></td>
+<td><b>194</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BLAST'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BLAST', '블라스트'); return false;" class="coin-link">
         <b>블라스트</b> <span class="ticker-symbol">(BLAST)</span>
     </a>
 </td>
@@ -3398,9 +3457,9 @@ function openUpbitChart(ticker) {
 <td><b>37.96점</b></td>
 </tr>
 <tr>
-<td><b>196</b></td>
+<td><b>195</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('UNI'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('UNI', '유니스왑'); return false;" class="coin-link">
         <b>유니스왑</b> <span class="ticker-symbol">(UNI)</span>
     </a>
 </td>
@@ -3415,26 +3474,26 @@ function openUpbitChart(ticker) {
 <td><b>37.94점</b></td>
 </tr>
 <tr>
-<td><b>197</b></td>
+<td><b>196</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SUI'); return false;" class="coin-link">
-        <b>수이</b> <span class="ticker-symbol">(SUI)</span>
+    <a href="#" onclick="openChartModal('MOODENG', '무뎅'); return false;" class="coin-link">
+        <b>무뎅</b> <span class="ticker-symbol">(MOODENG)</span>
     </a>
 </td>
-<td>978.0</td>
-<td class="minus">-0.71%</td>
-<td>68.1%</td>
+<td>53.6</td>
+<td class="minus">-2.55%</td>
+<td>62.5%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">51.0점</td>
+<td class="liquidity">35.5점</td>
 <td>0회</td>
-<td>8회</td>
+<td>6회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>37.93점</b></td>
+<td><b>37.85점</b></td>
 </tr>
 <tr>
-<td><b>198</b></td>
+<td><b>197</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('PENDLE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('PENDLE', '펜들'); return false;" class="coin-link">
         <b>펜들</b> <span class="ticker-symbol">(PENDLE)</span>
     </a>
 </td>
@@ -3449,9 +3508,9 @@ function openUpbitChart(ticker) {
 <td><b>37.84점</b></td>
 </tr>
 <tr>
-<td><b>199</b></td>
+<td><b>198</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('IO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('IO', '아이오넷'); return false;" class="coin-link">
         <b>아이오넷</b> <span class="ticker-symbol">(IO)</span>
     </a>
 </td>
@@ -3466,26 +3525,9 @@ function openUpbitChart(ticker) {
 <td><b>37.76점</b></td>
 </tr>
 <tr>
-<td><b>200</b></td>
+<td><b>199</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MOODENG'); return false;" class="coin-link">
-        <b>무뎅</b> <span class="ticker-symbol">(MOODENG)</span>
-    </a>
-</td>
-<td>53.8</td>
-<td class="minus">-0.92%</td>
-<td>62.2%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">35.5점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>37.75점</b></td>
-</tr>
-<tr>
-<td><b>201</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('BEAM'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BEAM', '빔'); return false;" class="coin-link">
         <b>빔</b> <span class="ticker-symbol">(BEAM)</span>
     </a>
 </td>
@@ -3500,9 +3542,9 @@ function openUpbitChart(ticker) {
 <td><b>37.74점</b></td>
 </tr>
 <tr>
-<td><b>202</b></td>
+<td><b>200</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('POLYX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('POLYX', '폴리매쉬'); return false;" class="coin-link">
         <b>폴리매쉬</b> <span class="ticker-symbol">(POLYX)</span>
     </a>
 </td>
@@ -3517,9 +3559,9 @@ function openUpbitChart(ticker) {
 <td><b>37.67점</b></td>
 </tr>
 <tr>
-<td><b>203</b></td>
+<td><b>201</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('DKA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('DKA', '디카르고'); return false;" class="coin-link">
         <b>디카르고</b> <span class="ticker-symbol">(DKA)</span>
     </a>
 </td>
@@ -3534,26 +3576,9 @@ function openUpbitChart(ticker) {
 <td><b>37.64점</b></td>
 </tr>
 <tr>
-<td><b>204</b></td>
+<td><b>202</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CYBER'); return false;" class="coin-link">
-        <b>사이버</b> <span class="ticker-symbol">(CYBER)</span>
-    </a>
-</td>
-<td>441.0</td>
-<td class="plus">+1.61%</td>
-<td>66.4%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">14.5점</td>
-<td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>37.64점</b></td>
-</tr>
-<tr>
-<td><b>205</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('KMNO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('KMNO', '카미노파이낸스'); return false;" class="coin-link">
         <b>카미노파이낸스</b> <span class="ticker-symbol">(KMNO)</span>
     </a>
 </td>
@@ -3568,28 +3593,28 @@ function openUpbitChart(ticker) {
 <td><b>37.61점</b></td>
 </tr>
 <tr>
-<td><b>206</b></td>
+<td><b>203</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ATH'); return false;" class="coin-link">
-        <b>에이셔</b> <span class="ticker-symbol">(ATH)</span>
+    <a href="#" onclick="openChartModal('DATA', '데이터네트워크'); return false;" class="coin-link">
+        <b>데이터네트워크</b> <span class="ticker-symbol">(DATA)</span>
     </a>
 </td>
-<td>5.73</td>
-<td class="minus">-1.21%</td>
-<td>75.6%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">41.3점</td>
+<td>294.0</td>
+<td class="minus">-0.34%</td>
+<td>56.4%</td>
+<td class="accumulation">30점</td>
+<td class="liquidity">38.3점</td>
 <td>0회</td>
-<td>5회</td>
+<td>3회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
 <td><b>37.48점</b></td>
 </tr>
 <tr>
-<td><b>207</b></td>
+<td><b>204</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TOKAMAK'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TOKAMAK', '토카막네트워크'); return false;" class="coin-link">
         <b>토카막네트워크</b> <span class="ticker-symbol">(TOKAMAK)</span>
-    </a>
+    </a><span class="ai-badge">AI추천</span>
 </td>
 <td>457.0</td>
 <td class="plus">+0.44%</td>
@@ -3602,9 +3627,26 @@ function openUpbitChart(ticker) {
 <td><b>37.41점</b></td>
 </tr>
 <tr>
-<td><b>208</b></td>
+<td><b>205</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('F'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BABY', '바빌론'); return false;" class="coin-link">
+        <b>바빌론</b> <span class="ticker-symbol">(BABY)</span>
+    </a>
+</td>
+<td>17.4</td>
+<td class="minus">-0.57%</td>
+<td>72.9%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">38.9점</td>
+<td>0회</td>
+<td>4회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>37.27점</b></td>
+</tr>
+<tr>
+<td><b>206</b></td>
+<td>
+    <a href="#" onclick="openChartModal('F', '신퓨처스'); return false;" class="coin-link">
         <b>신퓨처스</b> <span class="ticker-symbol">(F)</span>
     </a>
 </td>
@@ -3619,9 +3661,9 @@ function openUpbitChart(ticker) {
 <td><b>37.15점</b></td>
 </tr>
 <tr>
-<td><b>209</b></td>
+<td><b>207</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TFUEL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TFUEL', '쎄타퓨엘'); return false;" class="coin-link">
         <b>쎄타퓨엘</b> <span class="ticker-symbol">(TFUEL)</span>
     </a>
 </td>
@@ -3636,9 +3678,9 @@ function openUpbitChart(ticker) {
 <td><b>37.14점</b></td>
 </tr>
 <tr>
-<td><b>210</b></td>
+<td><b>208</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CHIP'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CHIP', '유에스디에이아이'); return false;" class="coin-link">
         <b>유에스디에이아이</b> <span class="ticker-symbol">(CHIP)</span>
     </a>
 </td>
@@ -3653,9 +3695,43 @@ function openUpbitChart(ticker) {
 <td><b>37.03점</b></td>
 </tr>
 <tr>
+<td><b>209</b></td>
+<td>
+    <a href="#" onclick="openChartModal('LINEA', '리네아'); return false;" class="coin-link">
+        <b>리네아</b> <span class="ticker-symbol">(LINEA)</span>
+    </a><span class="ai-badge">AI추천</span>
+</td>
+<td>3.13</td>
+<td class="plus">+0.97%</td>
+<td>71.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">24.0점</td>
+<td>0회</td>
+<td>3회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>37.0점</b></td>
+</tr>
+<tr>
+<td><b>210</b></td>
+<td>
+    <a href="#" onclick="openChartModal('HOME', '디파이앱'); return false;" class="coin-link">
+        <b>디파이앱</b> <span class="ticker-symbol">(HOME)</span>
+    </a>
+</td>
+<td>13.2</td>
+<td class="minus">-1.49%</td>
+<td>70.5%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">55.7점</td>
+<td>0회</td>
+<td>6회</td>
+<td><span class="plus">▲18회</span> / <span class="minus">▼6회</span></td>
+<td><b>36.96점</b></td>
+</tr>
+<tr>
 <td><b>211</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('KAVA'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('KAVA', '카바'); return false;" class="coin-link">
         <b>카바</b> <span class="ticker-symbol">(KAVA)</span>
     </a>
 </td>
@@ -3672,7 +3748,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>212</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('WIF'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('WIF', '도그위프햇'); return false;" class="coin-link">
         <b>도그위프햇</b> <span class="ticker-symbol">(WIF)</span>
     </a>
 </td>
@@ -3689,41 +3765,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>213</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BABY'); return false;" class="coin-link">
-        <b>바빌론</b> <span class="ticker-symbol">(BABY)</span>
-    </a>
-</td>
-<td>17.5</td>
-<td class="">0.0%</td>
-<td>73.9%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">38.9점</td>
-<td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>36.9점</b></td>
-</tr>
-<tr>
-<td><b>214</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('ZETA'); return false;" class="coin-link">
-        <b>제타체인</b> <span class="ticker-symbol">(ZETA)</span>
-    </a>
-</td>
-<td>41.3</td>
-<td class="">0.0%</td>
-<td>71.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">19.2점</td>
-<td>0회</td>
-<td>2회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>36.83점</b></td>
-</tr>
-<tr>
-<td><b>215</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('BREV'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BREV', '브레비스'); return false;" class="coin-link">
         <b>브레비스</b> <span class="ticker-symbol">(BREV)</span>
     </a>
 </td>
@@ -3738,9 +3780,26 @@ function openUpbitChart(ticker) {
 <td><b>36.76점</b></td>
 </tr>
 <tr>
-<td><b>216</b></td>
+<td><b>214</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('OPG'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ZETA', '제타체인'); return false;" class="coin-link">
+        <b>제타체인</b> <span class="ticker-symbol">(ZETA)</span>
+    </a>
+</td>
+<td>41.3</td>
+<td class="">0.0%</td>
+<td>71.4%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">19.1점</td>
+<td>0회</td>
+<td>2회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>36.73점</b></td>
+</tr>
+<tr>
+<td><b>215</b></td>
+<td>
+    <a href="#" onclick="openChartModal('OPG', '오픈그라디언트'); return false;" class="coin-link">
         <b>오픈그라디언트</b> <span class="ticker-symbol">(OPG)</span>
     </a>
 </td>
@@ -3755,60 +3814,26 @@ function openUpbitChart(ticker) {
 <td><b>36.64점</b></td>
 </tr>
 <tr>
+<td><b>216</b></td>
+<td>
+    <a href="#" onclick="openChartModal('RE', '리'); return false;" class="coin-link">
+        <b>리</b> <span class="ticker-symbol">(RE)</span>
+    </a>
+</td>
+<td>586.0</td>
+<td class="minus">-4.87%</td>
+<td>61.6%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">66.2점</td>
+<td>0회</td>
+<td>11회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
+<td><b>36.41점</b></td>
+</tr>
+<tr>
 <td><b>217</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ERA'); return false;" class="coin-link">
-        <b>칼데라</b> <span class="ticker-symbol">(ERA)</span>
-    </a>
-</td>
-<td>97.8</td>
-<td class="plus">+0.82%</td>
-<td>75.5%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">43.0점</td>
-<td>0회</td>
-<td>6회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>36.5점</b></td>
-</tr>
-<tr>
-<td><b>218</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('B3'); return false;" class="coin-link">
-        <b>비쓰리</b> <span class="ticker-symbol">(B3)</span>
-    </a>
-</td>
-<td>0.633</td>
-<td class="">0.0%</td>
-<td>69.4%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">24.8점</td>
-<td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>36.39점</b></td>
-</tr>
-<tr>
-<td><b>219</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('PEPE'); return false;" class="coin-link">
-        <b>페페</b> <span class="ticker-symbol">(PEPE)</span>
-    </a>
-</td>
-<td>0.00402</td>
-<td class="minus">-0.74%</td>
-<td>66.8%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">38.1점</td>
-<td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>36.3점</b></td>
-</tr>
-<tr>
-<td><b>220</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('UP2'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('UP2', '슈퍼폼'); return false;" class="coin-link">
         <b>슈퍼폼</b> <span class="ticker-symbol">(UP2)</span>
     </a>
 </td>
@@ -3823,9 +3848,9 @@ function openUpbitChart(ticker) {
 <td><b>36.24점</b></td>
 </tr>
 <tr>
-<td><b>221</b></td>
+<td><b>218</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MASK'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MASK', '마스크네트워크'); return false;" class="coin-link">
         <b>마스크네트워크</b> <span class="ticker-symbol">(MASK)</span>
     </a>
 </td>
@@ -3840,9 +3865,9 @@ function openUpbitChart(ticker) {
 <td><b>36.17점</b></td>
 </tr>
 <tr>
-<td><b>222</b></td>
+<td><b>219</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('GRT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('GRT', '더그래프'); return false;" class="coin-link">
         <b>더그래프</b> <span class="ticker-symbol">(GRT)</span>
     </a>
 </td>
@@ -3857,26 +3882,9 @@ function openUpbitChart(ticker) {
 <td><b>36.11점</b></td>
 </tr>
 <tr>
-<td><b>223</b></td>
+<td><b>220</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('KNC'); return false;" class="coin-link">
-        <b>카이버네트워크</b> <span class="ticker-symbol">(KNC)</span>
-    </a>
-</td>
-<td>145.0</td>
-<td class="plus">+1.4%</td>
-<td>59.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">25.5점</td>
-<td>0회</td>
-<td>2회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>36.08점</b></td>
-</tr>
-<tr>
-<td><b>224</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('VTHO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('VTHO', '비토르토큰'); return false;" class="coin-link">
         <b>비토르토큰</b> <span class="ticker-symbol">(VTHO)</span>
     </a>
 </td>
@@ -3891,26 +3899,43 @@ function openUpbitChart(ticker) {
 <td><b>36.06점</b></td>
 </tr>
 <tr>
-<td><b>225</b></td>
+<td><b>221</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TIA'); return false;" class="coin-link">
-        <b>셀레스티아</b> <span class="ticker-symbol">(TIA)</span>
+    <a href="#" onclick="openChartModal('ATH', '에이셔'); return false;" class="coin-link">
+        <b>에이셔</b> <span class="ticker-symbol">(ATH)</span>
     </a>
 </td>
-<td>463.0</td>
-<td class="plus">+0.22%</td>
-<td>68.8%</td>
+<td>5.72</td>
+<td class="minus">-1.38%</td>
+<td>74.1%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">19.1점</td>
+<td class="liquidity">41.3점</td>
 <td>0회</td>
-<td>1회</td>
+<td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>36.03점</b></td>
+<td><b>36.02점</b></td>
 </tr>
 <tr>
-<td><b>226</b></td>
+<td><b>222</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ARDR'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('LSK', '리스크'); return false;" class="coin-link">
+        <b>리스크</b> <span class="ticker-symbol">(LSK)</span>
+    </a>
+</td>
+<td>106.0</td>
+<td class="plus">+0.95%</td>
+<td>76.8%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">22.6점</td>
+<td>0회</td>
+<td>1회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
+<td><b>35.92점</b></td>
+</tr>
+<tr>
+<td><b>223</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ARDR', '아더'); return false;" class="coin-link">
         <b>아더</b> <span class="ticker-symbol">(ARDR)</span>
     </a>
 </td>
@@ -3925,43 +3950,26 @@ function openUpbitChart(ticker) {
 <td><b>35.84점</b></td>
 </tr>
 <tr>
-<td><b>227</b></td>
+<td><b>224</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AVAX'); return false;" class="coin-link">
-        <b>아발란체</b> <span class="ticker-symbol">(AVAX)</span>
+    <a href="#" onclick="openChartModal('PEPE', '페페'); return false;" class="coin-link">
+        <b>페페</b> <span class="ticker-symbol">(PEPE)</span>
     </a>
 </td>
-<td>9,155.0</td>
-<td class="minus">-0.49%</td>
-<td>63.9%</td>
+<td>0.00402</td>
+<td class="minus">-0.99%</td>
+<td>65.3%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">37.4점</td>
+<td class="liquidity">38.1점</td>
 <td>0회</td>
-<td>5회</td>
+<td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.84점</b></td>
+<td><b>35.81점</b></td>
 </tr>
 <tr>
-<td><b>228</b></td>
+<td><b>225</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AERO'); return false;" class="coin-link">
-        <b>에어로드롬파이낸스</b> <span class="ticker-symbol">(AERO)</span>
-    </a>
-</td>
-<td>615.0</td>
-<td class="plus">+0.49%</td>
-<td>68.1%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">21.7점</td>
-<td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.82점</b></td>
-</tr>
-<tr>
-<td><b>229</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('EDGE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('EDGE', '디피니티브'); return false;" class="coin-link">
         <b>디피니티브</b> <span class="ticker-symbol">(EDGE)</span>
     </a>
 </td>
@@ -3976,9 +3984,9 @@ function openUpbitChart(ticker) {
 <td><b>35.8점</b></td>
 </tr>
 <tr>
-<td><b>230</b></td>
+<td><b>226</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BLEND'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BLEND', '플루언트'); return false;" class="coin-link">
         <b>플루언트</b> <span class="ticker-symbol">(BLEND)</span>
     </a>
 </td>
@@ -3993,9 +4001,26 @@ function openUpbitChart(ticker) {
 <td><b>35.77점</b></td>
 </tr>
 <tr>
-<td><b>231</b></td>
+<td><b>227</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SKR'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('TIA', '셀레스티아'); return false;" class="coin-link">
+        <b>셀레스티아</b> <span class="ticker-symbol">(TIA)</span>
+    </a>
+</td>
+<td>461.0</td>
+<td class="minus">-0.22%</td>
+<td>67.1%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">18.9점</td>
+<td>0회</td>
+<td>1회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>35.75점</b></td>
+</tr>
+<tr>
+<td><b>228</b></td>
+<td>
+    <a href="#" onclick="openChartModal('SKR', '시커'); return false;" class="coin-link">
         <b>시커</b> <span class="ticker-symbol">(SKR)</span>
     </a>
 </td>
@@ -4010,26 +4035,43 @@ function openUpbitChart(ticker) {
 <td><b>35.7점</b></td>
 </tr>
 <tr>
-<td><b>232</b></td>
+<td><b>229</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('TAIKO'); return false;" class="coin-link">
-        <b>타이코</b> <span class="ticker-symbol">(TAIKO)</span>
+    <a href="#" onclick="openChartModal('ERA', '칼데라'); return false;" class="coin-link">
+        <b>칼데라</b> <span class="ticker-symbol">(ERA)</span>
     </a>
 </td>
-<td>100.0</td>
-<td class="">0.0%</td>
-<td>69.3%</td>
+<td>97.8</td>
+<td class="plus">+0.72%</td>
+<td>76.0%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">25.1점</td>
+<td class="liquidity">42.9점</td>
 <td>0회</td>
-<td>2회</td>
+<td>5회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.69점</b></td>
+<td><b>35.66점</b></td>
 </tr>
 <tr>
-<td><b>233</b></td>
+<td><b>230</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('USDE'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('AERO', '에어로드롬파이낸스'); return false;" class="coin-link">
+        <b>에어로드롬파이낸스</b> <span class="ticker-symbol">(AERO)</span>
+    </a>
+</td>
+<td>612.0</td>
+<td class="minus">-0.16%</td>
+<td>67.4%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">21.7점</td>
+<td>0회</td>
+<td>3회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>35.56점</b></td>
+</tr>
+<tr>
+<td><b>231</b></td>
+<td>
+    <a href="#" onclick="openChartModal('USDE', '유에스디이'); return false;" class="coin-link">
         <b>유에스디이</b> <span class="ticker-symbol">(USDE)</span>
     </a>
 </td>
@@ -4044,9 +4086,9 @@ function openUpbitChart(ticker) {
 <td><b>35.53점</b></td>
 </tr>
 <tr>
-<td><b>234</b></td>
+<td><b>232</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AZTEC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('AZTEC', '아즈텍'); return false;" class="coin-link">
         <b>아즈텍</b> <span class="ticker-symbol">(AZTEC)</span>
     </a>
 </td>
@@ -4061,9 +4103,9 @@ function openUpbitChart(ticker) {
 <td><b>35.5점</b></td>
 </tr>
 <tr>
-<td><b>235</b></td>
+<td><b>233</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('GAME2'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('GAME2', '게임빌드'); return false;" class="coin-link">
         <b>게임빌드</b> <span class="ticker-symbol">(GAME2)</span>
     </a>
 </td>
@@ -4078,60 +4120,9 @@ function openUpbitChart(ticker) {
 <td><b>35.5점</b></td>
 </tr>
 <tr>
-<td><b>236</b></td>
+<td><b>234</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('RE'); return false;" class="coin-link">
-        <b>리</b> <span class="ticker-symbol">(RE)</span>
-    </a>
-</td>
-<td>585.0</td>
-<td class="minus">-5.03%</td>
-<td>61.4%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">66.1점</td>
-<td>0회</td>
-<td>10회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.49점</b></td>
-</tr>
-<tr>
-<td><b>237</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('VIRTUAL'); return false;" class="coin-link">
-        <b>버추얼프로토콜</b> <span class="ticker-symbol">(VIRTUAL)</span>
-    </a>
-</td>
-<td>800.0</td>
-<td class="minus">-0.25%</td>
-<td>60.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">40.9점</td>
-<td>0회</td>
-<td>7회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.48점</b></td>
-</tr>
-<tr>
-<td><b>238</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('ICX'); return false;" class="coin-link">
-        <b>아이콘</b> <span class="ticker-symbol">(ICX)</span>
-    </a>
-</td>
-<td>32.2</td>
-<td class="plus">+0.31%</td>
-<td>73.3%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">25.4점</td>
-<td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.48점</b></td>
-</tr>
-<tr>
-<td><b>239</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('PRL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('PRL', '펄'); return false;" class="coin-link">
         <b>펄</b> <span class="ticker-symbol">(PRL)</span>
     </a>
 </td>
@@ -4146,9 +4137,9 @@ function openUpbitChart(ticker) {
 <td><b>35.47점</b></td>
 </tr>
 <tr>
-<td><b>240</b></td>
+<td><b>235</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CHZ'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CHZ', '칠리즈'); return false;" class="coin-link">
         <b>칠리즈</b> <span class="ticker-symbol">(CHZ)</span>
     </a>
 </td>
@@ -4163,26 +4154,60 @@ function openUpbitChart(ticker) {
 <td><b>35.44점</b></td>
 </tr>
 <tr>
-<td><b>241</b></td>
+<td><b>236</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ARKM'); return false;" class="coin-link">
-        <b>아캄</b> <span class="ticker-symbol">(ARKM)</span>
+    <a href="#" onclick="openChartModal('ARK', '아크'); return false;" class="coin-link">
+        <b>아크</b> <span class="ticker-symbol">(ARK)</span>
     </a>
 </td>
-<td>136.0</td>
-<td class="plus">+1.49%</td>
-<td>63.9%</td>
+<td>133.0</td>
+<td class="plus">+0.76%</td>
+<td>71.0%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">23.6점</td>
+<td class="liquidity">30.7점</td>
 <td>0회</td>
-<td>0회</td>
+<td>3회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.32점</b></td>
+<td><b>35.4점</b></td>
 </tr>
 <tr>
-<td><b>242</b></td>
+<td><b>237</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('STRAX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('AVAX', '아발란체'); return false;" class="coin-link">
+        <b>아발란체</b> <span class="ticker-symbol">(AVAX)</span>
+    </a>
+</td>
+<td>9,130.0</td>
+<td class="minus">-0.92%</td>
+<td>65.7%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">37.5점</td>
+<td>0회</td>
+<td>4회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>35.36점</b></td>
+</tr>
+<tr>
+<td><b>238</b></td>
+<td>
+    <a href="#" onclick="openChartModal('TAIKO', '타이코'); return false;" class="coin-link">
+        <b>타이코</b> <span class="ticker-symbol">(TAIKO)</span>
+    </a>
+</td>
+<td>102.0</td>
+<td class="plus">+2.1%</td>
+<td>68.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">24.5점</td>
+<td>0회</td>
+<td>2회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>35.33점</b></td>
+</tr>
+<tr>
+<td><b>239</b></td>
+<td>
+    <a href="#" onclick="openChartModal('STRAX', '저트라'); return false;" class="coin-link">
         <b>저트라</b> <span class="ticker-symbol">(STRAX)</span>
     </a>
 </td>
@@ -4197,9 +4222,9 @@ function openUpbitChart(ticker) {
 <td><b>35.32점</b></td>
 </tr>
 <tr>
-<td><b>243</b></td>
+<td><b>240</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SC', '시아코인'); return false;" class="coin-link">
         <b>시아코인</b> <span class="ticker-symbol">(SC)</span>
     </a>
 </td>
@@ -4214,9 +4239,26 @@ function openUpbitChart(ticker) {
 <td><b>35.28점</b></td>
 </tr>
 <tr>
-<td><b>244</b></td>
+<td><b>241</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MON'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('VIRTUAL', '버추얼프로토콜'); return false;" class="coin-link">
+        <b>버추얼프로토콜</b> <span class="ticker-symbol">(VIRTUAL)</span>
+    </a>
+</td>
+<td>800.0</td>
+<td class="minus">-0.25%</td>
+<td>59.4%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">40.9점</td>
+<td>0회</td>
+<td>7회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>35.19점</b></td>
+</tr>
+<tr>
+<td><b>242</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MON', '모나드'); return false;" class="coin-link">
         <b>모나드</b> <span class="ticker-symbol">(MON)</span>
     </a>
 </td>
@@ -4231,9 +4273,9 @@ function openUpbitChart(ticker) {
 <td><b>35.15점</b></td>
 </tr>
 <tr>
-<td><b>245</b></td>
+<td><b>243</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MTL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MTL', '메탈'); return false;" class="coin-link">
         <b>메탈</b> <span class="ticker-symbol">(MTL)</span>
     </a>
 </td>
@@ -4248,43 +4290,43 @@ function openUpbitChart(ticker) {
 <td><b>35.14점</b></td>
 </tr>
 <tr>
+<td><b>244</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ARKM', '아캄'); return false;" class="coin-link">
+        <b>아캄</b> <span class="ticker-symbol">(ARKM)</span>
+    </a>
+</td>
+<td>136.0</td>
+<td class="plus">+1.49%</td>
+<td>64.5%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">23.7점</td>
+<td>0회</td>
+<td>0회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>35.08점</b></td>
+</tr>
+<tr>
+<td><b>245</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BLUR', '블러'); return false;" class="coin-link">
+        <b>블러</b> <span class="ticker-symbol">(BLUR)</span>
+    </a><span class="ai-badge">AI추천</span>
+</td>
+<td>19.5</td>
+<td class="plus">+1.04%</td>
+<td>69.8%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">28.4점</td>
+<td>0회</td>
+<td>1회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>35.04점</b></td>
+</tr>
+<tr>
 <td><b>246</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ARK'); return false;" class="coin-link">
-        <b>아크</b> <span class="ticker-symbol">(ARK)</span>
-    </a>
-</td>
-<td>132.0</td>
-<td class="">0.0%</td>
-<td>71.1%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">30.7점</td>
-<td>0회</td>
-<td>3회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.12점</b></td>
-</tr>
-<tr>
-<td><b>247</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('PUMP'); return false;" class="coin-link">
-        <b>펌프펀</b> <span class="ticker-symbol">(PUMP)</span>
-    </a>
-</td>
-<td>3.36</td>
-<td class="plus">+0.9%</td>
-<td>74.6%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">37.9점</td>
-<td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>35.06점</b></td>
-</tr>
-<tr>
-<td><b>248</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('XPL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('XPL', '플라즈마'); return false;" class="coin-link">
         <b>플라즈마</b> <span class="ticker-symbol">(XPL)</span>
     </a>
 </td>
@@ -4299,9 +4341,26 @@ function openUpbitChart(ticker) {
 <td><b>34.96점</b></td>
 </tr>
 <tr>
-<td><b>249</b></td>
+<td><b>247</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MOC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('PUMP', '펌프펀'); return false;" class="coin-link">
+        <b>펌프펀</b> <span class="ticker-symbol">(PUMP)</span>
+    </a>
+</td>
+<td>3.35</td>
+<td class="plus">+0.6%</td>
+<td>74.9%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">38.0점</td>
+<td>0회</td>
+<td>4회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>34.95점</b></td>
+</tr>
+<tr>
+<td><b>248</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MOC', '모스코인'); return false;" class="coin-link">
         <b>모스코인</b> <span class="ticker-symbol">(MOC)</span>
     </a>
 </td>
@@ -4316,26 +4375,26 @@ function openUpbitChart(ticker) {
 <td><b>34.87점</b></td>
 </tr>
 <tr>
-<td><b>250</b></td>
+<td><b>249</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('IN'); return false;" class="coin-link">
-        <b>인피닛</b> <span class="ticker-symbol">(IN)</span>
+    <a href="#" onclick="openChartModal('ICX', '아이콘'); return false;" class="coin-link">
+        <b>아이콘</b> <span class="ticker-symbol">(ICX)</span>
     </a>
 </td>
-<td>48.5</td>
-<td class="minus">-0.21%</td>
-<td>64.6%</td>
+<td>32.4</td>
+<td class="plus">+0.62%</td>
+<td>72.8%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">36.0점</td>
+<td class="liquidity">25.4점</td>
 <td>0회</td>
-<td>6회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>34.84점</b></td>
+<td>2회</td>
+<td><span class="plus">▲1회</span> / <span class="minus">▼0회</span></td>
+<td><b>34.83점</b></td>
 </tr>
 <tr>
-<td><b>251</b></td>
+<td><b>250</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('RLUSD'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('RLUSD', '리플유에스디'); return false;" class="coin-link">
         <b>리플유에스디</b> <span class="ticker-symbol">(RLUSD)</span>
     </a>
 </td>
@@ -4350,9 +4409,9 @@ function openUpbitChart(ticker) {
 <td><b>34.81점</b></td>
 </tr>
 <tr>
-<td><b>252</b></td>
+<td><b>251</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SPX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SPX', '에스피엑스6900'); return false;" class="coin-link">
         <b>에스피엑스6900</b> <span class="ticker-symbol">(SPX)</span>
     </a>
 </td>
@@ -4367,9 +4426,26 @@ function openUpbitChart(ticker) {
 <td><b>34.78점</b></td>
 </tr>
 <tr>
+<td><b>252</b></td>
+<td>
+    <a href="#" onclick="openChartModal('KNC', '카이버네트워크'); return false;" class="coin-link">
+        <b>카이버네트워크</b> <span class="ticker-symbol">(KNC)</span>
+    </a>
+</td>
+<td>145.0</td>
+<td class="plus">+1.4%</td>
+<td>58.5%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">25.5점</td>
+<td>0회</td>
+<td>1회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>34.65점</b></td>
+</tr>
+<tr>
 <td><b>253</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('WAVES'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('WAVES', '웨이브'); return false;" class="coin-link">
         <b>웨이브</b> <span class="ticker-symbol">(WAVES)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -4386,7 +4462,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>254</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SOMI'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SOMI', '솜니아'); return false;" class="coin-link">
         <b>솜니아</b> <span class="ticker-symbol">(SOMI)</span>
     </a>
 </td>
@@ -4403,7 +4479,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>255</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MLK'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MLK', '밀크'); return false;" class="coin-link">
         <b>밀크</b> <span class="ticker-symbol">(MLK)</span>
     </a>
 </td>
@@ -4420,7 +4496,24 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>256</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('DRV'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('IN', '인피닛'); return false;" class="coin-link">
+        <b>인피닛</b> <span class="ticker-symbol">(IN)</span>
+    </a>
+</td>
+<td>48.5</td>
+<td class="minus">-0.21%</td>
+<td>64.6%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">36.1점</td>
+<td>0회</td>
+<td>6회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>34.54점</b></td>
+</tr>
+<tr>
+<td><b>257</b></td>
+<td>
+    <a href="#" onclick="openChartModal('DRV', '디라이브'); return false;" class="coin-link">
         <b>디라이브</b> <span class="ticker-symbol">(DRV)</span>
     </a>
 </td>
@@ -4435,9 +4528,9 @@ function openUpbitChart(ticker) {
 <td><b>34.34점</b></td>
 </tr>
 <tr>
-<td><b>257</b></td>
+<td><b>258</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('USDS'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('USDS', '유에스디에스'); return false;" class="coin-link">
         <b>유에스디에스</b> <span class="ticker-symbol">(USDS)</span>
     </a>
 </td>
@@ -4452,9 +4545,9 @@ function openUpbitChart(ticker) {
 <td><b>34.3점</b></td>
 </tr>
 <tr>
-<td><b>258</b></td>
+<td><b>259</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('EUL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('EUL', '오일러'); return false;" class="coin-link">
         <b>오일러</b> <span class="ticker-symbol">(EUL)</span>
     </a>
 </td>
@@ -4466,29 +4559,12 @@ function openUpbitChart(ticker) {
 <td>0회</td>
 <td>7회</td>
 <td><span class="plus">▲2회</span> / <span class="minus">▼0회</span></td>
-<td><b>34.16점</b></td>
-</tr>
-<tr>
-<td><b>259</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('BLUR'); return false;" class="coin-link">
-        <b>블러</b> <span class="ticker-symbol">(BLUR)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>19.4</td>
-<td class="plus">+0.52%</td>
-<td>69.7%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">28.4점</td>
-<td>0회</td>
-<td>0회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>33.96점</b></td>
+<td><b>33.91점</b></td>
 </tr>
 <tr>
 <td><b>260</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MED'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('MED', '메디블록'); return false;" class="coin-link">
         <b>메디블록</b> <span class="ticker-symbol">(MED)</span>
     </a>
 </td>
@@ -4505,24 +4581,24 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>261</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('LSK'); return false;" class="coin-link">
-        <b>리스크</b> <span class="ticker-symbol">(LSK)</span>
+    <a href="#" onclick="openChartModal('MIRA', '미라네트워크'); return false;" class="coin-link">
+        <b>미라네트워크</b> <span class="ticker-symbol">(MIRA)</span>
     </a>
 </td>
-<td>106.0</td>
-<td class="plus">+0.95%</td>
-<td>73.9%</td>
+<td>59.8</td>
+<td class="minus">-0.17%</td>
+<td>70.3%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">22.8점</td>
+<td class="liquidity">53.0점</td>
 <td>0회</td>
-<td>1회</td>
+<td>2회</td>
 <td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
-<td><b>33.6점</b></td>
+<td><b>33.65점</b></td>
 </tr>
 <tr>
 <td><b>262</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CBK'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CBK', '코박토큰'); return false;" class="coin-link">
         <b>코박토큰</b> <span class="ticker-symbol">(CBK)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
@@ -4539,7 +4615,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>263</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('AHT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('AHT', '아하토큰'); return false;" class="coin-link">
         <b>아하토큰</b> <span class="ticker-symbol">(AHT)</span>
     </a>
 </td>
@@ -4556,7 +4632,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>264</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SUPER'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SUPER', '슈퍼버스'); return false;" class="coin-link">
         <b>슈퍼버스</b> <span class="ticker-symbol">(SUPER)</span>
     </a>
 </td>
@@ -4573,7 +4649,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>265</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('ZIL'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('ZIL', '질리카'); return false;" class="coin-link">
         <b>질리카</b> <span class="ticker-symbol">(ZIL)</span>
     </a>
 </td>
@@ -4590,41 +4666,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>266</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('MIRA'); return false;" class="coin-link">
-        <b>미라네트워크</b> <span class="ticker-symbol">(MIRA)</span>
-    </a>
-</td>
-<td>59.8</td>
-<td class="minus">-0.17%</td>
-<td>70.6%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">53.0점</td>
-<td>0회</td>
-<td>2회</td>
-<td><span class="plus">▲1회</span> / <span class="minus">▼1회</span></td>
-<td><b>33.02점</b></td>
-</tr>
-<tr>
-<td><b>267</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('XRP'); return false;" class="coin-link">
-        <b>엑스알피(리플)</b> <span class="ticker-symbol">(XRP)</span>
-    </a>
-</td>
-<td>1,464.0</td>
-<td class="minus">-0.34%</td>
-<td>64.5%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">70.8점</td>
-<td>0회</td>
-<td>6회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>32.99점</b></td>
-</tr>
-<tr>
-<td><b>268</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('QKC'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('QKC', '쿼크체인'); return false;" class="coin-link">
         <b>쿼크체인</b> <span class="ticker-symbol">(QKC)</span>
     </a>
 </td>
@@ -4639,9 +4681,9 @@ function openUpbitChart(ticker) {
 <td><b>32.93점</b></td>
 </tr>
 <tr>
-<td><b>269</b></td>
+<td><b>267</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('XAUT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('XAUT', '테더골드'); return false;" class="coin-link">
         <b>테더골드</b> <span class="ticker-symbol">(XAUT)</span>
     </a>
 </td>
@@ -4656,9 +4698,9 @@ function openUpbitChart(ticker) {
 <td><b>32.55점</b></td>
 </tr>
 <tr>
-<td><b>270</b></td>
+<td><b>268</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BAT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BAT', '베이직어텐션토큰'); return false;" class="coin-link">
         <b>베이직어텐션토큰</b> <span class="ticker-symbol">(BAT)</span>
     </a>
 </td>
@@ -4673,9 +4715,60 @@ function openUpbitChart(ticker) {
 <td><b>32.51점</b></td>
 </tr>
 <tr>
+<td><b>269</b></td>
+<td>
+    <a href="#" onclick="openChartModal('IRYS', '아이리스'); return false;" class="coin-link">
+        <b>아이리스</b> <span class="ticker-symbol">(IRYS)</span>
+    </a>
+</td>
+<td>22.7</td>
+<td class="minus">-0.87%</td>
+<td>61.4%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">48.1점</td>
+<td>0회</td>
+<td>5회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>32.35점</b></td>
+</tr>
+<tr>
+<td><b>270</b></td>
+<td>
+    <a href="#" onclick="openChartModal('XRP', '엑스알피(리플)'); return false;" class="coin-link">
+        <b>엑스알피(리플)</b> <span class="ticker-symbol">(XRP)</span>
+    </a>
+</td>
+<td>1,465.0</td>
+<td class="minus">-0.41%</td>
+<td>65.1%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">70.8점</td>
+<td>0회</td>
+<td>5회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>32.31점</b></td>
+</tr>
+<tr>
 <td><b>271</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('O'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('XLM', '스텔라루멘'); return false;" class="coin-link">
+        <b>스텔라루멘</b> <span class="ticker-symbol">(XLM)</span>
+    </a>
+</td>
+<td>232.0</td>
+<td class="minus">-0.85%</td>
+<td>49.2%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">54.4점</td>
+<td>0회</td>
+<td>4회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>32.1점</b></td>
+</tr>
+<tr>
+<td><b>272</b></td>
+<td>
+    <a href="#" onclick="openChartModal('O', '오원익스체인지'); return false;" class="coin-link">
         <b>오원익스체인지</b> <span class="ticker-symbol">(O)</span>
     </a>
 </td>
@@ -4690,9 +4783,9 @@ function openUpbitChart(ticker) {
 <td><b>32.01점</b></td>
 </tr>
 <tr>
-<td><b>272</b></td>
+<td><b>273</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('PUNDIX'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('PUNDIX', '펀디엑스'); return false;" class="coin-link">
         <b>펀디엑스</b> <span class="ticker-symbol">(PUNDIX)</span>
     </a>
 </td>
@@ -4707,43 +4800,9 @@ function openUpbitChart(ticker) {
 <td><b>32.0점</b></td>
 </tr>
 <tr>
-<td><b>273</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('ARB'); return false;" class="coin-link">
-        <b>아비트럼</b> <span class="ticker-symbol">(ARB)</span>
-    </a>
-</td>
-<td>111.0</td>
-<td class="minus">-1.77%</td>
-<td>67.4%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">40.1점</td>
-<td>0회</td>
-<td>1회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>31.89점</b></td>
-</tr>
-<tr>
 <td><b>274</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('XLM'); return false;" class="coin-link">
-        <b>스텔라루멘</b> <span class="ticker-symbol">(XLM)</span>
-    </a>
-</td>
-<td>232.0</td>
-<td class="minus">-0.85%</td>
-<td>49.1%</td>
-<td class="accumulation">0점</td>
-<td class="liquidity">54.3점</td>
-<td>0회</td>
-<td>4회</td>
-<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>31.81점</b></td>
-</tr>
-<tr>
-<td><b>275</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('HOLO'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('HOLO', '홀로월드에이아이'); return false;" class="coin-link">
         <b>홀로월드에이아이</b> <span class="ticker-symbol">(HOLO)</span>
     </a>
 </td>
@@ -4758,9 +4817,26 @@ function openUpbitChart(ticker) {
 <td><b>31.62점</b></td>
 </tr>
 <tr>
+<td><b>275</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ARB', '아비트럼'); return false;" class="coin-link">
+        <b>아비트럼</b> <span class="ticker-symbol">(ARB)</span>
+    </a>
+</td>
+<td>111.0</td>
+<td class="minus">-0.89%</td>
+<td>65.7%</td>
+<td class="accumulation">0점</td>
+<td class="liquidity">39.9점</td>
+<td>0회</td>
+<td>1회</td>
+<td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
+<td><b>31.56점</b></td>
+</tr>
+<tr>
 <td><b>276</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('1INCH'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('1INCH', '1인치네트워크'); return false;" class="coin-link">
         <b>1인치네트워크</b> <span class="ticker-symbol">(1INCH)</span>
     </a>
 </td>
@@ -4777,7 +4853,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>277</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('BARD'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('BARD', '롬바드'); return false;" class="coin-link">
         <b>롬바드</b> <span class="ticker-symbol">(BARD)</span>
     </a>
 </td>
@@ -4794,24 +4870,24 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>278</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SHIB'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SHIB', '시바이누'); return false;" class="coin-link">
         <b>시바이누</b> <span class="ticker-symbol">(SHIB)</span>
     </a>
 </td>
 <td>0.00651</td>
 <td class="minus">-1.06%</td>
-<td>65.7%</td>
+<td>65.5%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">47.2점</td>
+<td class="liquidity">47.1점</td>
 <td>0회</td>
 <td>3회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>29.2점</b></td>
+<td><b>29.37점</b></td>
 </tr>
 <tr>
 <td><b>279</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('SUN'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('SUN', '썬'); return false;" class="coin-link">
         <b>썬</b> <span class="ticker-symbol">(SUN)</span>
     </a>
 </td>
@@ -4828,7 +4904,7 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>280</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('CKB'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('CKB', '너보스'); return false;" class="coin-link">
         <b>너보스</b> <span class="ticker-symbol">(CKB)</span>
     </a>
 </td>
@@ -4845,21 +4921,33 @@ function openUpbitChart(ticker) {
 <tr>
 <td><b>281</b></td>
 <td>
-    <a href="#" onclick="openUpbitChart('USDT'); return false;" class="coin-link">
+    <a href="#" onclick="openChartModal('USDT', '테더'); return false;" class="coin-link">
         <b>테더</b> <span class="ticker-symbol">(USDT)</span>
     </a>
 </td>
-<td>1,404.0</td>
-<td class="minus">-0.07%</td>
-<td>50.3%</td>
+<td>1,405.0</td>
+<td class="plus">+0.07%</td>
+<td>49.9%</td>
 <td class="accumulation">0점</td>
-<td class="liquidity">74.1점</td>
+<td class="liquidity">74.0점</td>
 <td>0회</td>
 <td>4회</td>
 <td><span class="plus">▲0회</span> / <span class="minus">▼0회</span></td>
-<td><b>24.6점</b></td>
+<td><b>24.1점</b></td>
 </tr>
 </tbody>
 </table>
+
+<!-- 차트 모달 레이어 -->
+<div id="chartModal" class="modal-overlay" onclick="if(event.target === this) closeChartModal();">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="modalTitle" class="modal-title">코인 차트</span>
+            <span class="modal-close" onclick="closeChartModal()">&times;</span>
+        </div>
+        <div class="modal-body" id="tvChartContainer"></div>
+    </div>
+</div>
+
 </body>
 </html>
