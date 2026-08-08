@@ -22,8 +22,8 @@ KST = timezone(timedelta(hours=9))
 
 
 def fetch_ai_recommendations():
-    """upbit-a.onrender.com에서 생성한 JSON 파일을 가져오는 함수"""
-    url = "https://upbit-a.onrender.com/ai_recommend.json"
+    """GitHub 저장소의 ai_recommend_tracker.json 파일을 가져오는 함수"""
+    url = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json"
     try:
         res = requests.get(url, timeout=5)
         if res.status_code == 200:
