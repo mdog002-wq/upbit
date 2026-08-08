@@ -5,3 +5,4 @@ feedparser
 pyupbit
 openpyxl
 redis
+paramiko
