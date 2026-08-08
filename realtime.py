@@ -225,21 +225,45 @@ def main():
     # JavaScript용 분석 데이터 JSON
     js_data_json = json.dumps(analysis_results, ensure_ascii=False)
 
-    # 2. HTML 대시보드 생성
-    html_content = f"""<!DOCTYPE html>
+    # 2. 테이블 행(Rows) HTML 생성
+    table_rows_html = ""
+    for item in analysis_results:
+        change_class = "plus" if item['change_rate'] > 0 else ("minus" if item['change_rate'] < 0 else "")
+        change_sign = "+" if item['change_rate'] > 0 else ""
+
+        table_rows_html += f"""
+            <tr onclick="openModal('{item["market"]}')">
+                <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
+                <td data-val="{item['name']}">
+                    <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
+                </td>
+                <td data-val="{item['current_price']}">{item['current_price']:,}</td>
+                <td data-val="{item['change_rate']}" class="{change_class}">{change_sign}{item['change_rate']}%</td>
+                <td data-val="{item['pattern_similarity']}">{item['pattern_similarity']}%</td>
+                <td data-val="{item['accumulation_score']}" class="accumulation">{item['accumulation_score']}점</td>
+                <td data-val="{item['liquidity_index']}" class="liquidity">{item['liquidity_index']}점</td>
+                <td data-val="{item['recent_top10_count']}">{item['recent_top10_count']}회</td>
+                <td data-val="{item['positive_count']}">{item['positive_count']}회</td>
+                <td data-val="{item['up_5pct_count']}"><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
+                <td data-val="{item['score']}"><b>{item['score']}점</b></td>
+            </tr>
+        """
+
+    # 3. 전체 HTML 템플릿 작성 (일반 문자열 사용으로 f-string 문법 에러 원천 차단)
+    html_template = """<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>업비트 실시간 급등주 포착 대시보드</title>
     <style>
-        body {{
+        body {
             background-color: #f8f9fa;
             color: #333333;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-        }}
-        .header-container {{
+        }
+        .header-container {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
@@ -248,16 +272,16 @@ def main():
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             margin-bottom: 20px;
-        }}
-        .header-left {{ text-align: left; }}
-        .header-center {{ text-align: center; }}
-        .header-right {{
+        }
+        .header-left { text-align: left; }
+        .header-center { text-align: center; }
+        .header-right {
             text-align: right;
             font-size: 13px;
             color: #495057;
             font-weight: 500;
-        }}
-        .ai-btn {{
+        }
+        .ai-btn {
             background-color: #007bff;
             color: white;
             padding: 10px 18px;
@@ -267,10 +291,10 @@ def main():
             font-size: 14px;
             display: inline-block;
             transition: background 0.2s;
-        }}
-        .ai-btn:hover {{ background-color: #0056b3; }}
-        .search-box {{ margin-bottom: 20px; }}
-        .search-box input {{
+        }
+        .ai-btn:hover { background-color: #0056b3; }
+        .search-box { margin-bottom: 20px; }
+        .search-box input {
             width: 100%;
             padding: 12px 15px;
             font-size: 16px;
@@ -279,52 +303,51 @@ def main():
             box-sizing: border-box;
             outline: none;
             background: #ffffff;
-        }}
-        table {{
+        }
+        table {
             width: 100%;
             border-collapse: collapse;
             background: #ffffff;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }}
-        th, td {{
+        }
+        th, td {
             padding: 12px 15px;
             text-align: center;
             border-bottom: 1px solid #e9ecef;
-        }}
-        th {{
+        }
+        th {
             background-color: #f1f3f5;
             color: #495057;
             font-weight: 600;
             cursor: pointer;
             user-select: none;
             transition: background-color 0.2s;
-        }}
-        th:hover {{ background-color: #e9ecef; }}
-        th::after {{
+        }
+        th:hover { background-color: #e9ecef; }
+        th::after {
             content: " ↕";
             font-size: 11px;
             color: #adb5bd;
-        }}
-        tbody tr {{
+        }
+        tbody tr {
             cursor: pointer;
             transition: background-color 0.15s;
-        }}
-        tbody tr:hover {{ background-color: #e9ecef !important; }}
-        .plus {{ color: #e03131; font-weight: bold; }}
-        .minus {{ color: #1971c2; font-weight: bold; }}
-        .ticker-symbol {{
+        }
+        tbody tr:hover { background-color: #e9ecef !important; }
+        .plus { color: #e03131; font-weight: bold; }
+        .minus { color: #1971c2; font-weight: bold; }
+        .ticker-symbol {
             font-size: 12px;
             color: #868e96;
             font-weight: normal;
             margin-left: 4px;
-        }}
-        .accumulation {{ color: #d9480f; font-weight: bold; }}
-        .liquidity {{ color: #2b8a3e; font-weight: bold; }}
+        }
+        .accumulation { color: #d9480f; font-weight: bold; }
+        .liquidity { color: #2b8a3e; font-weight: bold; }
 
-        /* 모달 (작은 메모장 크기 팝업) */
-        .modal-overlay {{
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0;
@@ -333,8 +356,8 @@ def main():
             z-index: 1000;
             justify-content: center;
             align-items: center;
-        }}
-        .modal-box {{
+        }
+        .modal-box {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -344,15 +367,13 @@ def main():
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.25);
             overflow: hidden;
-        }}
-        .modal-box iframe {{
+        }
+        .modal-box iframe {
             width: 100%;
             height: 100%;
             border: none;
-        }}
-
-        /* 팝업 모드 전용 스타일 (종목 상세 요약 카드) */
-        .detail-card {{
+        }
+        .detail-card {
             padding: 15px;
             box-sizing: border-box;
             height: 100%;
@@ -361,36 +382,35 @@ def main():
             justify-content: space-between;
             background: #ffffff;
             font-size: 13px;
-        }}
-        .detail-header {{
+        }
+        .detail-header {
             border-bottom: 2px solid #007bff;
             padding-bottom: 8px;
             margin-bottom: 10px;
-        }}
-        .detail-title {{
+        }
+        .detail-title {
             font-size: 18px;
             font-weight: bold;
             color: #212529;
             margin: 0;
-        }}
-        .detail-row {{
+        }
+        .detail-row {
             display: flex;
             justify-content: space-between;
             padding: 6px 0;
             border-bottom: 1px solid #f1f3f5;
-        }}
-        .detail-label {{ color: #495057; font-weight: 500; }}
-        .detail-value {{ font-weight: bold; }}
+        }
+        .detail-label { color: #495057; font-weight: 500; }
+        .detail-value { font-weight: bold; }
     </style>
     <script>
-        const analysisData = {js_data_json};
+        const analysisData = __JS_DATA_JSON__;
         let sortDirections = {};
 
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const symbol = urlParams.get('symbol');
 
-            // 팝업으로 전달된 경우 해당 종목 요약 카드만 렌더링
             if (symbol) {
                 const targetMarket = symbol.toUpperCase().startsWith('KRW-') ? symbol.toUpperCase() : `KRW-${symbol.toUpperCase()}`;
                 const item = analysisData.find(d => d.market === targetMarket || d.ticker === symbol.toUpperCase());
@@ -475,7 +495,7 @@ def main():
             <h2 style="margin: 0; font-size: 20px; color: #343a40;">🚀 업비트 실시간 급등주 포착 대시보드</h2>
         </div>
         <div class="header-right">
-            마지막 업데이트 (KST): <b>{current_time_str}</b>
+            마지막 업데이트 (KST): <b>__CURRENT_TIME_STR__</b>
         </div>
     </div>
 
@@ -500,56 +520,24 @@ def main():
             </tr>
         </thead>
         <tbody>
-"""
-
-    for item in analysis_results:
-        change_class = "plus" if item['change_rate'] > 0 else ("minus" if item['change_rate'] < 0 else "")
-        change_sign = "+" if item['change_rate'] > 0 else ""
-
-        price_formatted = f"{item['current_price']:,}"
-        market_id = item['market']
-
-        html_content += f"""
-            <tr onclick="openModal('{item["market"]}')">
-                <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
-                <td data-val="{item['name']}">
-                    <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
-                </td>
-                <td data-val="{item['current_price']}">{item['current_price']:,}</td>
-                <td data-val="{item['change_rate']}" class="{change_class}">{change_sign}{item['change_rate']}%</td>
-                <td data-val="{item['pattern_similarity']}">{item['pattern_similarity']}%</td>
-                <td data-val="{item['accumulation_score']}" class="accumulation">{item['accumulation_score']}점</td>
-                <td data-val="{item['liquidity_index']}" class="liquidity">{item['liquidity_index']}점</td>
-                <td data-val="{item['recent_top10_count']}">{item['recent_top10_count']}회</td>
-                <td data-val="{item['positive_count']}">{item['positive_count']}회</td>
-                <td data-val="{item['up_5pct_count']}"><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
-                <td data-val="{item['score']}"><b>{item['score']}점</b></td>
-            </tr>
-"""
-
-    html_content += f"""
+            __TABLE_ROWS_HTML__
         </tbody>
     </table>
 
-    <!-- 모달 HTML 영역 수정 -->
     <div id="coinDetailModal" class="modal-overlay" onclick="closeModal()">
       <div class="modal-box" onclick="event.stopPropagation();" style="width: 820px; max-width: 95vw; height: 500px; padding: 20px; display: flex; flex-direction: column;">
         
-        <!-- 모달 Header -->
         <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 15px; border-bottom: 1px solid #dee2e6;">
           <h4 id="rModalTitle" style="margin: 0; font-size: 18px; font-weight: bold;">종목 상세 정보</h4>
           <button onclick="closeModal()" style="border:none; background:none; font-size: 20px; cursor:pointer;">✕</button>
         </div>
 
-        <!-- 2열 동시 표시 레이아웃 -->
         <div style="display: flex; gap: 15px; flex: 1; min-height: 0;">
-          <!-- 좌측: R사이트 정보 -->
           <div style="flex: 1; background: #f8f9fa; border-radius: 8px; padding: 15px; overflow-y: auto;">
             <h5 style="margin-top:0; margin-bottom: 12px; font-size: 14px; color: #007bff; font-weight: bold;">⚡ R사이트 (실시간 급등)</h5>
             <div id="rModalContentR"></div>
           </div>
 
-          <!-- 우측: A사이트 iframe -->
           <div style="flex: 1; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
             <iframe id="modalIframeA" src="" style="width: 100%; height: 100%; border: none;"></iframe>
           </div>
@@ -581,7 +569,6 @@ def main():
           <div class="detail-row" style="display:flex; justify-content:space-between; padding: 6px 0; font-size: 13px;"><span class="detail-label">1주일 5% 변동</span><span class="detail-value"><span class="plus">▲${item.up_5pct_count}</span> / <span class="minus">▼${item.down_5pct_count}</span></span></div>
         `;
         
-        // A사이트 iframe 호출
         iframeA.src = `https://upbit-a.onrender.com/?symbol=${item.market}`;
       }
 
@@ -596,6 +583,11 @@ def main():
 </body>
 </html>
 """
+
+    # 4. 플레이스홀더를 실제 데이터로 안전하게 치환
+    html_content = html_template.replace("__JS_DATA_JSON__", js_data_json)
+    html_content = html_content.replace("__CURRENT_TIME_STR__", current_time_str)
+    html_content = html_content.replace("__TABLE_ROWS_HTML__", table_rows_html)
 
     with open(HTML_OUTPUT, 'w', encoding='utf-8') as f:
         f.write(html_content)
