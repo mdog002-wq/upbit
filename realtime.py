@@ -212,24 +212,24 @@ def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="do
         const analysisData = {js_data_json};
         const allCoinsMap = {coins_map_json};
 
-        function openModal(marketCode) {
+        function openModal(marketCode) {{
             let coin = allCoinsMap[marketCode] || analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
-            if (!coin) {
+            if (!coin) {{
                 alert("해당 종목의 정보를 찾을 수 없습니다.");
                 return;
-            }
+            }}
 
-            document.getElementById('modalCoinTitle').innerText = `${coin.name} (${coin.ticker}) - 양방향 상세 비교`;
+            document.getElementById('modalCoinTitle').innerText = `${{coin.name}} (${{coin.ticker}}) - 양방향 상세 비교`;
 
             // 1번 및 2번 사이트 iframe 불러오기
-            const leftUrl = `https://upbit-r.onrender.com/detail?symbol=${marketCode}`;
-            const rightUrl = `https://upbit-a.onrender.com/detail?symbol=${marketCode}`;
+            const leftUrl = `https://upbit-r.onrender.com/detail?symbol=${{marketCode}}`;
+            const rightUrl = `https://upbit-a.onrender.com/detail?symbol=${{marketCode}}`;
 
-            document.getElementById('leftSummaryContent').innerHTML = `<iframe src="${leftUrl}" style="width:100%; height:380px; border:none;"></iframe>`;
-            document.getElementById('rightSummaryContent').innerHTML = `<iframe src="${rightUrl}" style="width:100%; height:380px; border:none;"></iframe>`;
+            document.getElementById('leftSummaryContent').innerHTML = `<iframe src="${{leftUrl}}" style="width:100%; height:380px; border:none;"></iframe>`;
+            document.getElementById('rightSummaryContent').innerHTML = `<iframe src="${{rightUrl}}" style="width:100%; height:380px; border:none;"></iframe>`;
 
             document.getElementById('coinDetailModal').style.display = 'flex';
-        }
+        }}
 
         function closeModal() {{
             document.getElementById('coinDetailModal').style.display = 'none';
