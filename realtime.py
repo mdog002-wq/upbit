@@ -253,316 +253,13 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
         "liquidity_index": liquidity_index,
     }
 
-
 def generate_upbit_r_dashboard(
     analysis_results, current_time_str, html_path="docs/index.html"
 ):
     os.makedirs(os.path.dirname(html_path), exist_ok=True)
 
-    html_content = f"""<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>업비트 실시간 급등주 포착 대시보드</title>
-<style>
-body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }}
-.header-container {{ display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }}
-.header-left {{ text-align: left; }} .header-center {{ text-align: center; }} .header-right {{ text-align: right; font-size: 13px; color: #495057; font-weight: 500; }}
-.ai-btn {{ background-color: #007bff; color: white; padding: 10px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; transition: background 0.2s; }}
-.ai-btn:hover {{ background-color: #0056b3; }}
-
-/* --------- AI 추천 배지 CSS --------- */
-.ai-badge {{
-    background-color: #e03131;
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-    display: inline-block;
-    vertical-align: middle;
-}}
-
-.search-box {{ margin-bottom: 20px; }}
-.search-box input {{ width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }}
-table {{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
-th, td {{ padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }}
-th {{ background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; }}
-th:hover {{ background-color: #e9ecef; }}
-tbody tr {{ transition: background-color 0.15s; }}
-tbody tr:hover {{ background-color: #e9ecef !important; }}
-.plus {{ color: #e03131; font-weight: bold; }}
-.minus {{ color: #1971c2; font-weight: bold; }}
-.ticker-symbol {{ font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }}
-.accumulation {{ color: #d9480f; font-weight: bold; }}
-.liquidity {{ color: #2b8a3e; font-weight: bold; }}
-</style>
-<script>
-function filterTable() {{
-let input = document.getElementById('searchInput').value.toLowerCase();
-let tr = document.getElementById('coinTable').getElementsByTagName('tr');
-for (let i = 1; i < tr.length; i++) {{
-let td = tr[i].getElementsByTagName('td')[1];
-tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().indexOf(input) > -1) ? "" : "none";
-}}
-}}
-</script>
-</head>
-<body>
-<div class="header-container">
-<div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
-<div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
-<div class="header-right">마지막 업데이트: <b>{current_time_str}</b></div>
-</div>
-<div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
-<table id="coinTable">
-<thead>
-<tr>
-<th>순위</th><th>한글코인명</th><th>현재가격 (KRW)</th><th>전일대비등락율</th>
-<th>패턴유사율</th><th>세력매집강도</th><th>유동성지수</th><th>최근 3시간 TOP10</th>
-<th>매수우세</th><th>1주일 5% 변동</th><th>예측점수</th>
-</tr>
-</thead>
-def generate_upbit_r_dashboard(
-    analysis_results, current_time_str, html_path="docs/index.html"
-):
-    os.makedirs(os.path.dirname(html_path), exist_ok=True)
-
-    html_content = f"""<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>업비트 실시간 급등주 포착 대시보드</title>
-<style>
-body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }}
-.header-container {{ display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }}
-.header-left {{ text-align: left; }} .header-center {{ text-align: center; }} .header-right {{ text-align: right; font-size: 13px; color: #495057; font-weight: 500; }}
-.ai-btn {{ background-color: #007bff; color: white; padding: 10px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; transition: background 0.2s; }}
-.ai-btn:hover {{ background-color: #0056b3; }}
-
-/* --------- AI 추천 배지 CSS --------- */
-.ai-badge {{
-    background-color: #e03131;
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-    display: inline-block;
-    vertical-align: middle;
-}}
-
-/* --------- 코인명 클릭 링크 스타일 --------- */
-.coin-link {{
-    color: #333333;
-    text-decoration: none;
-    cursor: pointer;
-}}
-.coin-link:hover {{
-    color: #007bff;
-    text-decoration: underline;
-}}
-
-.search-box {{ margin-bottom: 20px; }}
-.search-box input {{ width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }}
-table {{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
-th, td {{ padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }}
-th {{ background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; }}
-th:hover {{ background-color: #e9ecef; }}
-tbody tr {{ transition: background-color 0.15s; }}
-tbody tr:hover {{ background-color: #e9ecef !important; }}
-.plus {{ color: #e03131; font-weight: bold; }}
-.minus {{ color: #1971c2; font-weight: bold; }}
-.ticker-symbol {{ font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }}
-.accumulation {{ color: #d9480f; font-weight: bold; }}
-.liquidity {{ color: #2b8a3e; font-weight: bold; }}
-</style>
-<script>
-function filterTable() {{
-    let input = document.getElementById('searchInput').value.toLowerCase();
-    let tr = document.getElementById('coinTable').getElementsByTagName('tr');
-    for (let i = 1; i < tr.length; i++) {{
-        let td = tr[i].getElementsByTagName('td')[1];
-        tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().indexOf(input) > -1) ? "" : "none";
-    }}
-}}
-
-// 업비트 차트 팝업 오픈 함수
-function openUpbitChart(ticker) {{
-    const url = 'https://upbit.com/exchange?code=CRIX.UPBIT.KRW-' + ticker;
-    window.open(url, 'upbitChart', 'width=1200,height=800,scrollbars=yes,resizable=yes');
-}}
-</script>
-</head>
-<body>
-<div class="header-container">
-<div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
-<div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
-<div class="header-right">마지막 업데이트: <b>{current_time_str}</b></div>
-</div>
-<div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
-<table id="coinTable">
-<thead>
-<tr>
-<th>순위</th><th>한글코인명</th><th>현재가격 (KRW)</th><th>전일대비등락율</th>
-<th>패턴유사율</th><th>세력매집강도</th><th>유동성지수</th><th>최근 3시간 TOP10</th>
-<th>매수우세</th><th>1주일 5% 변동</th><th>예측점수</th>
-</tr>
-</thead>
-<tbody>
-"""
-
-    for item in analysis_results:
-        change_class = (
-            "plus"
-            if item["change_rate"] > 0
-            else ("minus" if item["change_rate"] < 0 else "")
-        )
-        change_sign = "+" if item["change_rate"] > 0 else ""
-
-        # AI 추천 여부에 따른 배지 출력 처리
-        ai_badge_html = (
-            '<span class="ai-badge">AI추천</span>'
-            if item.get("is_ai_recommended")
-            else ""
-        )
-
-        html_content += f"""
-<tr>
-<td><b>{item['rank']}</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('{item['ticker']}'); return false;" class="coin-link">
-        <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
-    </a>{ai_badge_html}
-</td>
-<td>{item['current_price']:,}</td>
-<td class="{change_class}">{change_sign}{item['change_rate']}%</td>
-<td>{item['pattern_similarity']}%</td>
-def generate_upbit_r_dashboard(
-    analysis_results, current_time_str, html_path="docs/index.html"
-):
-    os.makedirs(os.path.dirname(html_path), exist_ok=True)
-
-    html_content = f"""<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>업비트 실시간 급등주 포착 대시보드</title>
-<style>
-body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }}
-.header-container {{ display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }}
-.header-left {{ text-align: left; }} .header-center {{ text-align: center; }} .header-right {{ text-align: right; font-size: 13px; color: #495057; font-weight: 500; }}
-.ai-btn {{ background-color: #007bff; color: white; padding: 10px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; transition: background 0.2s; }}
-.ai-btn:hover {{ background-color: #0056b3; }}
-
-/* --------- AI 추천 배지 CSS --------- */
-.ai-badge {{
-    background-color: #e03131;
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-    display: inline-block;
-    vertical-align: middle;
-}}
-
-/* --------- 코인명 클릭 링크 스타일 --------- */
-.coin-link {{
-    color: #333333;
-    text-decoration: none;
-    cursor: pointer;
-}}
-.coin-link:hover {{
-    color: #007bff;
-    text-decoration: underline;
-}}
-
-.search-box {{ margin-bottom: 20px; }}
-.search-box input {{ width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }}
-table {{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
-th, td {{ padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }}
-th {{ background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; }}
-th:hover {{ background-color: #e9ecef; }}
-tbody tr {{ transition: background-color 0.15s; }}
-tbody tr:hover {{ background-color: #e9ecef !important; }}
-.plus {{ color: #e03131; font-weight: bold; }}
-.minus {{ color: #1971c2; font-weight: bold; }}
-.ticker-symbol {{ font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }}
-.accumulation {{ color: #d9480f; font-weight: bold; }}
-.liquidity {{ color: #2b8a3e; font-weight: bold; }}
-</style>
-<script>
-function filterTable() {{
-    let input = document.getElementById('searchInput').value.toLowerCase();
-    let tr = document.getElementById('coinTable').getElementsByTagName('tr');
-    for (let i = 1; i < tr.length; i++) {{
-        let td = tr[i].getElementsByTagName('td')[1];
-        tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().indexOf(input) > -1) ? "" : "none";
-    }}
-}}
-
-// 업비트 차트 팝업 오픈 함수
-function openUpbitChart(ticker) {{
-    const url = 'https://upbit.com/exchange?code=CRIX.UPBIT.KRW-' + ticker;
-    window.open(url, 'upbitChart', 'width=1200,height=800,scrollbars=yes,resizable=yes');
-}}
-</script>
-</head>
-<body>
-<div class="header-container">
-<div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
-<div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
-<div class="header-right">마지막 업데이트: <b>{current_time_str}</b></div>
-</div>
-<div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
-<table id="coinTable">
-<thead>
-<tr>
-<th>순위</th><th>한글코인명</th><th>현재가격 (KRW)</th><th>전일대비등락율</th>
-<th>패턴유사율</th><th>세력매집강도</th><th>유동성지수</th><th>최근 3시간 TOP10</th>
-<th>매수우세</th><th>1주일 5% 변동</th><th>예측점수</th>
-</tr>
-</thead>
-<tbody>
-"""
-
-    for item in analysis_results:
-        change_class = (
-            "plus"
-            if item["change_rate"] > 0
-            else ("minus" if item["change_rate"] < 0 else "")
-        )
-        change_sign = "+" if item["change_rate"] > 0 else ""
-
-        # AI 추천 여부에 따른 배지 출력 처리
-        ai_badge_html = (
-            '<span class="ai-badge">AI추천</span>'
-            if item.get("is_ai_recommended")
-            else ""
-        )
-
-        html_content += f"""
-<tr>
-<td><b>{item['rank']}</b></td>
-<td>
-    <a href="#" onclick="openUpbitChart('{item['ticker']}'); return false;" class="coin-link">
-        <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
-    </a>{ai_badge_html}
-</td>
-<td>{item['current_price']:,}</td>
-<td class="{change_class}">{change_sign}{item['change_rate']}%</td>
-<td>{item['pattern_similarity']}%</td>
-def generate_upbit_r_dashboard(
-    analysis_results, current_time_str, html_path="docs/index.html"
-):
-    os.makedirs(os.path.dirname(html_path), exist_ok=True)
-
-    # 테이블 행 HTML 생성
-    rows_html = ""
+    # 1. 테이블 행(Rows) HTML 동적 생성
+    rows_list = []
     for item in analysis_results:
         change_class = (
             "plus"
@@ -577,7 +274,7 @@ def generate_upbit_r_dashboard(
             else ""
         )
 
-        rows_html += f"""
+        row = f"""
 <tr>
 <td><b>{item['rank']}</b></td>
 <td>
@@ -594,10 +291,12 @@ def generate_upbit_r_dashboard(
 <td>{item['positive_count']}회</td>
 <td><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
 <td><b>{item['score']}점</b></td>
-</tr>
-"""
+</tr>"""
+        rows_list.append(row)
 
-    # HTML 템플릿 (f-string 대신 일반 문자열을 사용하여 중괄호 충돌 방지)
+    rows_html = "".join(rows_list)
+
+    # 2. HTML 전체 템플릿 (일반 멀티라인 문자열로 f-string 중괄호 파싱 에러 차단)
     html_template = """<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -669,7 +368,7 @@ function openUpbitChart(ticker) {
 <div class="header-container">
 <div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
 <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
-<div class="header-right">마지막 업데이트: <b>__TIME__</b></div>
+<div class="header-right">마지막 업데이트: <b>{{CURRENT_TIME}}</b></div>
 </div>
 <div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
 <table id="coinTable">
@@ -681,19 +380,20 @@ function openUpbitChart(ticker) {
 </tr>
 </thead>
 <tbody>
-__ROWS__
+{{ROWS}}
 </tbody>
 </table>
 </body>
 </html>
 """
 
-    # 치환
-    final_html = html_template.replace("__TIME__", current_time_str).replace("__ROWS__", rows_html)
+    # 3. 데이터 치환 및 파일 저장
+    final_html = html_template.replace("{{CURRENT_TIME}}", current_time_str).replace("{{ROWS}}", rows_html)
 
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(final_html)
     print(f"🎨 [대시보드] HTML 생성 완료 ({html_path})!")
+
 
 
 
