@@ -403,16 +403,28 @@ def main():
         const allCoinsMap = {coins_map_json};
         let sortDirections = {{}};
 
-        window.addEventListener('DOMContentLoaded', () => {{
-            const urlParams = new URLSearchParams(window.location.search);
-            const symbol = urlParams.get('symbol');
+        window.addEventListener('DOMContentLoaded', () => {
+            // 만약 현재 페이지가 iframe 내부에 갇힌 상태라면, 좌우 분할 코드를 실행하지 않고 통과시킵니다.
+            if (window.self !== window.top) {
+                return; // iframe 안에서는 모달 팝업 로직 실행 금지
+            }
 
-            // 만약 단독 링크로 접근된 경우(필요시 기존 요약 카드 로직 유지 또는 대시보드 표시)
-            if (symbol) {{
-                const targetMarket = symbol.toUpperCase().startsWith('KRW-') ? symbol.toUpperCase() : `KRW-${{symbol.toUpperCase()}}`;
+            const urlParams = new URLSearchParams(window.location.search);
+            const symbolParam = urlParams.get('symbol');
+
+            if (symbolParam) {
+                const targetMarket = symbolParam.toUpperCase().startsWith('KRW-') ? symbolParam.toUpperCase() : `KRW-${{symbol.toUpperCase()}}`;
                 openModal(targetMarket);
-            }}
-        }});
+            }
+        });
+
+        function openModal(marketCode) {
+            const modalTitle = document.getElementById('modalCoinTitle');
+            const modalSub = document.getElementById('modalCoinSub');
+            
+            // 이후 내용...
+        }
+    </script>
 
         function openModal(marketCode) {{
             const modalTitle = document.getElementById('modalCoinTitle');
