@@ -5,6 +5,7 @@ from datetime import datetime, timezone, timedelta
 import requests
 import numpy as np
 import pandas as pd
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # 경로 및 상수 설정
 DATA_DIR = "data"
@@ -27,7 +28,7 @@ def fetch_krw_markets():
     return krw_markets, market_names
 
 def fetch_candles(market, count=672):
-    """최근 1주일간의 15분봉 데이터 수집 (672개 = 7일 * 24시간 * 4회)"""
+    """최근 1주일간의 15분봉 데이터 수집 (병렬 처리 지원을 위한 최적화)"""
     all_candles = []
     to_param = ""
     while len(all_candles) < count:
@@ -35,17 +36,23 @@ def fetch_candles(market, count=672):
         url = f"https://api.upbit.com/v1/candles/minutes/15?market={market}&count={req_count}"
         if to_param:
             url += f"&to={to_param}"
-        res = requests.get(url)
-        if res.status_code != 200:
-            break
-        data = res.json()
-        if not data:
-            break
-        all_candles.extend(data)
-        if len(data) < req_count:
-            break
-        to_param = data[-1]['candle_date_time_utc']
-        time.sleep(0.03) # API 호출 제한 준수
+        
+        try:
+            res = requests.get(url, timeout=5)
+            if res.status_code != 200:
+                time.sleep(0.2)
+                continue
+            data = res.json()
+            if not data:
+                break
+            all_candles.extend(data)
+            if len(data) < req_count:
+                break
+            to_param = data[-1]['candle_date_time_utc']
+        except Exception:
+            time.sleep(0.2)
+            continue
+            
     return all_candles
 
 def load_json(filepath, default):
@@ -62,10 +69,98 @@ def save_json(filepath, data):
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
+def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
+    """개별 코인 분석 함수 (스레드 병렬 처리를 위해 분리)"""
+    ticker = market.replace("KRW-", "")
+    
+    candles = fetch_candles(market, count=672)
+    if len(candles) < 24:
+        return None
+
+    df = pd.DataFrame(candles)
+    df = df.sort_values('timestamp').reset_index(drop=True)
+
+    df_6h = df.iloc[-24:].copy().reset_index(drop=True)
+
+    current_price = df_6h.iloc[-1]['trade_price']
+    prev_close = df_6h.iloc[0]['opening_price']
+    change_rate = ((current_price - prev_close) / prev_close) * 100
+
+    positive_count = sum(1 for _, row in df_6h.iterrows() if row['trade_price'] > row['opening_price'])
+
+    prices = df_6h['trade_price'].values
+    price_min, price_max = prices.min(), prices.max()
+    norm_prices = (prices - price_min) / (price_max - price_min + 1e-8)
+    distance = np.linalg.norm(norm_prices - ideal_pattern)
+    pattern_similarity = max(0.0, float(1.0 - (distance / np.sqrt(len(norm_prices))))) * 100
+
+    volume_std = df_6h['candle_acc_trade_volume'].std()
+    volume_mean = df_6h['candle_acc_trade_volume'].mean()
+    ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
+
+    accumulation_score = 0
+    df_6h['vol_ma'] = df_6h['candle_acc_trade_volume'].rolling(window=5).mean().fillna(0)
+    
+    for i in range(1, len(df_6h)):
+        row = df_6h.iloc[i]
+        prev_vol_ma = df_6h.iloc[i-1]['vol_ma']
+        if prev_vol_ma == 0: continue
+        
+        if row['candle_acc_trade_volume'] > prev_vol_ma * 2:
+            body = abs(row['trade_price'] - row['opening_price'])
+            upper_wick = row['high_price'] - max(row['trade_price'], row['opening_price'])
+            lower_wick = min(row['trade_price'], row['opening_price']) - row['low_price']
+            
+            if lower_wick > (body * 1.5):
+                accumulation_score += 30
+            if row['trade_price'] > row['opening_price'] and upper_wick > (body * 2):
+                accumulation_score += 20
+
+    accumulation_score = min(100.0, accumulation_score)
+
+    up_5pct_count = sum(1 for _, row in df.iterrows() if ((row['high_price'] - row['opening_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
+    down_5pct_count = sum(1 for _, row in df.iterrows() if ((row['opening_price'] - row['low_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
+
+    df_24h = df.iloc[-96:] if len(df) >= 96 else df
+    acc_24h_krw = df_24h['candle_acc_trade_price'].sum()
+    if acc_24h_krw > 0:
+        liquidity_index = round(min(100.0, max(0.0, (np.log10(acc_24h_krw) - 7) * 20)), 1)
+    else:
+        liquidity_index = 0.0
+
+    market_history = history_db.get(market, [])
+    now_ts = time.time()
+    three_hours_ago = now_ts - 3 * 3600
+    recent_top10_count = sum(1 for h in market_history if h['timestamp'] >= three_hours_ago and h['rank'] <= 10)
+
+    score = (
+        pattern_similarity * weights["w_pattern"] +
+        (positive_count / 24.0 * 100) * weights["w_buy_sell"] +
+        min(100.0, recent_top10_count * 20) * weights["w_recent_rank"] +
+        ai_volatility_score * weights["w_ai_volatility"] +
+        accumulation_score * weights["w_accumulation"]
+    )
+
+    return {
+        "market": market,
+        "ticker": ticker,
+        "name": k_name,
+        "current_price": current_price,
+        "change_rate": round(change_rate, 2),
+        "pattern_similarity": round(pattern_similarity, 1),
+        "positive_count": positive_count,
+        "accumulation_score": round(accumulation_score, 1),
+        "score": round(score, 2),
+        "recent_top10_count": recent_top10_count,
+        "ai_volatility_score": round(ai_volatility_score, 1),
+        "up_5pct_count": up_5pct_count,
+        "down_5pct_count": down_5pct_count,
+        "liquidity_index": liquidity_index
+    }
+
 def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="docs/index.html"):
     os.makedirs(os.path.dirname(html_path), exist_ok=True)
     
-    # 데이터를 JS 연동용 딕셔너리로 변환 (symbol 또는 market 기준 매핑)
     coins_dict = {}
     for item in analysis_results:
         key = item.get('market') or item.get('ticker')
@@ -81,288 +176,71 @@ def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="do
     <meta charset="UTF-8">
     <title>업비트 실시간 급등주 포착 대시보드</title>
     <style>
-        body {{
-            background-color: #f8f9fa;
-            color: #333333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }}
-        .header-container {{
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            background: #ffffff;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }}
-        .header-left {{ text-align: left; }}
-        .header-center {{ text-align: center; }}
-        .header-right {{
-            text-align: right;
-            font-size: 13px;
-            color: #495057;
-            font-weight: 500;
-        }}
-        .ai-btn {{
-            background-color: #007bff;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-            display: inline-block;
-            transition: background 0.2s;
-        }}
+        body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }}
+        .header-container {{ display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }}
+        .header-left {{ text-align: left; }} .header-center {{ text-align: center; }} .header-right {{ text-align: right; font-size: 13px; color: #495057; font-weight: 500; }}
+        .ai-btn {{ background-color: #007bff; color: white; padding: 10px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; transition: background 0.2s; }}
         .ai-btn:hover {{ background-color: #0056b3; }}
         .search-box {{ margin-bottom: 20px; }}
-        .search-box input {{
-            width: 100%;
-            padding: 12px 15px;
-            font-size: 16px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            box-sizing: border-box;
-            outline: none;
-            background: #ffffff;
-        }}
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }}
-        th, td {{
-            padding: 12px 15px;
-            text-align: center;
-            border-bottom: 1px solid #e9ecef;
-        }}
-        th {{
-            background-color: #f1f3f5;
-            color: #495057;
-            font-weight: 600;
-            cursor: pointer;
-            user-select: none;
-            transition: background-color 0.2s;
-        }}
+        .search-box input {{ width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }}
+        table {{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
+        th, td {{ padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }}
+        th {{ background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; }}
         th:hover {{ background-color: #e9ecef; }}
-        th::after {{
-            content: " ↕";
-            font-size: 11px;
-            color: #adb5bd;
-        }}
-        tbody tr {{
-            cursor: pointer;
-            transition: background-color 0.15s;
-        }}
+        tbody tr {{ cursor: pointer; transition: background-color 0.15s; }}
         tbody tr:hover {{ background-color: #e9ecef !important; }}
         .plus {{ color: #e03131; font-weight: bold; }}
         .minus {{ color: #1971c2; font-weight: bold; }}
-        .ticker-symbol {{
-            font-size: 12px;
-            color: #868e96;
-            font-weight: normal;
-            margin-left: 4px;
-        }}
+        .ticker-symbol {{ font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }}
         .accumulation {{ color: #d9480f; font-weight: bold; }}
         .liquidity {{ color: #2b8a3e; font-weight: bold; }}
-
-        /* 좌우 분할 모달 스타일 */
-        .modal-overlay {{
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.55);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }}
-        .modal-memo {{
-            width: 950px;
-            height: 650px;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-            border: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            animation: modalPop 0.2s ease-out;
-        }}
-        @keyframes modalPop {{
-            from {{ transform: scale(0.92); opacity: 0; }}
-            to {{ transform: scale(1); opacity: 1; }}
-        }}
-        .modal-header-memo {{
-            background-color: #f8fafc;
-            padding: 12px 16px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }}
-        .modal-frames-container {{
-            display: flex;
-            width: 100%;
-            height: 100%;
-            flex: 1;
-        }}
-        .modal-frame-pane {{
-            width: 50%;
-            height: 100%;
-            border: none;
-        }}
-        .modal-frame-pane:first-child {{
-            border-right: 1px solid #e2e8f0;
-        }}
-        .close-memo-btn {{
-            border: none;
-            background: transparent;
-            color: #94a3b8;
-            font-size: 1.25rem;
-            cursor: pointer;
-            line-height: 1;
-            transition: color 0.15s;
-        }}
-        .close-memo-btn:hover {{ color: #0f172a; }}
+        .modal-overlay {{ display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }}
+        .modal-memo {{ width: 950px; height: 650px; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; position: relative; }}
+        .modal-header-memo {{ background-color: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }}
+        .modal-frames-container {{ display: flex; width: 100%; height: 100%; flex: 1; }}
+        .modal-frame-pane {{ width: 50%; height: 100%; border: none; }}
+        .modal-frame-pane:first-child {{ border-right: 1px solid #e2e8f0; }}
+        .close-memo-btn {{ border: none; background: transparent; color: #94a3b8; font-size: 1.25rem; cursor: pointer; line-height: 1; }}
     </style>
     <script>
         const analysisData = {js_data_json};
         const allCoinsMap = {coins_map_json};
         let sortDirections = {{}};
-
-        window.addEventListener('DOMContentLoaded', () => {{
-            if (window.self !== window.top) {{
-                return;
-            }}
-            const urlParams = new URLSearchParams(window.location.search);
-            const symbolParam = urlParams.get('symbol');
-            if (symbolParam) {{
-                const targetMarket = symbolParam.toUpperCase().startsWith('KRW-') ? symbolParam.toUpperCase() : 'KRW-' + symbolParam.toUpperCase();
-                openModal(targetMarket);
-            }}
-        }});
-
         function openModal(marketCode) {{
-            const modalTitle = document.getElementById('modalCoinTitle');
-            const modalSub = document.getElementById('modalCoinSub');
-            
-            let coinData = allCoinsMap[marketCode];
-            if (!coinData) {{
-                coinData = analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
-            }}
-
-            if (coinData) {{
-                modalTitle.innerText = (coinData.name || coinData.kor_name || '종목') + ' (' + (coinData.ticker || coinData.symbol || marketCode) + ') - 양방향 상세 비교';
-                modalSub.innerText = 'Market: ' + marketCode;
-            }} else {{
-                modalTitle.innerText = "종목 상세 비교";
-                modalSub.innerText = marketCode;
-            }}
-
-            const leftUrl = 'https://upbit-r.onrender.com/?symbol=' + marketCode;
-            const rightUrl = 'https://upbit-a.onrender.com/?symbol=' + marketCode;
-
-            document.getElementById('modalIframeLeft').src = leftUrl;
-            document.getElementById('modalIframeRight').src = rightUrl;
-
+            let coinData = allCoinsMap[marketCode] || analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
+            document.getElementById('modalCoinTitle').innerText = (coinData ? (coinData.name || coinData.ticker) : marketCode) + ' - 상세 비교';
+            document.getElementById('modalIframeLeft').src = 'https://upbit-r.onrender.com/?symbol=' + marketCode;
+            document.getElementById('modalIframeRight').src = 'https://upbit-a.onrender.com/?symbol=' + marketCode;
             document.getElementById('coinDetailModal').style.display = 'flex';
         }}
-
         function closeModal() {{
             document.getElementById('coinDetailModal').style.display = 'none';
             document.getElementById('modalIframeLeft').src = '';
             document.getElementById('modalIframeRight').src = '';
         }}
-
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
-            let table = document.getElementById('coinTable');
-            let tr = table.getElementsByTagName('tr');
+            let tr = document.getElementById('coinTable').getElementsByTagName('tr');
             for (let i = 1; i < tr.length; i++) {{
-                let tdName = tr[i].getElementsByTagName('td')[1];
-                if (tdName) {{
-                    let textName = tdName.textContent || tdName.innerText;
-                    if (textName.toLowerCase().indexOf(input) > -1) {{
-                        tr[i].style.display = "";
-                    }} else {{
-                        tr[i].style.display = "none";
-                    }}
-                }}
+                let td = tr[i].getElementsByTagName('td')[1];
+                tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().indexOf(input) > -1) ? "" : "none";
             }}
-        }}
-
-        function sortTable(columnIndex) {{
-            let table = document.getElementById('coinTable');
-            let tbody = table.querySelector('tbody');
-            let rows = Array.from(tbody.querySelectorAll('tr'));
-
-            if (!(columnIndex in sortDirections)) {{
-                sortDirections[columnIndex] = (columnIndex === 0 || columnIndex === 1) ? true : false;
-            }} else {{
-                sortDirections[columnIndex] = !sortDirections[columnIndex];
-            }}
-
-            let isAscending = sortDirections[columnIndex];
-
-            rows.sort((a, b) => {{
-                let valA = a.children[columnIndex].getAttribute('data-val') || a.children[columnIndex].innerText.trim();
-                let valB = b.children[columnIndex].getAttribute('data-val') || b.children[columnIndex].innerText.trim();
-
-                let numA = parseFloat(valA.replace(/[^0-9.-]/g, ''));
-                let numB = parseFloat(valB.replace(/[^0-9.-]/g, ''));
-
-                if (!isNaN(numA) && !isNaN(numB)) {{
-                    return isAscending ? numA - numB : numB - numA;
-                }} else {{
-                    return isAscending ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                }}
-            }});
-
-            rows.forEach(row => tbody.appendChild(row));
         }}
     </script>
 </head>
 <body>
-
     <div class="header-container">
-        <div class="header-left">
-            <a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a>
-        </div>
-        <div class="header-center">
-            <h2 style="margin: 0; font-size: 20px; color: #343a40;">🚀 업비트 실시간 급등주 포착 대시보드</h2>
-        </div>
-        <div class="header-right">
-            마지막 업데이트 (KST): <b>{current_time_str}</b>
-        </div>
+        <div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
+        <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
+        <div class="header-right">마지막 업데이트: <b>{current_time_str}</b></div>
     </div>
-
-    <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색 (예: 비트코인, BTC)...">
-    </div>
-
+    <div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
     <table id="coinTable">
         <thead>
             <tr>
-                <th onclick="sortTable(0)">순위</th>
-                <th onclick="sortTable(1)">한글코인명</th>
-                <th onclick="sortTable(2)">현재가격 (KRW)</th>
-                <th onclick="sortTable(3)">전일대비등락율</th>
-                <th onclick="sortTable(4)">패턴유사율</th>
-                <th onclick="sortTable(5)">세력매집강도</th>
-                <th onclick="sortTable(6)">유동성지수</th>
-                <th onclick="sortTable(7)">최근 3시간 TOP10</th>
-                <th onclick="sortTable(8)">매수우세 (6시간/15분)</th>
-                <th onclick="sortTable(9)">1주일 5% 변동 (15분봉)</th>
-                <th onclick="sortTable(10)">예측점수</th>
+                <th>순위</th><th>한글코인명</th><th>현재가격 (KRW)</th><th>전일대비등락율</th>
+                <th>패턴유사율</th><th>세력매집강도</th><th>유동성지수</th><th>최근 3시간 TOP10</th>
+                <th>매수우세</th><th>1주일 5% 변동</th><th>예측점수</th>
             </tr>
         </thead>
         <tbody>
@@ -372,218 +250,93 @@ def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="do
         change_class = "plus" if item['change_rate'] > 0 else ("minus" if item['change_rate'] < 0 else "")
         change_sign = "+" if item['change_rate'] > 0 else ""
         market_code = item.get('market') or f"KRW-{item.get('ticker')}"
-
         html_content += f"""
             <tr onclick="openModal('{market_code}')">
-                <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
-                <td data-val="{item['name']}">
-                    <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
-                </td>
-                <td data-val="{item['current_price']}">{item['current_price']:,}</td>
-                <td data-val="{item['change_rate']}" class="{change_class}">{change_sign}{item['change_rate']}%</td>
-                <td data-val="{item['pattern_similarity']}">{item['pattern_similarity']}%</td>
-                <td data-val="{item['accumulation_score']}" class="accumulation">{item['accumulation_score']}점</td>
-                <td data-val="{item['liquidity_index']}" class="liquidity">{item['liquidity_index']}점</td>
-                <td data-val="{item['recent_top10_count']}">{item['recent_top10_count']}회</td>
-                <td data-val="{item['positive_count']}">{item['positive_count']}회</td>
-                <td data-val="{item['up_5pct_count']}"><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
-                <td data-val="{item['score']}"><b>{item['score']}점</b></td>
+                <td><b>{item['rank']}</b></td>
+                <td><b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span></td>
+                <td>{item['current_price']:,}</td>
+                <td class="{change_class}">{change_sign}{item['change_rate']}%</td>
+                <td>{item['pattern_similarity']}%</td>
+                <td class="accumulation">{item['accumulation_score']}점</td>
+                <td class="liquidity">{item['liquidity_index']}점</td>
+                <td>{item['recent_top10_count']}회</td>
+                <td>{item['positive_count']}회</td>
+                <td><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
+                <td><b>{item['score']}점</b></td>
             </tr>
 """
 
-    html_content += f"""
+    html_content += """
         </tbody>
     </table>
-
-    <!-- 모달 오버레이 및 좌우 프레임 팝업 창 -->
     <div id="coinDetailModal" class="modal-overlay" onclick="closeModal()">
         <div class="modal-memo" onclick="event.stopPropagation();">
             <div class="modal-header-memo">
-                <div>
-                    <h6 class="fw-bold mb-0 text-dark" id="modalCoinTitle">종목 상세 정보 (1번 & 2번 비교)</h6>
-                    <small class="text-muted" id="modalCoinSub" style="font-size: 0.75rem;">upbit-r & upbit-a 양방향 비교</small>
-                </div>
+                <h6 id="modalCoinTitle" class="mb-0">종목 상세 정보</h6>
                 <button type="button" class="close-memo-btn" onclick="closeModal()">✕</button>
             </div>
             <div class="modal-frames-container">
-                <iframe id="modalIframeLeft" class="modal-frame-pane" title="1번 사이트 상세"></iframe>
-                <iframe id="modalIframeRight" class="modal-frame-pane" title="2번 사이트 상세"></iframe>
+                <iframe id="modalIframeLeft" class="modal-frame-pane"></iframe>
+                <iframe id="modalIframeRight" class="modal-frame-pane"></iframe>
             </div>
         </div>
     </div>
-
 </body>
 </html>
 """
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"🎨 [1번 대시보드] HTML 생성 완료 (`{html_path}`)!")
-    return html_content
+    print(f"🎨 [대시보드] HTML 생성 완료 (`{html_path}`)!")
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(DOCS_DIR, exist_ok=True)
 
-    # 1. 초기 데이터 및 가중치 불러오기
     history_db = load_json(HISTORY_FILE, {}) 
     weights = load_json(WEIGHTS_FILE, {
-        "w_pattern": 0.25,
-        "w_buy_sell": 0.25,
-        "w_recent_rank": 0.15,
-        "w_ai_volatility": 0.15,
-        "w_accumulation": 0.20
+        "w_pattern": 0.25, "w_buy_sell": 0.25, "w_recent_rank": 0.15,
+        "w_ai_volatility": 0.15, "w_accumulation": 0.20
     })
 
     pattern_data = load_json(PATTERN_FILE, {})
-    if "golden_pattern" in pattern_data:
-        ideal_pattern = np.array(pattern_data["golden_pattern"])
-    else:
-        ideal_pattern = np.linspace(0.2, 1.0, 24)
+    ideal_pattern = np.array(pattern_data["golden_pattern"]) if "golden_pattern" in pattern_data else np.linspace(0.2, 1.0, 24)
 
     krw_markets, market_names = fetch_krw_markets()
     current_time_str = datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S')
     analysis_results = []
 
-    print(f"[{current_time_str}] 데이터 수집 및 분석 시작 (총 {len(krw_markets)}개 종목)...")
+    print(f"[{current_time_str}] 멀티스레딩 데이터 수집 및 분석 시작 (총 {len(krw_markets)}개 종목)...")
 
-    for market in krw_markets:
-        k_name = market_names.get(market, market)
-        ticker = market.replace("KRW-", "")
+    # 병렬 스레드 풀 사용 (최대 10개 스레드로 동시 요청하여 시간 단축)
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = {executor.submit(analyze_single_coin, market, market_names.get(market, market), ideal_pattern, history_db, weights): market for market in krw_markets}
         
-        # 1주일 치 15분봉 수집 (672개)
-        candles = fetch_candles(market, count=672)
-        if len(candles) < 24:
-            continue
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                analysis_results.append(result)
 
-        df = pd.DataFrame(candles)
-        df = df.sort_values('timestamp').reset_index(drop=True)
-
-        # 최근 6시간 분석용 캔들 (마지막 24개)
-        df_6h = df.iloc[-24:].copy().reset_index(drop=True)
-
-        current_price = df_6h.iloc[-1]['trade_price']
-        prev_close = df_6h.iloc[0]['opening_price']
-        change_rate = ((current_price - prev_close) / prev_close) * 100
-
-        # 최근 6시간 매수 우세 횟수 (양봉 캔들)
-        positive_count = sum(1 for _, row in df_6h.iterrows() if row['trade_price'] > row['opening_price'])
-
-        # 패턴 유사도 계산
-        prices = df_6h['trade_price'].values
-        price_min, price_max = prices.min(), prices.max()
-        norm_prices = (prices - price_min) / (price_max - price_min + 1e-8)
-        distance = np.linalg.norm(norm_prices - ideal_pattern)
-        pattern_similarity = max(0.0, float(1.0 - (distance / np.sqrt(len(norm_prices))))) * 100
-
-        # AI 변동성 점수
-        volume_std = df_6h['candle_acc_trade_volume'].std()
-        volume_mean = df_6h['candle_acc_trade_volume'].mean()
-        ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
-
-        # 세력 매집 추적 점수
-        accumulation_score = 0
-        df_6h['vol_ma'] = df_6h['candle_acc_trade_volume'].rolling(window=5).mean().fillna(0)
-        
-        for i in range(1, len(df_6h)):
-            row = df_6h.iloc[i]
-            prev_vol_ma = df_6h.iloc[i-1]['vol_ma']
-            if prev_vol_ma == 0: continue
-            
-            if row['candle_acc_trade_volume'] > prev_vol_ma * 2:
-                body = abs(row['trade_price'] - row['opening_price'])
-                upper_wick = row['high_price'] - max(row['trade_price'], row['opening_price'])
-                lower_wick = min(row['trade_price'], row['opening_price']) - row['low_price']
-                
-                if lower_wick > (body * 1.5):
-                    accumulation_score += 30
-                if row['trade_price'] > row['opening_price'] and upper_wick > (body * 2):
-                    accumulation_score += 20
-
-        accumulation_score = min(100.0, accumulation_score)
-
-        # 지난 1주일간 15분 내 5% 이상 변동 집계
-        up_5pct_count = sum(1 for _, row in df.iterrows() if ((row['high_price'] - row['opening_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
-        down_5pct_count = sum(1 for _, row in df.iterrows() if ((row['opening_price'] - row['low_price']) / (row['opening_price'] + 1e-8)) * 100 >= 5.0)
-
-        # 유동성 지수
-        df_24h = df.iloc[-96:] if len(df) >= 96 else df
-        acc_24h_krw = df_24h['candle_acc_trade_price'].sum()
-        if acc_24h_krw > 0:
-            liquidity_index = round(min(100.0, max(0.0, (np.log10(acc_24h_krw) - 7) * 20)), 1)
-        else:
-            liquidity_index = 0.0
-
-        # 최근 3시간 TOP10 유지 횟수
-        market_history = history_db.get(market, [])
-        now_ts = time.time()
-        three_hours_ago = now_ts - 3 * 3600
-        recent_top10_count = sum(1 for h in market_history if h['timestamp'] >= three_hours_ago and h['rank'] <= 10)
-
-        # 가중치 기반 최종 예측 점수
-        score = (
-            pattern_similarity * weights["w_pattern"] +
-            (positive_count / 24.0 * 100) * weights["w_buy_sell"] +
-            min(100.0, recent_top10_count * 20) * weights["w_recent_rank"] +
-            ai_volatility_score * weights["w_ai_volatility"] +
-            accumulation_score * weights["w_accumulation"]
-        )
-
-        analysis_results.append({
-            "market": market,
-            "ticker": ticker,
-            "name": k_name,
-            "current_price": current_price,
-            "change_rate": round(change_rate, 2),
-            "pattern_similarity": round(pattern_similarity, 1),
-            "positive_count": positive_count,
-            "accumulation_score": round(accumulation_score, 1),
-            "score": round(score, 2),
-            "recent_top10_count": recent_top10_count,
-            "ai_volatility_score": round(ai_volatility_score, 1),
-            "up_5pct_count": up_5pct_count,
-            "down_5pct_count": down_5pct_count,
-            "liquidity_index": liquidity_index
-        })
-
-    # 예측 점수 정렬
     analysis_results.sort(key=lambda x: x['score'], reverse=True)
 
     for idx, item in enumerate(analysis_results):
         rank = idx + 1
         item['rank'] = rank
-        if item['market'] not in history_db:
-            history_db[item['market']] = []
-        history_db[item['market']].append({
+        m_code = item['market']
+        if m_code not in history_db:
+            history_db[m_code] = []
+        history_db[m_code].append({
             "timestamp": time.time(),
             "score": item['score'],
             "rank": rank,
             "price": item['current_price']
         })
-        history_db[item['market']] = [h for h in history_db[item['market']] if h['timestamp'] >= time.time() - 86400]
-
-    # 가중치 피드백 재조정
-    top_5 = analysis_results[:5]
-    for top in top_5:
-        m = top['market']
-        past_records = history_db.get(m, [])
-        if len(past_records) >= 2:
-            initial_price = past_records[0]['price']
-            latest_price = top['current_price']
-            perf = (latest_price - initial_price) / (initial_price + 1e-8)
-            if perf > 0.01:
-                weights["w_pattern"] = min(0.4, weights["w_pattern"] + 0.001)
-                weights["w_accumulation"] = min(0.3, weights["w_accumulation"] + 0.001)
-            elif perf < -0.01:
-                weights["w_pattern"] = max(0.1, weights["w_pattern"] - 0.001)
-                weights["w_accumulation"] = max(0.1, weights["w_accumulation"] - 0.001)
+        history_db[m_code] = [h for h in history_db[m_code] if h['timestamp'] >= time.time() - 86400]
 
     save_json(HISTORY_FILE, history_db)
     save_json(WEIGHTS_FILE, weights)
 
-    # 대시보드 HTML 생성 호출
     generate_upbit_r_dashboard(analysis_results, current_time_str, HTML_OUTPUT)
-
-    print("대시보드 HTML 생성 및 자가진화 업데이트 완료.")
+    print("대시보드 HTML 생성 및 업데이트 완료.")
 
 if __name__ == "__main__":
     main()
