@@ -6,6 +6,9 @@ import time
 import numpy as np
 import pandas as pd
 import requests
+from bs4 import BeautifulSoup
+
+
 
 # 경로 및 상수 설정
 DATA_DIR = "data"
