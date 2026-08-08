@@ -212,40 +212,24 @@ def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="do
         const analysisData = {js_data_json};
         const allCoinsMap = {coins_map_json};
 
-        function openModal(marketCode) {{
+        function openModal(marketCode) {
             let coin = allCoinsMap[marketCode] || analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
-            if (!coin) {{
+            if (!coin) {
                 alert("해당 종목의 정보를 찾을 수 없습니다.");
                 return;
-            }}
+            }
 
-            document.getElementById('modalCoinTitle').innerText = `${{coin.name}} (${{coin.ticker}}) - 핵심 요약 비교`;
+            document.getElementById('modalCoinTitle').innerText = `${coin.name} (${coin.ticker}) - 양방향 상세 비교`;
 
-            // 1번 사이트 요약 정보
-            let leftHtml = `
-                <div class="info-row"><span class="info-label">현재 가격</span><span class="info-value">${{coin.current_price.toLocaleString()}} 원</span></div>
-                <div class="info-row"><span class="info-label">전일 대비 등락률</span><span class="info-value ${{coin.change_rate > 0 ? 'plus' : (coin.change_rate < 0 ? 'minus' : '')}}">${{coin.change_rate > 0 ? '+' : ''}}${{coin.change_rate}}%</span></div>
-                <div class="info-row"><span class="info-label">예측 점수</span><span class="info-value">${{coin.score}} 점</span></div>
-                <div class="info-row"><span class="info-label">패턴 유사율</span><span class="info-value">${{coin.pattern_similarity}}%</span></div>
-                <div class="info-row"><span class="info-label">세력 매집 강도</span><span class="info-value">${{coin.accumulation_score}} 점</span></div>
-                <div class="info-row"><span class="info-label">유동성 지수</span><span class="info-value">${{coin.liquidity_index}} 점</span></div>
-                <div class="info-row"><span class="info-label">최근 3h TOP10</span><span class="info-value">${{coin.recent_top10_count}} 회</span></div>
-                <div class="info-row"><span class="info-label">AI 변동성 점수</span><span class="info-value">${{coin.ai_volatility_score}} 점</span></div>
-            `;
-            document.getElementById('leftSummaryContent').innerHTML = leftHtml;
+            // 1번 및 2번 사이트 iframe 불러오기
+            const leftUrl = `https://upbit-r.onrender.com/detail?symbol=${marketCode}`;
+            const rightUrl = `https://upbit-a.onrender.com/detail?symbol=${marketCode}`;
 
-            // 2번 사이트 이동 및 안내 정보
-            let rightHtml = `
-                <div class="info-row"><span class="info-label">대상 종목</span><span class="info-value">${{coin.name}} (${{coin.ticker}})</span></div>
-                <div class="info-row"><span class="info-label">상세 리포트 이동</span><span class="info-value"><a href="https://upbit-a.onrender.com" target="_self" style="color:#28a745; font-weight:bold; text-decoration:none;">2번 대시보드로 이동 ➔</a></span></div>
-                <p style="font-size:13px; color:#6c757d; margin-top:20px; line-height:1.5;">
-                    * 2번 사이트의 AI 덤핑 위험도(STGT), CMF/RSI 지표 및 머신러닝 리포트는 <b>2번 AI 대시보드</b>에서 확인할 수 있습니다.
-                </p>
-            `;
-            document.getElementById('rightSummaryContent').innerHTML = rightHtml;
+            document.getElementById('leftSummaryContent').innerHTML = `<iframe src="${leftUrl}" style="width:100%; height:380px; border:none;"></iframe>`;
+            document.getElementById('rightSummaryContent').innerHTML = `<iframe src="${rightUrl}" style="width:100%; height:380px; border:none;"></iframe>`;
 
             document.getElementById('coinDetailModal').style.display = 'flex';
-        }}
+        }
 
         function closeModal() {{
             document.getElementById('coinDetailModal').style.display = 'none';
