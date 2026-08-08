@@ -9,7 +9,6 @@ import requests
 from bs4 import BeautifulSoup
 
 
-
 # 경로 및 상수 설정
 DATA_DIR = "data"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
@@ -63,7 +62,6 @@ def fetch_ai_recommendations():
         print(f"⚠️ [AI 추천 연동] JSON 불러오기 실패: {e}")
 
     return set()
-
 
 
 def fetch_krw_markets():
@@ -286,9 +284,33 @@ body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Taho
 
 .search-box {{ margin-bottom: 20px; }}
 .search-box input {{ width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }}
-table {{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
+
+/* --------- 테이블 및 상단 고정(Sticky) 메뉴바 CSS --------- */
+table {{ 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0; 
+    background: #ffffff; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}}
+
 th, td {{ padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }}
-th {{ background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; }}
+
+/* 테이블 메뉴바 고정 설정 */
+th {{ 
+    position: sticky;
+    top: 0;
+    background-color: #f1f3f5; /* 고정 시 투명해지지 않도록 배경색 지정 */
+    color: #495057; 
+    font-weight: 600; 
+    cursor: pointer; 
+    user-select: none; 
+    transition: background-color 0.2s; 
+    z-index: 100; /* 데이터 행 위에 노출되도록 레이어 설정 */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08); /* 고정 헤더 아래에 경계선 명시 */
+}}
+
 th:hover {{ background-color: #e9ecef; }}
 tbody tr {{ transition: background-color 0.15s; }}
 tbody tr:hover {{ background-color: #e9ecef !important; }}
