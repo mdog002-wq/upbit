@@ -7,6 +7,12 @@ import numpy as np
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI(title="Upbit AI Quantitative Dashboard Server")
+
 # 경로 및 상수 설정
 DATA_DIR = "data"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
@@ -16,6 +22,27 @@ DOCS_DIR = "docs"
 HTML_OUTPUT = os.path.join(DOCS_DIR, "index.html")
 
 KST = timezone(timedelta(hours=9))
+
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(DOCS_DIR, exist_ok=True)
+
+
+# ==============================================================================
+# [헬퍼 및 데이터 수집 함수]
+# ==============================================================================
+def load_json(filepath, default):
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return default
+
+def save_json(filepath, data):
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
 
 def fetch_krw_markets():
     url = "https://api.upbit.com/v1/market/all"
@@ -28,7 +55,6 @@ def fetch_krw_markets():
     return krw_markets, market_names
 
 def fetch_candles(market, count=672):
-    """최근 1주일간의 15분봉 데이터 수집 (병렬 처리 지원을 위한 최적화)"""
     all_candles = []
     to_param = ""
     while len(all_candles) < count:
@@ -55,22 +81,7 @@ def fetch_candles(market, count=672):
             
     return all_candles
 
-def load_json(filepath, default):
-    if os.path.exists(filepath):
-        try:
-            with open(filepath, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return default
-
-def save_json(filepath, data):
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-
 def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
-    """개별 코인 분석 함수 (스레드 병렬 처리를 위해 분리)"""
     ticker = market.replace("KRW-", "")
     
     candles = fetch_candles(market, count=672)
@@ -158,209 +169,104 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
         "liquidity_index": liquidity_index
     }
 
-def generate_upbit_r_dashboard(analysis_results, current_time_str, html_path="docs/index.html"):
-    os.makedirs(os.path.dirname(html_path), exist_ok=True)
-   
-    coins_dict = {}
-    for item in analysis_results:
-        key = item.get('market') or item.get('ticker')
-        if key:
-            coins_dict[key] = item
 
-    js_data_json = json.dumps(analysis_results, ensure_ascii=False)
-    coins_map_json = json.dumps(coins_dict, ensure_ascii=False)
+# ==============================================================================
+# [FastAPI 라우터 설정]
+# ==============================================================================
 
-    html_content = f"""<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>업비트 실시간 급등주 포착 대시보드</title>
-    <style>
-        body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }}
-        .header-container {{ display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }}
-        .header-left {{ text-align: left; }} .header-center {{ text-align: center; }} .header-right {{ text-align: right; font-size: 13px; color: #495057; font-weight: 500; }}
-        .ai-btn {{ background-color: #007bff; color: white; padding: 10px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; transition: background 0.2s; }}
-        .ai-btn:hover {{ background-color: #0056b3; }}
-        .search-box {{ margin-bottom: 20px; }}
-        .search-box input {{ width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }}
-        table {{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
-        th, td {{ padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }}
-        th {{ background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; }}
-        th:hover {{ background-color: #e9ecef; }}
-        tbody tr {{ cursor: pointer; transition: background-color 0.15s; }}
-        tbody tr:hover {{ background-color: #e9ecef !important; }}
-        .plus {{ color: #e03131; font-weight: bold; }}
-        .minus {{ color: #1971c2; font-weight: bold; }}
-        .ticker-symbol {{ font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }}
-        .accumulation {{ color: #d9480f; font-weight: bold; }}
-        .liquidity {{ color: #2b8a3e; font-weight: bold; }}
-        
-        /* 텍스트 카드 요약형 모달 스타일 */
-        .modal-overlay {{ display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }}
-        .modal-memo {{ width: 850px; max-height: 85vh; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; }}
-        .modal-header-memo {{ background-color: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }}
-        .modal-summary-container {{ display: flex; width: 100%; padding: 20px; gap: 20px; box-sizing: border-box; overflow-y: auto; }}
-        .summary-card {{ flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }}
-        .summary-card h4 {{ margin-top: 0; margin-bottom: 15px; color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 8px; font-size: 15px; }}
-        .summary-card.right h4 {{ color: #28a745; border-bottom-color: #28a745; }}
-        .info-row {{ display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; border-bottom: 1px dashed #e9ecef; padding-bottom: 6px; }}
-        .info-label {{ color: #6c757d; font-weight: 500; }}
-        .info-value {{ font-weight: bold; color: #212529; }}
-        .close-memo-btn {{ border: none; background: transparent; color: #94a3b8; font-size: 1.25rem; cursor: pointer; line-height: 1; }}
-    </style>
-    <script>
-        const analysisData = {js_data_json};
-        const allCoinsMap = {coins_map_json};
+@app.get("/", response_class=HTMLResponse)
+async def get_dashboard():
+    """메인 대시보드 페이지 반환"""
+    if os.path.exists(HTML_OUTPUT):
+        with open(HTML_OUTPUT, "r", encoding="utf-8") as f:
+            return f.read()
+    return "<h3>대시보드가 아직 생성되지 않았습니다. 잠시 후 다시 시도해 주세요.</h3>"
 
-        function openModal(marketCode) {{
-            let coin = allCoinsMap[marketCode] || analysisData.find(d => d.market === marketCode || d.ticker === marketCode);
-            if (!coin) {{
-                alert("해당 종목의 정보를 찾을 수 없습니다.");
-                return;
-            }}
 
-            document.getElementById('modalCoinTitle').innerText = `${{coin.name}} (${{coin.ticker}}) - 양방향 상세 비교`;
+@app.get("/detail", response_class=HTMLResponse)
+async def get_1st_site_detail_view(request: Request, symbol: str = "KRW-BTC"):
+    """
+    모달 내 iframe 전용 종목 상세 분석 라우터
+    실제 분석 함수를 즉시 실행하여 실시간 데이터를 랜더링합니다.
+    """
+    symbol_upper = symbol.upper()
+    market = symbol_upper if symbol_upper.startswith("KRW-") else f"KRW-{symbol_upper}"
+    ticker = market.replace("KRW-", "")
 
-            // 1번 및 2번 사이트 iframe 불러오기
-            const leftUrl = `https://upbit-r.onrender.com/detail?symbol=${{marketCode}}`;
-            const rightUrl = `https://upbit-a.onrender.com/detail?symbol=${{marketCode}}`;
-
-            document.getElementById('leftSummaryContent').innerHTML = `<iframe src="${{leftUrl}}" style="width:100%; height:380px; border:none;"></iframe>`;
-            document.getElementById('rightSummaryContent').innerHTML = `<iframe src="${{rightUrl}}" style="width:100%; height:380px; border:none;"></iframe>`;
-
-            document.getElementById('coinDetailModal').style.display = 'flex';
-        }}
-
-        function closeModal() {{
-            document.getElementById('coinDetailModal').style.display = 'none';
-        }}
-
-        function filterTable() {{
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let tr = document.getElementById('coinTable').getElementsByTagName('tr');
-            for (let i = 1; i < tr.length; i++) {{
-                let td = tr[i].getElementsByTagName('td')[1];
-                tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().indexOf(input) > -1) ? "" : "none";
-            }}
-        }}
-    </script>
-</head>
-<body>
-    <div class="header-container">
-        <div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
-        <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
-        <div class="header-right">마지막 업데이트: <b>{current_time_str}</b></div>
-    </div>
-    <div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
-    <table id="coinTable">
-        <thead>
-            <tr>
-                <th>순위</th><th>한글코인명</th><th>현재가격 (KRW)</th><th>전일대비등락율</th>
-                <th>패턴유사율</th><th>세력매집강도</th><th>유동성지수</th><th>최근 3시간 TOP10</th>
-                <th>매수우세</th><th>1주일 5% 변동</th><th>예측점수</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
-
-    for item in analysis_results:
-        change_class = "plus" if item['change_rate'] > 0 else ("minus" if item['change_rate'] < 0 else "")
-        change_sign = "+" if item['change_rate'] > 0 else ""
-        market_code = item.get('market') or f"KRW-{item.get('ticker')}"
-        html_content += f"""
-            <tr onclick="openModal('{market_code}')">
-                <td><b>{item['rank']}</b></td>
-                <td><b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span></td>
-                <td>{item['current_price']:,}</td>
-                <td class="{change_class}">{change_sign}{item['change_rate']}%</td>
-                <td>{item['pattern_similarity']}%</td>
-                <td class="accumulation">{item['accumulation_score']}점</td>
-                <td class="liquidity">{item['liquidity_index']}점</td>
-                <td>{item['recent_top10_count']}회</td>
-                <td>{item['positive_count']}회</td>
-                <td><span class="plus">▲{item['up_5pct_count']}회</span> / <span class="minus">▼{item['down_5pct_count']}회</span></td>
-                <td><b>{item['score']}점</b></td>
-            </tr>
-"""
-
-    html_content += """
-        </tbody>
-    </table>
-    
-    <!-- 요약 정보 모달 구조 -->
-    <div id="coinDetailModal" class="modal-overlay" onclick="closeModal()">
-        <div class="modal-memo" onclick="event.stopPropagation();">
-            <div class="modal-header-memo">
-                <h3 id="modalCoinTitle" style="margin:0; font-size:18px;">종목 상세 정보 요약</h3>
-                <button type="button" class="close-memo-btn" onclick="closeModal()">✕</button>
-            </div>
-            <div class="modal-summary-container">
-                <div class="summary-card">
-                    <h4>📊 1번 사이트 지표 요약</h4>
-                    <div id="leftSummaryContent">로딩 중...</div>
-                </div>
-                <div class="summary-card right">
-                    <h4>🤖 2번 AI 사이트 연결</h4>
-                    <div id="rightSummaryContent">로딩 중...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-"""
-    with open(html_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f"🎨 [대시보드] HTML 생성 완료 (`{html_path}`)!")
-def main():
-    os.makedirs(DATA_DIR, exist_ok=True)
-    os.makedirs(DOCS_DIR, exist_ok=True)
-
-    history_db = load_json(HISTORY_FILE, {}) 
+    history_db = load_json(HISTORY_FILE, {})
     weights = load_json(WEIGHTS_FILE, {
         "w_pattern": 0.25, "w_buy_sell": 0.25, "w_recent_rank": 0.15,
         "w_ai_volatility": 0.15, "w_accumulation": 0.20
     })
-
     pattern_data = load_json(PATTERN_FILE, {})
     ideal_pattern = np.array(pattern_data["golden_pattern"]) if "golden_pattern" in pattern_data else np.linspace(0.2, 1.0, 24)
 
-    krw_markets, market_names = fetch_krw_markets()
-    current_time_str = datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S')
-    analysis_results = []
+    # 해당 코인 단일 실시간 분석 실행
+    analyzed_data = analyze_single_coin(market, ticker, ideal_pattern, history_db, weights)
 
-    print(f"[{current_time_str}] 멀티스레딩 데이터 수집 및 분석 시작 (총 {len(krw_markets)}개 종목)...")
+    if analyzed_data:
+        coin_info = {
+            "symbol": ticker,
+            "price": f"{analyzed_data['current_price']:,}",
+            "score": analyzed_data['score'],
+            "pattern_match": f"{analyzed_data['pattern_similarity']}%",
+            "volume_power": f"{analyzed_data['accumulation_score']} 점"
+        }
+    else:
+        coin_info = {
+            "symbol": ticker,
+            "price": "N/A",
+            "score": 0.0,
+            "pattern_match": "0.0%",
+            "volume_power": "0 점"
+        }
 
-    # 병렬 스레드 풀 사용 (최대 10개 스레드로 동시 요청하여 시간 단축)
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = {executor.submit(analyze_single_coin, market, market_names.get(market, market), ideal_pattern, history_db, weights): market for market in krw_markets}
-        
-        for future in as_completed(futures):
-            result = future.result()
-            if result:
-                analysis_results.append(result)
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {{ background-color: #ffffff; padding: 15px; font-family: sans-serif; }}
+            .card {{ border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
+            .metric-row {{ display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }}
+        </style>
+    </head>
+    <body>
+        <div class="card p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold m-0 text-primary">📊 1번 사이트 지표 요약</h6>
+                <span class="badge bg-primary">{coin_info['symbol']}</span>
+            </div>
+            <hr class="my-2">
+            
+            <div class="metric-row">
+                <span class="text-secondary">현재 가격</span>
+                <span class="fw-bold">{coin_info['price']} 원</span>
+            </div>
+            <div class="metric-row">
+                <span class="text-secondary">예측 점수</span>
+                <span class="fw-bold text-primary">{coin_info['score']} 점</span>
+            </div>
+            <div class="metric-row">
+                <span class="text-secondary">패턴 유사율</span>
+                <span class="fw-bold">{coin_info['pattern_match']}</span>
+            </div>
+            <div class="metric-row">
+                <span class="text-secondary">세력 매집 강도</span>
+                <span class="fw-bold text-success">{coin_info['volume_power']}</span>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
-    analysis_results.sort(key=lambda x: x['score'], reverse=True)
 
-    for idx, item in enumerate(analysis_results):
-        rank = idx + 1
-        item['rank'] = rank
-        m_code = item['market']
-        if m_code not in history_db:
-            history_db[m_code] = []
-        history_db[m_code].append({
-            "timestamp": time.time(),
-            "score": item['score'],
-            "rank": rank,
-            "price": item['current_price']
-        })
-        history_db[m_code] = [h for h in history_db[m_code] if h['timestamp'] >= time.time() - 86400]
-
-    save_json(HISTORY_FILE, history_db)
-    save_json(WEIGHTS_FILE, weights)
-
-    generate_upbit_r_dashboard(analysis_results, current_time_str, HTML_OUTPUT)
-    print("대시보드 HTML 생성 및 업데이트 완료.")
-
+# ==============================================================================
+# [실행 진입점]
+# ==============================================================================
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
