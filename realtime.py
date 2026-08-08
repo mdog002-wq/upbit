@@ -507,7 +507,7 @@ def main():
         change_sign = "+" if item['change_rate'] > 0 else ""
 
         html_content += f"""
-            <tr onclick="openModal('{item['market']}')">
+            <tr onclick="openModal('{item["market"]}')">
                 <td data-val="{item['rank']}"><b>{item['rank']}</b></td>
                 <td data-val="{item['name']}">
                     <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
