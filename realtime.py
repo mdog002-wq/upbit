@@ -9,7 +9,6 @@ import requests
 from bs4 import BeautifulSoup
 
 
-
 # 경로 및 상수 설정
 DATA_DIR = "data"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
@@ -32,21 +31,18 @@ def fetch_ai_recommendations():
             raw_tickers = []
             
             if isinstance(data, dict):
-                # 1. JSON 구조가 { "BLEND": {...}, "MOCA": {...} } 형태인 경우 (최상위 Key 추출)
-                # "recommended_tickers" 등의 특정 키가 존재하지 않으면 Dict의 모든 Key를 추출
                 if "recommended_tickers" in data:
                     raw_tickers = data.get("recommended_tickers", [])
                 elif "recommended_coins" in data:
                     raw_tickers = data.get("recommended_coins", [])
                 else:
-                    raw_tickers = list(data.keys())  # "BLEND", "MOCA", "W", "STX" 등 최상위 키 모두 가져옴
+                    raw_tickers = list(data.keys())
                     
             elif isinstance(data, list):
                 raw_tickers = data
 
             print(f"🤖 [AI 추천 연동] 원본 수집 심볼 목록: {raw_tickers}")
 
-            # 티커 정제 (KRW-W, W, krw-w 모두 파싱 가능하도록 저장)
             for t in raw_tickers:
                 if not t or not isinstance(t, str):
                     continue
@@ -63,7 +59,6 @@ def fetch_ai_recommendations():
         print(f"⚠️ [AI 추천 연동] JSON 불러오기 실패: {e}")
 
     return set()
-
 
 
 def fetch_krw_markets():
@@ -265,10 +260,51 @@ def generate_upbit_r_dashboard(
 <meta charset="UTF-8">
 <title>업비트 실시간 급등주 포착 대시보드</title>
 <style>
-body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }}
-.header-container {{ display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }}
-.header-left {{ text-align: left; }} .header-center {{ text-align: center; }} .header-right {{ text-align: right; font-size: 13px; color: #495057; font-weight: 500; }}
-.ai-btn {{ background-color: #007bff; color: white; padding: 10px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; transition: background 0.2s; }}
+html, body {{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* 전체 화면 스크롤을 막고 내부 스크롤박스만 작동 */
+    background-color: #f8f9fa;
+    color: #333333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}}
+
+.app-wrapper {{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}}
+
+.header-container {{ 
+    display: grid; 
+    grid-template-columns: 1fr auto 1fr; 
+    align-items: center; 
+    background: #ffffff; 
+    padding: 15px 25px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+    margin-bottom: 15px; 
+    flex-shrink: 0;
+}}
+
+.header-left {{ text-align: left; }} 
+.header-center {{ text-align: center; }} 
+.header-right {{ text-align: right; font-size: 13px; color: #495057; font-weight: 500; }}
+
+.ai-btn {{ 
+    background-color: #007bff; 
+    color: white; 
+    padding: 10px 18px; 
+    border-radius: 5px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    font-size: 14px; 
+    display: inline-block; 
+    transition: background 0.2s; 
+}}
 .ai-btn:hover {{ background-color: #0056b3; }}
 
 /* --------- AI 추천 배지 CSS --------- */
@@ -284,11 +320,52 @@ body {{ background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Taho
     vertical-align: middle;
 }}
 
-.search-box {{ margin-bottom: 20px; }}
-.search-box input {{ width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }}
-table {{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }}
+.search-box {{ 
+    margin-bottom: 15px; 
+    flex-shrink: 0;
+}}
+.search-box input {{ 
+    width: 100%; 
+    padding: 12px 15px; 
+    font-size: 16px; 
+    border: 1px solid #ced4da; 
+    border-radius: 6px; 
+    box-sizing: border-box; 
+    outline: none; 
+    background: #ffffff; 
+}}
+
+/* --------- 코인 목록 영역 전용 독립 스크롤 영역 --------- */
+.table-container {{
+    flex: 1;
+    overflow-y: auto; /* 아래 코인 목록 부분만 개별 스크롤 */
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+}}
+
+table {{ 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0; 
+}}
+
 th, td {{ padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }}
-th {{ background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; }}
+
+/* 메뉴바 상단 고정 */
+th {{ 
+    position: sticky;
+    top: 0;
+    background-color: #f1f3f5;
+    color: #495057; 
+    font-weight: 600; 
+    cursor: pointer; 
+    user-select: none; 
+    z-index: 10;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}}
+
 th:hover {{ background-color: #e9ecef; }}
 tbody tr {{ transition: background-color 0.15s; }}
 tbody tr:hover {{ background-color: #e9ecef !important; }}
@@ -310,21 +387,28 @@ tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().inde
 </script>
 </head>
 <body>
-<div class="header-container">
-<div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
-<div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
-<div class="header-right">마지막 업데이트: <b>{current_time_str}</b></div>
-</div>
-<div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
-<table id="coinTable">
-<thead>
-<tr>
-<th>순위</th><th>한글코인명</th><th>현재가격 (KRW)</th><th>전일대비등락율</th>
-<th>패턴유사율</th><th>세력매집강도</th><th>유동성지수</th><th>최근 3시간 TOP10</th>
-<th>매수우세</th><th>1주일 5% 변동</th><th>예측점수</th>
-</tr>
-</thead>
-<tbody>
+<div class="app-wrapper">
+    <!-- 1. 고정 헤더 영역 -->
+    <div class="header-container">
+        <div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
+        <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 업비트 실시간 급등주 포착 대시보드</h2></div>
+        <div class="header-right">마지막 업데이트: <b>{current_time_str}</b></div>
+    </div>
+    
+    <!-- 2. 고정 검색창 영역 -->
+    <div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
+
+    <!-- 3. 분리되어 독립적으로 스크롤되는 코인 목록 테이블 영역 -->
+    <div class="table-container">
+        <table id="coinTable">
+        <thead>
+        <tr>
+        <th>순위</th><th>한글코인명</th><th>현재가격 (KRW)</th><th>전일대비등락율</th>
+        <th>패턴유사율</th><th>세력매집강도</th><th>유동성지수</th><th>최근 3시간 TOP10</th>
+        <th>매수우세</th><th>1주일 5% 변동</th><th>예측점수</th>
+        </tr>
+        </thead>
+        <tbody>
 """
 
     for item in analysis_results:
@@ -335,7 +419,6 @@ tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().inde
         )
         change_sign = "+" if item["change_rate"] > 0 else ""
 
-        # AI 추천 여부에 따른 배지 출력 처리
         ai_badge_html = (
             '<span class="ai-badge">AI추천</span>'
             if item.get("is_ai_recommended")
@@ -359,8 +442,10 @@ tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().inde
 """
 
     html_content += """
-</tbody>
-</table>
+        </tbody>
+        </table>
+    </div>
+</div>
 </body>
 </html>
 """
@@ -373,7 +458,6 @@ def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(DOCS_DIR, exist_ok=True)
 
-    # 1. upbit-a의 JSON URL에서 AI 추천 종목 가져오기
     ai_recommend_set = fetch_ai_recommendations()
 
     history_db = load_json(HISTORY_FILE, {})
@@ -419,7 +503,6 @@ def main():
         for future in as_completed(futures):
             result = future.result()
             if result:
-                # 2. 결과 개체에 AI 추천 여부(is_ai_recommended) 매핑
                 ticker = result["ticker"]
                 market = result["market"]
 
