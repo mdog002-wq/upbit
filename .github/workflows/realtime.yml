@@ -1,4 +1,4 @@
-Name: Upbit Realtime Analyzer
+name: Upbit Realtime Analyzer
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 전체 히스토리를 불러와 Git 동기화 오류 방지
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,12 +34,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # 1. 원격 최신 커밋 가져오기 (커밋되지 않은 로컬 변경사항 유지)
           git fetch origin ${{ github.ref_name }}
           git reset --soft origin/${{ github.ref_name }}
-          
-          # 2. 변경된 파일 스테이징 및 커밋
           git add docs/index.html data/
           if git commit -m "Auto: Update realtime dashboard & evolution data [skip ci]"; then
             git push origin ${{ github.ref_name }}
