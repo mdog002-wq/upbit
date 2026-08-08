@@ -249,7 +249,7 @@ def main():
             </tr>
         """
 
-    # 3. 전체 HTML 템플릿 작성 (일반 문자열 사용으로 f-string 문법 에러 원천 차단)
+    # 3. 전체 HTML 템플릿 작성
     html_template = """<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -524,6 +524,7 @@ def main():
         </tbody>
     </table>
 
+    <!-- 모달 창 -->
     <div id="coinDetailModal" class="modal-overlay" onclick="closeModal()">
       <div class="modal-box" onclick="event.stopPropagation();" style="width: 820px; max-width: 95vw; height: 500px; padding: 20px; display: flex; flex-direction: column;">
         
@@ -533,13 +534,29 @@ def main():
         </div>
 
         <div style="display: flex; gap: 15px; flex: 1; min-height: 0;">
+          <!-- 좌측: R 사이트 AI실시간 상세 정보 -->
           <div style="flex: 1; background: #f8f9fa; border-radius: 8px; padding: 15px; overflow-y: auto;">
             <h5 style="margin-top:0; margin-bottom: 12px; font-size: 14px; color: #007bff; font-weight: bold;">⚡ AI실시간 </h5>
             <div id="rModalContentR"></div>
           </div>
 
-          <div style="flex: 1; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
-            <iframe id="modalIframeA" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+          <!-- 우측: 상단(iframe A) / 하단(A추천종목 R순위 정렬 리스트) -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <!-- 우측 상단: A 사이트 iframe -->
+            <div style="flex: 1; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden; min-height: 180px;">
+              <iframe id="modalIframeA" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+
+            <!-- 우측 하단: A 사이트 추천 종목 (R 사이트 순위순 정렬) -->
+            <div style="height: 190px; border: 1px solid #dee2e6; border-radius: 8px; padding: 10px; background: #ffffff; overflow-y: auto;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 13px; font-weight: bold; color: #212529;">🎯 AI 추천 종목</span>
+                <span style="font-size: 11px; color: #6c757d;">R 사이트 순위순 정렬</span>
+              </div>
+              <div id="modalRecommendList" style="font-size: 12px;">
+                <div style="text-align: center; color: #6c757d; padding: 15px 0;">순위 데이터 연동 중...</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -547,6 +564,81 @@ def main():
     </div>
 
     <script>
+    // A 사이트의 추천 종목 데이터를 가져오는 함수
+    async function fetchARecommendations() {
+      try {
+        const response = await fetch('https://upbit-a.onrender.com/api/rankings'); // A 사이트 추천 API/JSON
+        if (!response.ok) throw new Error("A 사이트 연동 실패");
+        return await response.json();
+      } catch (e) {
+        console.warn("A 사이트 연동 실패, 기본 데이터로 대체합니다.", e);
+        return [];
+      }
+    }
+
+    // A 사이트 추천 종목 중 모니터에 포함된 코인들의 R 사이트 순위 정렬 표출
+    async function renderRecommendedListSortedByR() {
+      const container = document.getElementById('modalRecommendList');
+      const aItems = await fetchARecommendations();
+
+      if (!aItems || aItems.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 10px;">추천 종목을 불러올 수 없습니다.</div>';
+        return;
+      }
+
+      // A 사이트 추천 종목 코인들에 R 사이트 현재 순위 매핑
+      const mappedList = aItems.map(aCoin => {
+        const marketKey = aCoin.market || (aCoin.symbol ? `KRW-${aCoin.symbol}` : '');
+        const tickerKey = aCoin.ticker || aCoin.symbol;
+
+        // R 사이트(analysisData)에서 동일 코인 검색
+        const rMatch = analysisData.find(r => 
+          r.market === marketKey || 
+          r.ticker === tickerKey ||
+          r.market === `KRW-${tickerKey}`
+        );
+
+        return {
+          name: aCoin.name || (rMatch ? rMatch.name : tickerKey),
+          ticker: tickerKey,
+          market: marketKey,
+          score: rMatch ? rMatch.score : (aCoin.score || 0),
+          // R 사이트 순위 (없을 시 9999)
+          r_rank: rMatch && rMatch.rank ? parseInt(rMatch.rank, 10) : 9999
+        };
+      });
+
+      // R 사이트 순위(r_rank) 오름차순 정렬 (1위 -> 2위...)
+      mappedList.sort((a, b) => a.r_rank - b.r_rank);
+
+      // HTML 랜더링
+      let html = '<table style="width: 100%; border-collapse: collapse; text-align: center;">';
+      html += '<thead style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">' +
+              '<tr><th style="padding: 4px;">R순위</th><th style="padding: 4px; text-align: left;">종목명</th><th style="padding: 4px; text-align: right;">R점수</th></tr>' +
+              '</thead><tbody>';
+
+      mappedList.forEach(coin => {
+        const rankDisplay = coin.r_rank !== 9999 
+          ? `<b style="color: #007bff;">${coin.r_rank}위</b>` 
+          : `<span style="color: #adb5bd;">-</span>`;
+
+        html += `
+          <tr onclick="openModal('${coin.market}')" style="cursor: pointer; border-bottom: 1px solid #f1f3f5;">
+            <td style="padding: 5px;">${rankDisplay}</td>
+            <td style="padding: 5px; text-align: left;">
+              <b>${coin.name}</b> <span style="font-size: 10px; color: #868e96;">(${coin.ticker})</span>
+            </td>
+            <td style="padding: 5px; text-align: right; font-weight: bold; color: #2b8a3e;">
+              ${coin.score}점
+            </td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
     function openModal(symbol) {
       const targetMarket = symbol.toUpperCase().startsWith('KRW-') ? symbol.toUpperCase() : `KRW-${symbol.toUpperCase()}`;
       const item = analysisData.find(d => d.market === targetMarket || d.ticker === symbol.toUpperCase());
@@ -571,6 +663,9 @@ def main():
         
         iframeA.src = `https://upbit-a.onrender.com/?symbol=${item.market}`;
       }
+
+      // 모달이 열릴 때 A사이트 추천 코인의 R사이트 순위 정렬 리스트 랜더링
+      renderRecommendedListSortedByR();
 
       document.getElementById('coinDetailModal').style.display = 'flex';
     }
