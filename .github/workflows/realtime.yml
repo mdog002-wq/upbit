@@ -3,7 +3,7 @@ name: Upbit Realtime Analyzer
 on:
   workflow_dispatch:
   repository_dispatch:
-    types: [run_backend]  # 👈 upbit-a에서 보내는 event_type과 동일하게 수정
+    types: [backend_complete]  # 👈 upbit-a에서 보내는 event_type과 동일하게 수정
 
 permissions:
   contents: write
