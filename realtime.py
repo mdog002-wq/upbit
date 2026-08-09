@@ -76,15 +76,16 @@ class UpbitWebSocketManager:
 # 2. DTW 유사도 산출 (3순위 - 1차원 예외 방지)
 # ==========================================
 def calculate_dtw_similarity(seq1, seq2):
-    """DTW(Dynamic Time Warping) 기반 패턴 유사도 산출 (Exponential 정규화 적용)"""
+    """DTW(Dynamic Time Warping) 기반 패턴 유사도 산출 (dist 함수 예외 및 1D 차원 완전 해결)"""
     try:
-        s1 = np.squeeze(np.asarray(seq1, dtype=np.float64)).flatten()
-        s2 = np.squeeze(np.asarray(seq2, dtype=np.float64)).flatten()
+        # 1. 넘파이 배열 변환 및 평탄화 (1D 스칼라 배열 확보)
+        s1 = np.asarray(seq1, dtype=np.float64).reshape(-1)
+        s2 = np.asarray(seq2, dtype=np.float64).reshape(-1)
 
         if s1.size == 0 or s2.size == 0:
             return 0.0
 
-        # 두 시열의 데이터 길이가 다를 경우 작은 길이에 맞춰 자름
+        # 2. 두 시열의 데이터 길이를 최소 길이에 맞춤
         min_len = min(len(s1), len(s2))
         if min_len == 0:
             return 0.0
@@ -92,14 +93,14 @@ def calculate_dtw_similarity(seq1, seq2):
         s1 = s1[-min_len:]
         s2 = s2[-min_len:]
 
-        # DTW 거리 계산
-        distance, _ = fastdtw(s1, s2, dist=euclidean)
+        # 3. scipy의 euclidean 대신 단일 스칼라 차이(abs) 거리 함수 사용 (핵심 수정 부분)
+        # scipy.spatial.distance.euclidean 사용 시 'Input vector should be 1-D' 발생 원인 방지
+        distance, _ = fastdtw(s1, s2, dist=lambda x, y: abs(x - y))
         
-        # 포인트당 평균 거리 산출
+        # 4. 포인트당 평균 거리 계산
         avg_dist = distance / min_len
 
-        # 지수 감쇄 모델(Exponential Decay)을 적용해 0~100% 스케일링
-        # avg_dist가 0이면 100%, 커질수록 자연스럽게 감소
+        # 5. 지수 감쇄(Exponential Decay) 모델로 0~100% 유사도 변환
         similarity = np.exp(-1.5 * avg_dist) * 100.0
         
         return round(float(similarity), 1)
