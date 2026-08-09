@@ -374,7 +374,7 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
 
     if is_ai_recommended:
         if rsi < 68.0 and vol_surge_score >= 10.0:
-            final_score *= 1.015
+            final_score *= 1.01
         elif liquidity_index < 10.0 or combined_pattern_sim < 30.0:
             final_score *= 0.95
 
