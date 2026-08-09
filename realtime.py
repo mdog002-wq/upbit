@@ -30,31 +30,21 @@ def fetch_ai_recommendations():
     refined_set = set()
 
     def parse_item(item):
-        """문자열, 딕셔너리, 리스트 등 모든 형태에서 티커(RED, ELF, SPK 등) 추출"""
         if isinstance(item, str):
-            # "레드스톤 (RED)" -> "RED" 추출 / "KRW-RED" -> "RED" 추출
             match = re.search(r"\(([A-Z0-9]+)\)", item.upper())
-            if match:
-                ticker = match.group(1)
-            else:
-                ticker = item.strip().upper().replace("KRW-", "")
-
+            ticker = match.group(1) if match else item.strip().upper().replace("KRW-", "")
             if ticker and len(ticker) <= 10:
                 refined_set.add(ticker)
                 refined_set.add(f"KRW-{ticker}")
 
         elif isinstance(item, dict):
-            # 딕셔너리 내부 모든 필드 확인
+            # Dict의 Key 자체가 심볼(예: "BTC", "ETH")인 경우도 파싱 대상에 추가
             for k, v in item.items():
-                if k in [
-                    "ticker",
-                    "symbol",
-                    "market",
-                    "code",
-                    "korean_name",
-                    "name",
-                    "coin_name",
-                ]:
+                if k.isupper() and len(k) <= 10:
+                    refined_set.add(k)
+                    refined_set.add(f"KRW-{k}")
+                
+                if k in ["ticker", "symbol", "market", "code", "korean_name", "name", "coin_name"]:
                     parse_item(v)
                 elif isinstance(v, (dict, list)):
                     parse_item(v)
@@ -680,14 +670,14 @@ function sortTable(columnIndex) {
     rows.forEach(row => tbody.appendChild(row));
 }
 
-function openChartModal(ticker, name) {
+unction openChartModal(ticker, name) {
     document.getElementById('modalTitle').innerText = name + ' (' + ticker + ') 실시간 차트';
     document.getElementById('chartModal').style.display = 'flex';
     document.getElementById('tvChartContainer').innerHTML = '';
     
     new TradingView.widget({
         "autosize": true,
-        "symbol": "UPBIT:" + ticker + "KRW",
+        "symbol": "UPBIT:" + ticker, // 👈 "UPBIT:" + ticker + "KRW" 에서 수정됨
         "interval": "5",
         "timezone": "Asia/Seoul",
         "theme": "dark",
