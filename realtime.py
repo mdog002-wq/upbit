@@ -79,7 +79,6 @@ def fetch_ticker_data(markets):
         if res.status_code == 200:
             data = res.json()
             for item in data:
-                # signed_change_rate (예: 0.0395)를 % 단위로 변환 (+3.95%)
                 ticker_dict[item["market"]] = item["signed_change_rate"] * 100
     except Exception as e:
         print(f"⚠️ [Ticker 연동 실패] 전일대비 데이터 수집 오류: {e}")
@@ -221,7 +220,6 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
     df_6h = df.iloc[-24:].copy().reset_index(drop=True)
     current_price = df_6h.iloc[-1]["trade_price"]
 
-    # 업비트 API 공식 전일대비 등락률 매핑
     change_rate = daily_change_rate
 
     positive_count = sum(
@@ -272,6 +270,7 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
 
     accumulation_score = min(100.0, accumulation_score)
 
+    # 최근 7일 간 15분 캔들 내 5% 이상 상승/하락 변동 카운트
     up_5pct_count = sum(
         1 for _, row in df.iterrows()
         if ((row["high_price"] - row["low_price"]) / (row["low_price"] + 1e-8)) * 100 >= 5.0
@@ -315,9 +314,6 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
 
     final_score = max(0.0, (base_score - overheat_penalty) * btc_multiplier)
 
-    tp_price = round(current_price * 1.05, 2)
-    sl_price = round(current_price * 0.98, 2)
-
     return {
         "market": market,
         "ticker": ticker,
@@ -334,8 +330,6 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
         "up_5pct_count": up_5pct_count,
         "down_5pct_count": down_5pct_count,
         "liquidity_index": liquidity_index,
-        "target_tp": tp_price,
-        "target_sl": sl_price,
     }
 
 
@@ -380,7 +374,7 @@ def generate_upbit_r_dashboard(
 <td class="accumulation">{item['accumulation_score']}점</td>
 <td class="liquidity">{item['liquidity_index']}점</td>
 <td><b>{item['score']}점</b></td>
-<td class="trade-guide"><span class="plus">익절 (+5%) {item['target_tp']:,}</span><br><span class="minus">손절 (-2%) {item['target_sl']:,}</span></td>
+<td><span class="plus">▲ {item['up_5pct_count']}회</span> / <span class="minus">▼ {item['down_5pct_count']}회</span></td>
 </tr>"""
         rows_list.append(row)
 
@@ -460,7 +454,6 @@ tbody tr:hover { background-color: #e9ecef !important; }
 .ticker-symbol { font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }
 .accumulation { color: #d9480f; font-weight: bold; }
 .liquidity { color: #2b8a3e; font-weight: bold; }
-.trade-guide { font-size: 12px; }
 
 .modal-overlay {
     display: none;
@@ -594,7 +587,7 @@ window.onkeydown = function(event) {
 <th onclick="sortTable(6)">세력매집</th>
 <th onclick="sortTable(7)">유동성</th>
 <th onclick="sortTable(8)">최종예측점수</th>
-<th>스캘핑 타겟 (+5% / -2%)</th>
+<th onclick="sortTable(9)">5% 변동 (상승/하락)</th>
 </tr>
 </thead>
 <tbody>
@@ -686,7 +679,7 @@ def main():
                 history_db,
                 weights,
                 btc_multiplier,
-                ticker_data.get(market, 0.0) # 수집된 등락률 파라미터 전달
+                ticker_data.get(market, 0.0)
             ): market
             for market in krw_markets
         }
