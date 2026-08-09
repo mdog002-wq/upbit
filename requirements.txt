@@ -7,3 +7,6 @@ openpyxl
 redis
 paramiko
 beautifulsoup4
+websockets>=11.0
+fastdtw
+scipy
