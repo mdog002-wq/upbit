@@ -676,18 +676,18 @@ function openChartModal(ticker, name) {
     document.getElementById('tvChartContainer').innerHTML = '';
     
     new TradingView.widget({
-        "autosize": true,
-        "symbol": "UPBIT:" + ticker, // 👈 "UPBIT:" + ticker + "KRW" 에서 수정됨
-        "interval": "5",
-        "timezone": "Asia/Seoul",
-        "theme": "dark",
-        "style": "1",
-        "locale": "kr",
-        "toolbar_bg": "#f1f3f5",
-        "enable_publishing": false,
-        "allow_symbol_change": true,
-        "container_id": "tvChartContainer"
-    });
+    "autosize": true,
+    "symbol": "UPBIT:" + ticker + "KRW", // ✅ UPBIT:CVCKRW 형식으로 수정
+    "interval": "5",
+    "timezone": "Asia/Seoul",
+    "theme": "dark",
+    "style": "1",
+    "locale": "kr",
+    "toolbar_bg": "#f1f3f5",
+    "enable_publishing": false,
+    "allow_symbol_change": true,
+    "container_id": "tvChartContainer"
+});
 }
 
 function closeChartModal() {
