@@ -76,6 +76,7 @@ class UpbitWebSocketManager:
 # 2. DTW 유사도 산출 (3순위 - 1차원 예외 방지)
 # ==========================================
 def calculate_dtw_similarity(seq1, seq2):
+    """DTW(Dynamic Time Warping) 기반 패턴 유사도 산출 (Exponential 정규화 적용)"""
     try:
         s1 = np.squeeze(np.asarray(seq1, dtype=np.float64)).flatten()
         s2 = np.squeeze(np.asarray(seq2, dtype=np.float64)).flatten()
@@ -83,39 +84,70 @@ def calculate_dtw_similarity(seq1, seq2):
         if s1.size == 0 or s2.size == 0:
             return 0.0
 
-        distance, _ = fastdtw(s1, s2, dist=euclidean)
-        similarity = max(0.0, (1.0 - (distance / 5.0))) * 100
-        return round(float(similarity), 1)
-    except Exception:
-        return 0.0
+        # 두 시열의 데이터 길이가 다를 경우 작은 길이에 맞춰 자름
+        min_len = min(len(s1), len(s2))
+        if min_len == 0:
+            return 0.0
+        
+        s1 = s1[-min_len:]
+        s2 = s2[-min_len:]
 
+        # DTW 거리 계산
+        distance, _ = fastdtw(s1, s2, dist=euclidean)
+        
+        # 포인트당 평균 거리 산출
+        avg_dist = distance / min_len
+
+        # 지수 감쇄 모델(Exponential Decay)을 적용해 0~100% 스케일링
+        # avg_dist가 0이면 100%, 커질수록 자연스럽게 감소
+        similarity = np.exp(-1.5 * avg_dist) * 100.0
+        
+        return round(float(similarity), 1)
+    except Exception as e:
+        print(f"⚠️ DTW 계산 예외 발생: {e}")
+        return 0.0
 
 # ==========================================
 # 3. 데이터 수집 및 백테스팅 함수들
 # ==========================================
 def fetch_ai_recommendations():
+    """upbit-a 레포지토리의 AI 추천 파일 로드 및 티커 집합 생성"""
     url = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json"
     refined_set = set()
+    
     try:
         res = requests.get(url, timeout=5)
         if res.status_code == 200:
             data = res.json()
-            raw_tickers = []
-            if isinstance(data, dict):
-                raw_tickers = data.get("recommended_tickers", []) or data.get(
-                    "recommended_coins", []
-                )
-            elif isinstance(data, list):
-                raw_tickers = data
-
-            for t in raw_tickers:
-                if t and isinstance(t, str):
-                    t_str = t.strip().upper()
-                    refined_set.add(t_str)
-                    refined_set.add(f"KRW-{t_str.replace('KRW-', '')}")
+            raw_list = []
+            
+            # JSON 데이터 구조에 따른 예외 처리
+            if isinstance(data, list):
+                raw_list = data
+            elif isinstance(data, dict):
+                # 가능한 키값들 모두 검색
+                for key in ["recommended_tickers", "recommended_coins", "tickers", "data", "recommendations"]:
+                    if key in data and isinstance(data[key], list):
+                        raw_list = data[key]
+                        break
+            
+            for item in raw_list:
+                ticker_str = ""
+                if isinstance(item, str):
+                    ticker_str = item
+                elif isinstance(item, dict):
+                    ticker_str = item.get("market") or item.get("symbol") or item.get("ticker") or ""
+                
+                if ticker_str:
+                    clean_ticker = str(ticker_str).strip().upper().replace("KRW-", "")
+                    refined_set.add(clean_ticker) # 예: "BTC"
+                    refined_set.add(f"KRW-{clean_ticker}") # 예: "KRW-BTC"
+                    
+            print(f"🤖 [AI 추천 연동] 총 {len(refined_set)//2}개 종목 로드 완료: {refined_set}")
             return refined_set
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"⚠️ AI 추천 데이터 로드 실패: {e}")
+        
     return set()
 
 
@@ -278,18 +310,19 @@ def analyze_single_coin(
     prices = df_2h["trade_price"].values
     volumes = df_2h["candle_acc_trade_volume"].values
 
-    norm_prices = np.squeeze(
-        (prices - prices.min()) / (prices.max() - prices.min() + 1e-8)
-    ).flatten()
-    norm_volumes = np.squeeze(
-        (volumes - volumes.min()) / (volumes.max() - volumes.min() + 1e-8)
-    ).flatten()
+    # analyze_single_coin 함수 내부 정규화 수정
+    p_min, p_max = prices.min(), prices.max()
+    v_min, v_max = volumes.min(), volumes.max()
 
-    # DTW 유사도 산출 (가격 70% + 거래량 30%)
+    p_range = (p_max - p_min) if (p_max - p_min) > 1e-8 else 1.0
+    v_range = (v_max - v_min) if (v_max - v_min) > 1e-8 else 1.0
+
+    norm_prices = np.squeeze((prices - p_min) / p_range).flatten()
+    norm_volumes = np.squeeze((volumes - v_min) / v_range).flatten()
+
     price_sim = calculate_dtw_similarity(norm_prices, ideal_price_pattern)
     vol_sim = calculate_dtw_similarity(norm_volumes, ideal_vol_pattern)
     combined_pattern_sim = round(price_sim * 0.7 + vol_sim * 0.3, 1)
-
     positive_count = sum(
         1
         for _, row in df_2h.iterrows()
@@ -771,7 +804,7 @@ def main():
 
     analysis_results = []
 
-    # API 안정성을 위한 4 스레드 처리
+    # main() 함수 내 스레드 실행 부분의 매칭 로직
     with ThreadPoolExecutor(max_workers=4) as executor:
         futures = {
             executor.submit(
@@ -784,12 +817,9 @@ def main():
                 weights,
                 btc_multiplier,
                 ws_manager.ticker_data.get(market, {}),
-                (
-                    market in ai_recommend_set
-                    or market.replace("KRW-", "") in ai_recommend_set
-                ),
-            ): market
-            for market in krw_markets
+                # AI 추천 뱃지 조건식 강화
+                (market in ai_recommend_set or market.replace("KRW-", "") in ai_recommend_set)
+            ): market for market in krw_markets
         }
 
         for future in as_completed(futures):
