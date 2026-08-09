@@ -141,7 +141,7 @@ function sortTable(columnIndex) {
     rows.forEach(row => tbody.appendChild(row));
 }
 
-unction openChartModal(ticker, name) {
+function openChartModal(ticker, name) {
     document.getElementById('modalTitle').innerText = name + ' (' + ticker + ') 실시간 차트';
     document.getElementById('chartModal').style.display = 'flex';
     document.getElementById('tvChartContainer').innerHTML = '';
@@ -176,13 +176,13 @@ window.onkeydown = function(event) {
 <div class="header-container">
 <div class="header-left"><a href="https://upbit-a.onrender.com" target="_self" class="ai-btn">AI리포트이동</a></div>
 <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 실시간 DTW + 웹소켓 고도화 대시보드</h2></div>
-<div class="header-right">마지막 업데이트: <b>2026-08-09 20:11:42</b></div>
+<div class="header-right">마지막 업데이트: <b>2026-08-09 20:16:40</b></div>
 </div>
 
 <div class="status-card winrate-card">
 🎯 <b>실시간 백테스팅 승률 (익절 +5% / 손절 -2% 기준):</b> 
-<span class="winrate-val">1.6%</span> 
-<span style="font-size: 13px; color: #666; font-weight: normal;">(최근 포착 TOP10 종목 총 125건 검증 — 2승 123패)</span>
+<span class="winrate-val">1.7%</span> 
+<span style="font-size: 13px; color: #666; font-weight: normal;">(최근 포착 TOP10 종목 총 121건 검증 — 2승 119패)</span>
 </div>
 
 <div class="status-card">
@@ -212,117 +212,133 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>1</b></td>
 <td>
-    <a href="#" onclick="openChartModal('CVC', '시빅'); return false;" class="coin-link">
-        <b>시빅</b> <span class="ticker-symbol">(CVC)</span>
-    </a>
+    <a href="#" onclick="openChartModal('ME', '매직에덴'); return false;" class="coin-link">
+        <b>매직에덴</b> <span class="ticker-symbol">(ME)</span>
+    </a><span class="ai-badge">AI추천</span>
 </td>
-<td>27.3</td>
-<td class="plus">+4.6%</td>
-<td>61.1</td>
+<td>91.1</td>
+<td class="plus">+6.55%</td>
+<td><span class='overheat'>70.0 (과열)</span></td>
 <td><b>73.8%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">26.8점</td>
-<td><b>107.3점</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">33.3점</td>
+<td><b>114.57점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>2</b></td>
 <td>
-    <a href="#" onclick="openChartModal('IO', '아이오넷'); return false;" class="coin-link">
-        <b>아이오넷</b> <span class="ticker-symbol">(IO)</span>
+    <a href="#" onclick="openChartModal('CVC', '시빅'); return false;" class="coin-link">
+        <b>시빅</b> <span class="ticker-symbol">(CVC)</span>
     </a>
 </td>
-<td>179.0</td>
-<td class="plus">+5.92%</td>
-<td>44.4</td>
-<td><b>72.8%</b></td>
-<td class="accumulation">90점</td>
-<td class="liquidity">30.1점</td>
-<td><b>97.47점</b></td>
+<td>27.2</td>
+<td class="plus">+4.21%</td>
+<td>50.0</td>
+<td><b>72.6%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">26.8점</td>
+<td><b>105.27점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>3</b></td>
 <td>
-    <a href="#" onclick="openChartModal('KERNEL', '커널다오'); return false;" class="coin-link">
-        <b>커널다오</b> <span class="ticker-symbol">(KERNEL)</span>
+    <a href="#" onclick="openChartModal('MANTRA', '만트라'); return false;" class="coin-link">
+        <b>만트라</b> <span class="ticker-symbol">(MANTRA)</span>
     </a>
 </td>
-<td>51.0</td>
-<td class="plus">+7.59%</td>
-<td>60.7</td>
-<td><b>72.1%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">41.7점</td>
-<td><b>96.6점</b></td>
+<td>8.07</td>
+<td class="plus">+1.64%</td>
+<td>58.3</td>
+<td><b>75.6%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">22.2점</td>
+<td><b>93.17점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>4</b></td>
 <td>
-    <a href="#" onclick="openChartModal('BONK', '봉크'); return false;" class="coin-link">
-        <b>봉크</b> <span class="ticker-symbol">(BONK)</span>
+    <a href="#" onclick="openChartModal('KERNEL', '커널다오'); return false;" class="coin-link">
+        <b>커널다오</b> <span class="ticker-symbol">(KERNEL)</span>
     </a>
 </td>
-<td>0.00349</td>
-<td class="minus">-3.59%</td>
-<td>37.4</td>
-<td><b>75.3%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">36.3점</td>
-<td><b>95.83점</b></td>
+<td>51.3</td>
+<td class="plus">+8.23%</td>
+<td><span class='overheat'>74.1 (과열)</span></td>
+<td><b>71.9%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">41.7점</td>
+<td><b>91.46점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>5</b></td>
 <td>
-    <a href="#" onclick="openChartModal('ME', '매직에덴'); return false;" class="coin-link">
-        <b>매직에덴</b> <span class="ticker-symbol">(ME)</span>
-    </a><span class="ai-badge">AI추천</span>
+    <a href="#" onclick="openChartModal('IO', '아이오넷'); return false;" class="coin-link">
+        <b>아이오넷</b> <span class="ticker-symbol">(IO)</span>
+    </a>
 </td>
-<td>90.1</td>
-<td class="plus">+5.38%</td>
-<td>66.0</td>
-<td><b>79.1%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">30.3점</td>
-<td><b>91.62점</b></td>
+<td>180.0</td>
+<td class="plus">+6.51%</td>
+<td>44.4</td>
+<td><b>74.6%</b></td>
+<td class="accumulation">90점</td>
+<td class="liquidity">30.1점</td>
+<td><b>91.45점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>6</b></td>
 <td>
-    <a href="#" onclick="openChartModal('MANTRA', '만트라'); return false;" class="coin-link">
-        <b>만트라</b> <span class="ticker-symbol">(MANTRA)</span>
+    <a href="#" onclick="openChartModal('PUMP', '펌프펀'); return false;" class="coin-link">
+        <b>펌프펀</b> <span class="ticker-symbol">(PUMP)</span>
     </a>
 </td>
-<td>8.05</td>
-<td class="plus">+1.39%</td>
-<td>57.1</td>
-<td><b>75.2%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">22.1점</td>
-<td><b>90.96점</b></td>
+<td>3.6</td>
+<td class="plus">+6.51%</td>
+<td><span class='overheat'>77.8 (과열)</span></td>
+<td><b>73.1%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">38.6점</td>
+<td><b>88.2점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>7</b></td>
 <td>
-    <a href="#" onclick="openChartModal('PUMP', '펌프펀'); return false;" class="coin-link">
-        <b>펌프펀</b> <span class="ticker-symbol">(PUMP)</span>
-    </a>
+    <a href="#" onclick="openChartModal('VVV', '베니스토큰'); return false;" class="coin-link">
+        <b>베니스토큰</b> <span class="ticker-symbol">(VVV)</span>
+    </a><span class="ai-badge">AI추천</span>
 </td>
-<td>3.59</td>
-<td class="plus">+6.21%</td>
-<td><span class='overheat'>80.0 (과열)</span></td>
-<td><b>72.8%</b></td>
+<td>16,290.0</td>
+<td class="plus">+2.71%</td>
+<td><span class='overheat'>76.0 (과열)</span></td>
+<td><b>65.2%</b></td>
 <td class="accumulation">30점</td>
-<td class="liquidity">38.3점</td>
-<td><b>86.34점</b></td>
+<td class="liquidity">24.9점</td>
+<td><b>87.79점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>8</b></td>
+<td>
+    <a href="#" onclick="openChartModal('CFX', '콘플럭스'); return false;" class="coin-link">
+        <b>콘플럭스</b> <span class="ticker-symbol">(CFX)</span>
+    </a>
+</td>
+<td>58.9</td>
+<td class="minus">-0.34%</td>
+<td>30.8</td>
+<td><b>70.7%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">25.2점</td>
+<td><b>86.85점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>9</b></td>
 <td>
     <a href="#" onclick="openChartModal('VTHO', '비토르토큰'); return false;" class="coin-link">
         <b>비토르토큰</b> <span class="ticker-symbol">(VTHO)</span>
@@ -335,22 +351,6 @@ window.onkeydown = function(event) {
 <td class="accumulation">0점</td>
 <td class="liquidity">25.5점</td>
 <td><b>86.22점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>9</b></td>
-<td>
-    <a href="#" onclick="openChartModal('VVV', '베니스토큰'); return false;" class="coin-link">
-        <b>베니스토큰</b> <span class="ticker-symbol">(VVV)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>16,210.0</td>
-<td class="plus">+2.21%</td>
-<td><span class='overheat'>75.8 (과열)</span></td>
-<td><b>65.2%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">24.9점</td>
-<td><b>86.13점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -372,6 +372,22 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>11</b></td>
 <td>
+    <a href="#" onclick="openChartModal('LA', '라그랑주'); return false;" class="coin-link">
+        <b>라그랑주</b> <span class="ticker-symbol">(LA)</span>
+    </a>
+</td>
+<td>74.9</td>
+<td class="plus">+4.17%</td>
+<td><span class='overheat'>82.4 (과열)</span></td>
+<td><b>71.7%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">48.7점</td>
+<td><b>85.82점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>12</b></td>
+<td>
     <a href="#" onclick="openChartModal('AERO', '에어로드롬파이낸스'); return false;" class="coin-link">
         <b>에어로드롬파이낸스</b> <span class="ticker-symbol">(AERO)</span>
     </a>
@@ -386,39 +402,71 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>12</b></td>
-<td>
-    <a href="#" onclick="openChartModal('SHIB', '시바이누'); return false;" class="coin-link">
-        <b>시바이누</b> <span class="ticker-symbol">(SHIB)</span>
-    </a>
-</td>
-<td>0.00649</td>
-<td class="minus">-0.15%</td>
-<td>62.4</td>
-<td><b>66.9%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">39.1점</td>
-<td><b>85.72점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
 <td><b>13</b></td>
 <td>
-    <a href="#" onclick="openChartModal('CFX', '콘플럭스'); return false;" class="coin-link">
-        <b>콘플럭스</b> <span class="ticker-symbol">(CFX)</span>
+    <a href="#" onclick="openChartModal('MET2', '메테오라'); return false;" class="coin-link">
+        <b>메테오라</b> <span class="ticker-symbol">(MET2)</span>
     </a>
 </td>
-<td>58.9</td>
-<td class="minus">-0.34%</td>
-<td>28.6</td>
-<td><b>72.7%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">25.2점</td>
-<td><b>84.96점</b></td>
+<td>234.0</td>
+<td class="minus">-0.85%</td>
+<td>60.0</td>
+<td><b>73.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">30.7점</td>
+<td><b>83.43점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>14</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BSV', '비트코인에스브이'); return false;" class="coin-link">
+        <b>비트코인에스브이</b> <span class="ticker-symbol">(BSV)</span>
+    </a>
+</td>
+<td>20,600.0</td>
+<td class="plus">+1.78%</td>
+<td><span class='overheat'>72.1 (과열)</span></td>
+<td><b>74.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">29.8점</td>
+<td><b>83.38점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>15</b></td>
+<td>
+    <a href="#" onclick="openChartModal('SIGN', '사인'); return false;" class="coin-link">
+        <b>사인</b> <span class="ticker-symbol">(SIGN)</span>
+    </a>
+</td>
+<td>9.73</td>
+<td class="plus">+1.46%</td>
+<td>55.0</td>
+<td><b>75.9%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">26.8점</td>
+<td><b>82.75점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>16</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BONK', '봉크'); return false;" class="coin-link">
+        <b>봉크</b> <span class="ticker-symbol">(BONK)</span>
+    </a>
+</td>
+<td>0.00349</td>
+<td class="minus">-3.59%</td>
+<td>28.5</td>
+<td><b>68.9%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">36.3점</td>
+<td><b>82.25점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>17</b></td>
 <td>
     <a href="#" onclick="openChartModal('IQ', '아이큐'); return false;" class="coin-link">
         <b>아이큐</b> <span class="ticker-symbol">(IQ)</span>
@@ -434,87 +482,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>15</b></td>
-<td>
-    <a href="#" onclick="openChartModal('BSV', '비트코인에스브이'); return false;" class="coin-link">
-        <b>비트코인에스브이</b> <span class="ticker-symbol">(BSV)</span>
-    </a>
-</td>
-<td>20,580.0</td>
-<td class="plus">+1.68%</td>
-<td><span class='overheat'>71.2 (과열)</span></td>
-<td><b>73.5%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">29.7점</td>
-<td><b>81.89점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>16</b></td>
-<td>
-    <a href="#" onclick="openChartModal('MET2', '메테오라'); return false;" class="coin-link">
-        <b>메테오라</b> <span class="ticker-symbol">(MET2)</span>
-    </a>
-</td>
-<td>233.0</td>
-<td class="minus">-1.27%</td>
-<td>60.0</td>
-<td><b>73.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">30.7점</td>
-<td><b>81.59점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>17</b></td>
-<td>
-    <a href="#" onclick="openChartModal('AVAX', '아발란체'); return false;" class="coin-link">
-        <b>아발란체</b> <span class="ticker-symbol">(AVAX)</span>
-    </a>
-</td>
-<td>9,120.0</td>
-<td class="">0%</td>
-<td>50.0</td>
-<td><b>70.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">32.2점</td>
-<td><b>81.54점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
 <td><b>18</b></td>
 <td>
-    <a href="#" onclick="openChartModal('FLOCK', '플록'); return false;" class="coin-link">
-        <b>플록</b> <span class="ticker-symbol">(FLOCK)</span>
+    <a href="#" onclick="openChartModal('SHIB', '시바이누'); return false;" class="coin-link">
+        <b>시바이누</b> <span class="ticker-symbol">(SHIB)</span>
     </a>
 </td>
-<td>41.0</td>
-<td class="minus">-0.97%</td>
-<td>27.3</td>
-<td><b>66.2%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">32.3점</td>
-<td><b>81.4점</b></td>
+<td>0.00648</td>
+<td class="minus">-0.31%</td>
+<td>55.5</td>
+<td><b>67.7%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">39.0점</td>
+<td><b>81.32점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>19</b></td>
 <td>
-    <a href="#" onclick="openChartModal('DOOD', '두들즈'); return false;" class="coin-link">
-        <b>두들즈</b> <span class="ticker-symbol">(DOOD)</span>
+    <a href="#" onclick="openChartModal('HYPER', '하이퍼레인'); return false;" class="coin-link">
+        <b>하이퍼레인</b> <span class="ticker-symbol">(HYPER)</span>
     </a>
 </td>
-<td>2.0</td>
-<td class="plus">+5.26%</td>
-<td>50.0</td>
-<td><b>67.7%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">32.3점</td>
-<td><b>81.15점</b></td>
+<td>91.6</td>
+<td class="plus">+0.99%</td>
+<td><span class='overheat'>73.3 (과열)</span></td>
+<td><b>79.9%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">32.7점</td>
+<td><b>81.24점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>20</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MOVE', '무브먼트'); return false;" class="coin-link">
+        <b>무브먼트</b> <span class="ticker-symbol">(MOVE)</span>
+    </a>
+</td>
+<td>9.99</td>
+<td class="minus">-1.09%</td>
+<td>47.4</td>
+<td><b>61.4%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">35.1점</td>
+<td><b>81.1점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>21</b></td>
 <td>
     <a href="#" onclick="openChartModal('GAS', '가스'); return false;" class="coin-link">
         <b>가스</b> <span class="ticker-symbol">(GAS)</span>
@@ -527,22 +543,6 @@ window.onkeydown = function(event) {
 <td class="accumulation">0점</td>
 <td class="liquidity">22.3점</td>
 <td><b>81.09점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>21</b></td>
-<td>
-    <a href="#" onclick="openChartModal('SIGN', '사인'); return false;" class="coin-link">
-        <b>사인</b> <span class="ticker-symbol">(SIGN)</span>
-    </a>
-</td>
-<td>9.69</td>
-<td class="plus">+1.04%</td>
-<td>45.5</td>
-<td><b>74.5%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">26.7점</td>
-<td><b>79.91점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -564,38 +564,6 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>23</b></td>
 <td>
-    <a href="#" onclick="openChartModal('LA', '라그랑주'); return false;" class="coin-link">
-        <b>라그랑주</b> <span class="ticker-symbol">(LA)</span>
-    </a>
-</td>
-<td>74.4</td>
-<td class="plus">+3.48%</td>
-<td><span class='overheat'>78.6 (과열)</span></td>
-<td><b>71.8%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">48.8점</td>
-<td><b>79.25점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>24</b></td>
-<td>
-    <a href="#" onclick="openChartModal('HOME', '디파이앱'); return false;" class="coin-link">
-        <b>디파이앱</b> <span class="ticker-symbol">(HOME)</span>
-    </a>
-</td>
-<td>13.1</td>
-<td class="minus">-2.24%</td>
-<td>50.0</td>
-<td><b>72.0%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">46.9점</td>
-<td><b>78.9점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>25</b></td>
-<td>
     <a href="#" onclick="openChartModal('AXS', '엑시인피니티'); return false;" class="coin-link">
         <b>엑시인피니티</b> <span class="ticker-symbol">(AXS)</span>
     </a>
@@ -610,39 +578,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>26</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ZBT', '제로베이스'); return false;" class="coin-link">
-        <b>제로베이스</b> <span class="ticker-symbol">(ZBT)</span>
-    </a>
-</td>
-<td>146.0</td>
-<td class="">0%</td>
-<td>50.0</td>
-<td><b>69.6%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">57.7점</td>
-<td><b>78.44점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>27</b></td>
+<td><b>24</b></td>
 <td>
     <a href="#" onclick="openChartModal('BTC', '비트코인'); return false;" class="coin-link">
         <b>비트코인</b> <span class="ticker-symbol">(BTC)</span>
     </a>
 </td>
-<td>91,310,000.0</td>
-<td class="minus">-0.04%</td>
-<td>59.0</td>
-<td><b>67.8%</b></td>
+<td>91,338,000.0</td>
+<td class="minus">-0.01%</td>
+<td>62.0</td>
+<td><b>66.5%</b></td>
 <td class="accumulation">30점</td>
-<td class="liquidity">56.9점</td>
-<td><b>77.25점</b></td>
+<td class="liquidity">56.7점</td>
+<td><b>77.68점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>28</b></td>
+<td><b>25</b></td>
 <td>
     <a href="#" onclick="openChartModal('USDS', '유에스디에스'); return false;" class="coin-link">
         <b>유에스디에스</b> <span class="ticker-symbol">(USDS)</span>
@@ -658,71 +610,71 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
+<td><b>26</b></td>
+<td>
+    <a href="#" onclick="openChartModal('HOME', '디파이앱'); return false;" class="coin-link">
+        <b>디파이앱</b> <span class="ticker-symbol">(HOME)</span>
+    </a>
+</td>
+<td>13.2</td>
+<td class="minus">-1.49%</td>
+<td>66.7</td>
+<td><b>72.7%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">46.9점</td>
+<td><b>75.62점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>27</b></td>
+<td>
+    <a href="#" onclick="openChartModal('DATA', '데이터네트워크'); return false;" class="coin-link">
+        <b>데이터네트워크</b> <span class="ticker-symbol">(DATA)</span>
+    </a>
+</td>
+<td>296.0</td>
+<td class="minus">-0.34%</td>
+<td><span class='overheat'>71.4 (과열)</span></td>
+<td><b>77.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">34.7점</td>
+<td><b>75.6점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>28</b></td>
+<td>
+    <a href="#" onclick="openChartModal('APT', '앱토스'); return false;" class="coin-link">
+        <b>앱토스</b> <span class="ticker-symbol">(APT)</span>
+    </a>
+</td>
+<td>839.0</td>
+<td class="minus">-1.18%</td>
+<td>36.4</td>
+<td><b>72.1%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">27.7점</td>
+<td><b>75.52점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
 <td><b>29</b></td>
 <td>
     <a href="#" onclick="openChartModal('TRUST', '인튜이션'); return false;" class="coin-link">
         <b>인튜이션</b> <span class="ticker-symbol">(TRUST)</span>
     </a>
 </td>
-<td>74.6</td>
-<td class="plus">+0.67%</td>
-<td>32.1</td>
-<td><b>66.8%</b></td>
+<td>74.5</td>
+<td class="plus">+0.54%</td>
+<td>31.0</td>
+<td><b>67.4%</b></td>
 <td class="accumulation">60점</td>
 <td class="liquidity">29.5점</td>
-<td><b>76.47점</b></td>
+<td><b>75.5점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>30</b></td>
-<td>
-    <a href="#" onclick="openChartModal('SONIC', '소닉SVM'); return false;" class="coin-link">
-        <b>소닉SVM</b> <span class="ticker-symbol">(SONIC)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>26.8</td>
-<td class="plus">+2.29%</td>
-<td>63.6</td>
-<td><b>72.0%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">23.4점</td>
-<td><b>76.43점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>31</b></td>
-<td>
-    <a href="#" onclick="openChartModal('EUL', '오일러'); return false;" class="coin-link">
-        <b>오일러</b> <span class="ticker-symbol">(EUL)</span>
-    </a>
-</td>
-<td>1,651.0</td>
-<td class="minus">-2.37%</td>
-<td>32.5</td>
-<td><b>69.3%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">51.0점</td>
-<td><b>76.33점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>32</b></td>
-<td>
-    <a href="#" onclick="openChartModal('G', '그래비티'); return false;" class="coin-link">
-        <b>그래비티</b> <span class="ticker-symbol">(G)</span>
-    </a>
-</td>
-<td>5.13</td>
-<td class="plus">+2.19%</td>
-<td>25.0</td>
-<td><b>68.0%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">26.9점</td>
-<td><b>75.53점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>33</b></td>
 <td>
     <a href="#" onclick="openChartModal('A', '볼타'); return false;" class="coin-link">
         <b>볼타</b> <span class="ticker-symbol">(A)</span>
@@ -738,55 +690,87 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>34</b></td>
+<td><b>31</b></td>
 <td>
-    <a href="#" onclick="openChartModal('QUID', '스퀴드'); return false;" class="coin-link">
-        <b>스퀴드</b> <span class="ticker-symbol">(QUID)</span>
+    <a href="#" onclick="openChartModal('G', '그래비티'); return false;" class="coin-link">
+        <b>그래비티</b> <span class="ticker-symbol">(G)</span>
     </a>
 </td>
-<td>126.0</td>
-<td class="minus">-3.82%</td>
-<td>60.0</td>
-<td><b>62.0%</b></td>
+<td>5.12</td>
+<td class="plus">+1.99%</td>
+<td>20.0</td>
+<td><b>68.9%</b></td>
 <td class="accumulation">60점</td>
-<td class="liquidity">42.4점</td>
-<td><b>75.37점</b></td>
+<td class="liquidity">27.0점</td>
+<td><b>75.38점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>35</b></td>
-<td>
-    <a href="#" onclick="openChartModal('APT', '앱토스'); return false;" class="coin-link">
-        <b>앱토스</b> <span class="ticker-symbol">(APT)</span>
-    </a>
-</td>
-<td>838.0</td>
-<td class="minus">-1.3%</td>
-<td>41.7</td>
-<td><b>71.2%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">27.7점</td>
-<td><b>75.22점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>36</b></td>
+<td><b>32</b></td>
 <td>
     <a href="#" onclick="openChartModal('MIRA', '미라네트워크'); return false;" class="coin-link">
         <b>미라네트워크</b> <span class="ticker-symbol">(MIRA)</span>
     </a>
 </td>
-<td>58.9</td>
-<td class="minus">-1.83%</td>
-<td>58.8</td>
-<td><b>79.2%</b></td>
+<td>59.1</td>
+<td class="minus">-1.5%</td>
+<td>66.7</td>
+<td><b>77.8%</b></td>
 <td class="accumulation">30점</td>
-<td class="liquidity">40.5점</td>
-<td><b>75.2점</b></td>
+<td class="liquidity">39.9점</td>
+<td><b>75.21점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>37</b></td>
+<td><b>33</b></td>
+<td>
+    <a href="#" onclick="openChartModal('CC', '캔톤'); return false;" class="coin-link">
+        <b>캔톤</b> <span class="ticker-symbol">(CC)</span>
+    </a>
+</td>
+<td>136.0</td>
+<td class="plus">+3.03%</td>
+<td>37.5</td>
+<td><b>65.0%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">44.3점</td>
+<td><b>75.11점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>34</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ANIME', '애니메코인'); return false;" class="coin-link">
+        <b>애니메코인</b> <span class="ticker-symbol">(ANIME)</span>
+    </a>
+</td>
+<td>3.62</td>
+<td class="plus">+3.43%</td>
+<td>57.1</td>
+<td><b>64.9%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">25.3점</td>
+<td><b>74.86점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>35</b></td>
+<td>
+    <a href="#" onclick="openChartModal('CAP', '캡'); return false;" class="coin-link">
+        <b>캡</b> <span class="ticker-symbol">(CAP)</span>
+    </a>
+</td>
+<td>53.9</td>
+<td class="plus">+4.05%</td>
+<td>33.3</td>
+<td><b>73.9%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">58.3점</td>
+<td><b>74.82점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>36</b></td>
 <td>
     <a href="#" onclick="openChartModal('F', '신퓨처스'); return false;" class="coin-link">
         <b>신퓨처스</b> <span class="ticker-symbol">(F)</span>
@@ -802,23 +786,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>38</b></td>
+<td><b>37</b></td>
 <td>
-    <a href="#" onclick="openChartModal('CC', '캔톤'); return false;" class="coin-link">
-        <b>캔톤</b> <span class="ticker-symbol">(CC)</span>
+    <a href="#" onclick="openChartModal('GRVT', '그래비티토큰'); return false;" class="coin-link">
+        <b>그래비티토큰</b> <span class="ticker-symbol">(GRVT)</span>
     </a>
 </td>
-<td>136.0</td>
-<td class="plus">+3.03%</td>
-<td>37.5</td>
-<td><b>64.6%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">44.3점</td>
-<td><b>74.73점</b></td>
+<td>405.0</td>
+<td class="minus">-2.88%</td>
+<td>60.0</td>
+<td><b>74.0%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">37.0점</td>
+<td><b>74.7점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>39</b></td>
+<td><b>38</b></td>
 <td>
     <a href="#" onclick="openChartModal('UNI', '유니스왑'); return false;" class="coin-link">
         <b>유니스왑</b> <span class="ticker-symbol">(UNI)</span>
@@ -834,7 +818,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
+<td><b>39</b></td>
+<td>
+    <a href="#" onclick="openChartModal('QUID', '스퀴드'); return false;" class="coin-link">
+        <b>스퀴드</b> <span class="ticker-symbol">(QUID)</span>
+    </a>
+</td>
+<td>126.0</td>
+<td class="minus">-3.82%</td>
+<td>66.7</td>
+<td><b>63.7%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">42.4점</td>
+<td><b>74.05점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
 <td><b>40</b></td>
+<td>
+    <a href="#" onclick="openChartModal('XAUT', '테더골드'); return false;" class="coin-link">
+        <b>테더골드</b> <span class="ticker-symbol">(XAUT)</span>
+    </a>
+</td>
+<td>6,091,000.0</td>
+<td class="minus">-0.02%</td>
+<td>40.5</td>
+<td><b>69.6%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">21.5점</td>
+<td><b>74.05점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>41</b></td>
 <td>
     <a href="#" onclick="openChartModal('USDC', '유에스디코인'); return false;" class="coin-link">
         <b>유에스디코인</b> <span class="ticker-symbol">(USDC)</span>
@@ -850,39 +866,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>41</b></td>
-<td>
-    <a href="#" onclick="openChartModal('GRVT', '그래비티토큰'); return false;" class="coin-link">
-        <b>그래비티토큰</b> <span class="ticker-symbol">(GRVT)</span>
-    </a>
-</td>
-<td>405.0</td>
-<td class="minus">-2.88%</td>
-<td>62.5</td>
-<td><b>73.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">36.9점</td>
-<td><b>73.13점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
 <td><b>42</b></td>
 <td>
-    <a href="#" onclick="openChartModal('2Z', '더블제로'); return false;" class="coin-link">
-        <b>더블제로</b> <span class="ticker-symbol">(2Z)</span>
-    </a>
+    <a href="#" onclick="openChartModal('SONIC', '소닉SVM'); return false;" class="coin-link">
+        <b>소닉SVM</b> <span class="ticker-symbol">(SONIC)</span>
+    </a><span class="ai-badge">AI추천</span>
 </td>
-<td>79.0</td>
-<td class="plus">+1.28%</td>
-<td>54.1</td>
-<td><b>74.7%</b></td>
+<td>26.7</td>
+<td class="plus">+1.91%</td>
+<td>50.0</td>
+<td><b>71.6%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">14.5점</td>
-<td><b>73.1점</b></td>
+<td class="liquidity">23.2점</td>
+<td><b>73.67점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>43</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ZBT', '제로베이스'); return false;" class="coin-link">
+        <b>제로베이스</b> <span class="ticker-symbol">(ZBT)</span>
+    </a>
+</td>
+<td>145.0</td>
+<td class="minus">-0.68%</td>
+<td>50.0</td>
+<td><b>67.6%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">57.6점</td>
+<td><b>73.29점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>44</b></td>
+<td>
+    <a href="#" onclick="openChartModal('PYTH', '피스네트워크'); return false;" class="coin-link">
+        <b>피스네트워크</b> <span class="ticker-symbol">(PYTH)</span>
+    </a>
+</td>
+<td>59.4</td>
+<td class="plus">+4.95%</td>
+<td><span class='overheat'>70.0 (과열)</span></td>
+<td><b>70.6%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">40.7점</td>
+<td><b>73.27점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>45</b></td>
 <td>
     <a href="#" onclick="openChartModal('TREE', '트리하우스'); return false;" class="coin-link">
         <b>트리하우스</b> <span class="ticker-symbol">(TREE)</span>
@@ -890,15 +922,31 @@ window.onkeydown = function(event) {
 </td>
 <td>53.4</td>
 <td class="plus">+3.09%</td>
-<td>44.4</td>
-<td><b>73.8%</b></td>
+<td>57.1</td>
+<td><b>74.3%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">26.2점</td>
-<td><b>72.88점</b></td>
+<td class="liquidity">24.9점</td>
+<td><b>73.01점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>44</b></td>
+<td><b>46</b></td>
+<td>
+    <a href="#" onclick="openChartModal('2Z', '더블제로'); return false;" class="coin-link">
+        <b>더블제로</b> <span class="ticker-symbol">(2Z)</span>
+    </a>
+</td>
+<td>79.2</td>
+<td class="plus">+1.54%</td>
+<td>56.4</td>
+<td><b>73.5%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">14.5점</td>
+<td><b>72.99점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>47</b></td>
 <td>
     <a href="#" onclick="openChartModal('CELO', '셀로'); return false;" class="coin-link">
         <b>셀로</b> <span class="ticker-symbol">(CELO)</span>
@@ -914,7 +962,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>45</b></td>
+<td><b>48</b></td>
 <td>
     <a href="#" onclick="openChartModal('ORDER', '오덜리'); return false;" class="coin-link">
         <b>오덜리</b> <span class="ticker-symbol">(ORDER)</span>
@@ -930,7 +978,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>46</b></td>
+<td><b>49</b></td>
 <td>
     <a href="#" onclick="openChartModal('TOKAMAK', '토카막네트워크'); return false;" class="coin-link">
         <b>토카막네트워크</b> <span class="ticker-symbol">(TOKAMAK)</span>
@@ -946,23 +994,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>47</b></td>
-<td>
-    <a href="#" onclick="openChartModal('HYPER', '하이퍼레인'); return false;" class="coin-link">
-        <b>하이퍼레인</b> <span class="ticker-symbol">(HYPER)</span>
-    </a>
-</td>
-<td>91.4</td>
-<td class="plus">+0.77%</td>
-<td><span class='overheat'>73.3 (과열)</span></td>
-<td><b>79.5%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">32.4점</td>
-<td><b>72.56점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>48</b></td>
+<td><b>50</b></td>
 <td>
     <a href="#" onclick="openChartModal('PENDLE', '펜들'); return false;" class="coin-link">
         <b>펜들</b> <span class="ticker-symbol">(PENDLE)</span>
@@ -978,7 +1010,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>49</b></td>
+<td><b>51</b></td>
 <td>
     <a href="#" onclick="openChartModal('ORBS', '오브스'); return false;" class="coin-link">
         <b>오브스</b> <span class="ticker-symbol">(ORBS)</span>
@@ -994,23 +1026,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>50</b></td>
-<td>
-    <a href="#" onclick="openChartModal('AVNT', '아반티스'); return false;" class="coin-link">
-        <b>아반티스</b> <span class="ticker-symbol">(AVNT)</span>
-    </a>
-</td>
-<td>129.0</td>
-<td class="plus">+4.03%</td>
-<td>42.9</td>
-<td><b>70.9%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">37.2점</td>
-<td><b>72.27점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>51</b></td>
+<td><b>52</b></td>
 <td>
     <a href="#" onclick="openChartModal('NEO', '네오'); return false;" class="coin-link">
         <b>네오</b> <span class="ticker-symbol">(NEO)</span>
@@ -1023,22 +1039,6 @@ window.onkeydown = function(event) {
 <td class="accumulation">0점</td>
 <td class="liquidity">21.1점</td>
 <td><b>72.25점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>52</b></td>
-<td>
-    <a href="#" onclick="openChartModal('MMT', '모멘텀'); return false;" class="coin-link">
-        <b>모멘텀</b> <span class="ticker-symbol">(MMT)</span>
-    </a>
-</td>
-<td>309.0</td>
-<td class="plus">+11.15%</td>
-<td>63.2</td>
-<td><b>72.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">70.2점</td>
-<td><b>72.12점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -1060,69 +1060,37 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>54</b></td>
 <td>
-    <a href="#" onclick="openChartModal('PRL', '펄'); return false;" class="coin-link">
-        <b>펄</b> <span class="ticker-symbol">(PRL)</span>
+    <a href="#" onclick="openChartModal('BCH', '비트코인캐시'); return false;" class="coin-link">
+        <b>비트코인캐시</b> <span class="ticker-symbol">(BCH)</span>
     </a>
 </td>
-<td>418.0</td>
-<td class="minus">-1.18%</td>
-<td>36.4</td>
-<td><b>75.2%</b></td>
+<td>304,700.0</td>
+<td class="plus">+0.4%</td>
+<td>62.5</td>
+<td><b>76.5%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">35.7점</td>
-<td><b>71.88점</b></td>
+<td class="liquidity">27.9점</td>
+<td><b>71.62점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>55</b></td>
 <td>
-    <a href="#" onclick="openChartModal('BIO', '바이오프로토콜'); return false;" class="coin-link">
-        <b>바이오프로토콜</b> <span class="ticker-symbol">(BIO)</span>
-    </a>
-</td>
-<td>35.8</td>
-<td class="plus">+2.58%</td>
-<td>41.7</td>
-<td><b>73.0%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">38.4점</td>
-<td><b>71.72점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>56</b></td>
-<td>
     <a href="#" onclick="openChartModal('HP', '히포프로토콜'); return false;" class="coin-link">
         <b>히포프로토콜</b> <span class="ticker-symbol">(HP)</span>
     </a><span class="ai-badge">AI추천</span>
 </td>
-<td>9.71</td>
-<td class="">0%</td>
-<td>58.3</td>
-<td><b>72.8%</b></td>
+<td>9.65</td>
+<td class="minus">-0.62%</td>
+<td>53.8</td>
+<td><b>72.9%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">14.6점</td>
-<td><b>71.68점</b></td>
+<td class="liquidity">14.5점</td>
+<td><b>71.6점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>57</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ENSO', '엔소'); return false;" class="coin-link">
-        <b>엔소</b> <span class="ticker-symbol">(ENSO)</span>
-    </a>
-</td>
-<td>1,413.0</td>
-<td class="plus">+4.2%</td>
-<td>48.4</td>
-<td><b>72.4%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">49.5점</td>
-<td><b>71.65점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>58</b></td>
+<td><b>56</b></td>
 <td>
     <a href="#" onclick="openChartModal('RENDER', '렌더토큰'); return false;" class="coin-link">
         <b>렌더토큰</b> <span class="ticker-symbol">(RENDER)</span>
@@ -1138,39 +1106,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>59</b></td>
-<td>
-    <a href="#" onclick="openChartModal('DATA', '데이터네트워크'); return false;" class="coin-link">
-        <b>데이터네트워크</b> <span class="ticker-symbol">(DATA)</span>
-    </a>
-</td>
-<td>296.0</td>
-<td class="minus">-0.34%</td>
-<td>57.1</td>
-<td><b>74.2%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">34.5점</td>
-<td><b>71.46점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>60</b></td>
-<td>
-    <a href="#" onclick="openChartModal('PYTH', '피스네트워크'); return false;" class="coin-link">
-        <b>피스네트워크</b> <span class="ticker-symbol">(PYTH)</span>
-    </a>
-</td>
-<td>59.1</td>
-<td class="plus">+4.42%</td>
-<td>61.9</td>
-<td><b>70.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">40.7점</td>
-<td><b>71.37점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>61</b></td>
+<td><b>57</b></td>
 <td>
     <a href="#" onclick="openChartModal('KITE', '카이트'); return false;" class="coin-link">
         <b>카이트</b> <span class="ticker-symbol">(KITE)</span>
@@ -1186,7 +1122,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>62</b></td>
+<td><b>58</b></td>
 <td>
     <a href="#" onclick="openChartModal('B3', '비쓰리'); return false;" class="coin-link">
         <b>비쓰리</b> <span class="ticker-symbol">(B3)</span>
@@ -1202,7 +1138,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>63</b></td>
+<td><b>59</b></td>
 <td>
     <a href="#" onclick="openChartModal('BLAST', '블라스트'); return false;" class="coin-link">
         <b>블라스트</b> <span class="ticker-symbol">(BLAST)</span>
@@ -1218,7 +1154,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>64</b></td>
+<td><b>60</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BIO', '바이오프로토콜'); return false;" class="coin-link">
+        <b>바이오프로토콜</b> <span class="ticker-symbol">(BIO)</span>
+    </a>
+</td>
+<td>35.8</td>
+<td class="plus">+2.58%</td>
+<td>41.7</td>
+<td><b>71.0%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">38.4점</td>
+<td><b>71.14점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>61</b></td>
 <td>
     <a href="#" onclick="openChartModal('OPG', '오픈그라디언트'); return false;" class="coin-link">
         <b>오픈그라디언트</b> <span class="ticker-symbol">(OPG)</span>
@@ -1234,7 +1186,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>65</b></td>
+<td><b>62</b></td>
 <td>
     <a href="#" onclick="openChartModal('MVL', '엠블'); return false;" class="coin-link">
         <b>엠블</b> <span class="ticker-symbol">(MVL)</span>
@@ -1250,23 +1202,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>66</b></td>
+<td><b>63</b></td>
 <td>
-    <a href="#" onclick="openChartModal('BCH', '비트코인캐시'); return false;" class="coin-link">
-        <b>비트코인캐시</b> <span class="ticker-symbol">(BCH)</span>
+    <a href="#" onclick="openChartModal('KAITO', '카이토'); return false;" class="coin-link">
+        <b>카이토</b> <span class="ticker-symbol">(KAITO)</span>
     </a>
 </td>
-<td>304,700.0</td>
-<td class="plus">+0.4%</td>
-<td>62.5</td>
-<td><b>76.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">27.9점</td>
-<td><b>70.9점</b></td>
+<td>988.0</td>
+<td class="minus">-3.33%</td>
+<td>56.1</td>
+<td><b>74.2%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">49.6점</td>
+<td><b>70.78점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>67</b></td>
+<td><b>64</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ENSO', '엔소'); return false;" class="coin-link">
+        <b>엔소</b> <span class="ticker-symbol">(ENSO)</span>
+    </a>
+</td>
+<td>1,408.0</td>
+<td class="plus">+3.83%</td>
+<td>39.2</td>
+<td><b>70.4%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">49.5점</td>
+<td><b>70.76점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>65</b></td>
 <td>
     <a href="#" onclick="openChartModal('OP', '옵티미즘'); return false;" class="coin-link">
         <b>옵티미즘</b> <span class="ticker-symbol">(OP)</span>
@@ -1282,7 +1250,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>68</b></td>
+<td><b>66</b></td>
 <td>
     <a href="#" onclick="openChartModal('RAY', '레이디움'); return false;" class="coin-link">
         <b>레이디움</b> <span class="ticker-symbol">(RAY)</span>
@@ -1298,7 +1266,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>69</b></td>
+<td><b>67</b></td>
 <td>
     <a href="#" onclick="openChartModal('KNC', '카이버네트워크'); return false;" class="coin-link">
         <b>카이버네트워크</b> <span class="ticker-symbol">(KNC)</span>
@@ -1314,23 +1282,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>70</b></td>
+<td><b>68</b></td>
 <td>
-    <a href="#" onclick="openChartModal('BORA', '보라'); return false;" class="coin-link">
-        <b>보라</b> <span class="ticker-symbol">(BORA)</span>
+    <a href="#" onclick="openChartModal('AVNT', '아반티스'); return false;" class="coin-link">
+        <b>아반티스</b> <span class="ticker-symbol">(AVNT)</span>
     </a>
 </td>
-<td>27.6</td>
-<td class="minus">-2.82%</td>
-<td>45.5</td>
-<td><b>71.7%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">31.9점</td>
-<td><b>70.48점</b></td>
+<td>128.0</td>
+<td class="plus">+3.23%</td>
+<td>50.0</td>
+<td><b>70.9%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">37.3점</td>
+<td><b>70.64점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>71</b></td>
+<td><b>69</b></td>
+<td>
+    <a href="#" onclick="openChartModal('DOOD', '두들즈'); return false;" class="coin-link">
+        <b>두들즈</b> <span class="ticker-symbol">(DOOD)</span>
+    </a>
+</td>
+<td>1.98</td>
+<td class="plus">+4.21%</td>
+<td>57.1</td>
+<td><b>66.6%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">32.3점</td>
+<td><b>70.58점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>70</b></td>
 <td>
     <a href="#" onclick="openChartModal('SOPH', '소폰'); return false;" class="coin-link">
         <b>소폰</b> <span class="ticker-symbol">(SOPH)</span>
@@ -1346,19 +1330,35 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>72</b></td>
+<td><b>71</b></td>
 <td>
-    <a href="#" onclick="openChartModal('XAUT', '테더골드'); return false;" class="coin-link">
-        <b>테더골드</b> <span class="ticker-symbol">(XAUT)</span>
+    <a href="#" onclick="openChartModal('POWR', '파워렛저'); return false;" class="coin-link">
+        <b>파워렛저</b> <span class="ticker-symbol">(POWR)</span>
     </a>
 </td>
-<td>6,090,000.0</td>
-<td class="minus">-0.03%</td>
-<td>40.5</td>
-<td><b>70.9%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">21.3점</td>
-<td><b>70.11점</b></td>
+<td>54.9</td>
+<td class="plus">+0.37%</td>
+<td><span class='overheat'>78.6 (과열)</span></td>
+<td><b>74.6%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">28.6점</td>
+<td><b>70.27점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>72</b></td>
+<td>
+    <a href="#" onclick="openChartModal('CARV', '카브'); return false;" class="coin-link">
+        <b>카브</b> <span class="ticker-symbol">(CARV)</span>
+    </a>
+</td>
+<td>45.7</td>
+<td class="plus">+4.58%</td>
+<td>50.0</td>
+<td><b>73.7%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">55.6점</td>
+<td><b>70.24점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -1380,6 +1380,22 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>74</b></td>
 <td>
+    <a href="#" onclick="openChartModal('FLOCK', '플록'); return false;" class="coin-link">
+        <b>플록</b> <span class="ticker-symbol">(FLOCK)</span>
+    </a>
+</td>
+<td>40.9</td>
+<td class="minus">-1.21%</td>
+<td>25.0</td>
+<td><b>66.6%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">32.3점</td>
+<td><b>69.85점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>75</b></td>
+<td>
     <a href="#" onclick="openChartModal('SOMI', '솜니아'); return false;" class="coin-link">
         <b>솜니아</b> <span class="ticker-symbol">(SOMI)</span>
     </a>
@@ -1390,24 +1406,8 @@ window.onkeydown = function(event) {
 <td><b>67.0%</b></td>
 <td class="accumulation">30점</td>
 <td class="liquidity">42.8점</td>
-<td><b>69.66점</b></td>
+<td><b>69.83점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 1회</span></td>
-</tr>
-<tr>
-<td><b>75</b></td>
-<td>
-    <a href="#" onclick="openChartModal('KAITO', '카이토'); return false;" class="coin-link">
-        <b>카이토</b> <span class="ticker-symbol">(KAITO)</span>
-    </a>
-</td>
-<td>987.0</td>
-<td class="minus">-3.42%</td>
-<td>55.0</td>
-<td><b>74.1%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">49.6점</td>
-<td><b>69.64점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>76</b></td>
@@ -1428,69 +1428,37 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>77</b></td>
 <td>
-    <a href="#" onclick="openChartModal('WLFI', '월드리버티파이낸셜'); return false;" class="coin-link">
-        <b>월드리버티파이낸셜</b> <span class="ticker-symbol">(WLFI)</span>
+    <a href="#" onclick="openChartModal('XCN', '오닉스코인'); return false;" class="coin-link">
+        <b>오닉스코인</b> <span class="ticker-symbol">(XCN)</span>
     </a>
 </td>
-<td>73.0</td>
-<td class="plus">+1.25%</td>
-<td>50.0</td>
-<td><b>73.3%</b></td>
+<td>4.31</td>
+<td class="minus">-0.23%</td>
+<td>60.0</td>
+<td><b>70.8%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">37.5점</td>
-<td><b>69.61점</b></td>
+<td class="liquidity">16.7점</td>
+<td><b>69.01점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>78</b></td>
 <td>
-    <a href="#" onclick="openChartModal('BSB', '블록스트리트'); return false;" class="coin-link">
-        <b>블록스트리트</b> <span class="ticker-symbol">(BSB)</span>
+    <a href="#" onclick="openChartModal('MMT', '모멘텀'); return false;" class="coin-link">
+        <b>모멘텀</b> <span class="ticker-symbol">(MMT)</span>
     </a>
 </td>
-<td>209.0</td>
-<td class="minus">-7.52%</td>
-<td>50.0</td>
-<td><b>66.1%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">50.4점</td>
-<td><b>69.47점</b></td>
+<td>303.0</td>
+<td class="plus">+8.99%</td>
+<td>47.8</td>
+<td><b>72.1%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">70.2점</td>
+<td><b>68.94점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>79</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ZETA', '제타체인'); return false;" class="coin-link">
-        <b>제타체인</b> <span class="ticker-symbol">(ZETA)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>42.3</td>
-<td class="plus">+2.17%</td>
-<td>50.0</td>
-<td><b>69.8%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">15.3점</td>
-<td><b>69.34점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>80</b></td>
-<td>
-    <a href="#" onclick="openChartModal('VET', '비체인'); return false;" class="coin-link">
-        <b>비체인</b> <span class="ticker-symbol">(VET)</span>
-    </a>
-</td>
-<td>6.72</td>
-<td class="plus">+1.05%</td>
-<td>55.6</td>
-<td><b>73.7%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">23.0점</td>
-<td><b>69.02점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>81</b></td>
 <td>
     <a href="#" onclick="openChartModal('ENS', '이더리움네임서비스'); return false;" class="coin-link">
         <b>이더리움네임서비스</b> <span class="ticker-symbol">(ENS)</span>
@@ -1506,7 +1474,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>82</b></td>
+<td><b>80</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ZETA', '제타체인'); return false;" class="coin-link">
+        <b>제타체인</b> <span class="ticker-symbol">(ZETA)</span>
+    </a><span class="ai-badge">AI추천</span>
+</td>
+<td>42.1</td>
+<td class="plus">+1.69%</td>
+<td>50.0</td>
+<td><b>69.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">15.3점</td>
+<td><b>68.85점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>81</b></td>
 <td>
     <a href="#" onclick="openChartModal('AUCTION', '바운스토큰'); return false;" class="coin-link">
         <b>바운스토큰</b> <span class="ticker-symbol">(AUCTION)</span>
@@ -1522,23 +1506,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>83</b></td>
+<td><b>82</b></td>
 <td>
-    <a href="#" onclick="openChartModal('INJ', '인젝티브'); return false;" class="coin-link">
-        <b>인젝티브</b> <span class="ticker-symbol">(INJ)</span>
+    <a href="#" onclick="openChartModal('MASK', '마스크네트워크'); return false;" class="coin-link">
+        <b>마스크네트워크</b> <span class="ticker-symbol">(MASK)</span>
     </a>
 </td>
-<td>6,245.0</td>
-<td class="plus">+0.81%</td>
-<td>61.8</td>
-<td><b>69.5%</b></td>
+<td>526.0</td>
+<td class="plus">+1.15%</td>
+<td>63.6</td>
+<td><b>71.9%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">26.3점</td>
-<td><b>68.73점</b></td>
+<td class="liquidity">12.1점</td>
+<td><b>68.69점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>84</b></td>
+<td><b>83</b></td>
 <td>
     <a href="#" onclick="openChartModal('FCT2', '피르마체인'); return false;" class="coin-link">
         <b>피르마체인</b> <span class="ticker-symbol">(FCT2)</span>
@@ -1554,39 +1538,71 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>85</b></td>
+<td><b>84</b></td>
 <td>
-    <a href="#" onclick="openChartModal('MOVE', '무브먼트'); return false;" class="coin-link">
-        <b>무브먼트</b> <span class="ticker-symbol">(MOVE)</span>
+    <a href="#" onclick="openChartModal('INJ', '인젝티브'); return false;" class="coin-link">
+        <b>인젝티브</b> <span class="ticker-symbol">(INJ)</span>
     </a>
 </td>
-<td>9.99</td>
-<td class="minus">-1.09%</td>
-<td>31.0</td>
-<td><b>61.9%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">35.0점</td>
-<td><b>68.47점</b></td>
+<td>6,245.0</td>
+<td class="plus">+0.81%</td>
+<td>60.6</td>
+<td><b>68.4%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">26.3점</td>
+<td><b>68.43점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>85</b></td>
+<td>
+    <a href="#" onclick="openChartModal('FF', '팔콘파이낸스'); return false;" class="coin-link">
+        <b>팔콘파이낸스</b> <span class="ticker-symbol">(FF)</span>
+    </a>
+</td>
+<td>89.4</td>
+<td class="minus">-2.08%</td>
+<td>41.7</td>
+<td><b>71.4%</b></td>
+<td class="accumulation">20점</td>
+<td class="liquidity">34.8점</td>
+<td><b>68.24점</b></td>
+<td><span class="plus">▲ 1회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>86</b></td>
 <td>
-    <a href="#" onclick="openChartModal('SLX', '솔스티스'); return false;" class="coin-link">
-        <b>솔스티스</b> <span class="ticker-symbol">(SLX)</span>
+    <a href="#" onclick="openChartModal('DOGE', '도지코인'); return false;" class="coin-link">
+        <b>도지코인</b> <span class="ticker-symbol">(DOGE)</span>
     </a>
 </td>
-<td>116.0</td>
-<td class="minus">-0.85%</td>
-<td>42.9</td>
-<td><b>72.9%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">52.5점</td>
-<td><b>67.86점</b></td>
+<td>98.8</td>
+<td class="minus">-0.2%</td>
+<td>66.7</td>
+<td><b>76.3%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">43.1점</td>
+<td><b>68.17점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>87</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BSB', '블록스트리트'); return false;" class="coin-link">
+        <b>블록스트리트</b> <span class="ticker-symbol">(BSB)</span>
+    </a>
+</td>
+<td>209.0</td>
+<td class="minus">-7.52%</td>
+<td>50.0</td>
+<td><b>66.8%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">50.4점</td>
+<td><b>68.13점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>88</b></td>
 <td>
     <a href="#" onclick="openChartModal('ELF', '엘프'); return false;" class="coin-link">
         <b>엘프</b> <span class="ticker-symbol">(ELF)</span>
@@ -1602,7 +1618,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>88</b></td>
+<td><b>89</b></td>
+<td>
+    <a href="#" onclick="openChartModal('CBK', '코박토큰'); return false;" class="coin-link">
+        <b>코박토큰</b> <span class="ticker-symbol">(CBK)</span>
+    </a>
+</td>
+<td>237.0</td>
+<td class="minus">-0.42%</td>
+<td>53.8</td>
+<td><b>70.4%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">16.1점</td>
+<td><b>67.73점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>90</b></td>
 <td>
     <a href="#" onclick="openChartModal('ZORA', '조라'); return false;" class="coin-link">
         <b>조라</b> <span class="ticker-symbol">(ZORA)</span>
@@ -1618,23 +1650,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>89</b></td>
+<td><b>91</b></td>
 <td>
     <a href="#" onclick="openChartModal('WCT', '월렛커넥트'); return false;" class="coin-link">
         <b>월렛커넥트</b> <span class="ticker-symbol">(WCT)</span>
     </a>
 </td>
-<td>51.6</td>
-<td class="plus">+0.58%</td>
-<td>39.1</td>
-<td><b>72.0%</b></td>
+<td>51.8</td>
+<td class="plus">+0.97%</td>
+<td>52.4</td>
+<td><b>70.5%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">20.7점</td>
-<td><b>67.56점</b></td>
+<td><b>67.46점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>90</b></td>
+<td><b>92</b></td>
 <td>
     <a href="#" onclick="openChartModal('QKC', '쿼크체인'); return false;" class="coin-link">
         <b>쿼크체인</b> <span class="ticker-symbol">(QKC)</span>
@@ -1650,23 +1682,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>91</b></td>
-<td>
-    <a href="#" onclick="openChartModal('NEWT', '뉴턴프로토콜'); return false;" class="coin-link">
-        <b>뉴턴프로토콜</b> <span class="ticker-symbol">(NEWT)</span>
-    </a>
-</td>
-<td>55.6</td>
-<td class="plus">+0.18%</td>
-<td>41.7</td>
-<td><b>67.4%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">12.6점</td>
-<td><b>67.35점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>92</b></td>
+<td><b>93</b></td>
 <td>
     <a href="#" onclick="openChartModal('CYBER', '사이버'); return false;" class="coin-link">
         <b>사이버</b> <span class="ticker-symbol">(CYBER)</span>
@@ -1679,22 +1695,6 @@ window.onkeydown = function(event) {
 <td class="accumulation">0점</td>
 <td class="liquidity">12.9점</td>
 <td><b>67.31점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>93</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ANIME', '애니메코인'); return false;" class="coin-link">
-        <b>애니메코인</b> <span class="ticker-symbol">(ANIME)</span>
-    </a>
-</td>
-<td>3.62</td>
-<td class="plus">+3.43%</td>
-<td>64.7</td>
-<td><b>66.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">25.2점</td>
-<td><b>67.11점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -1716,6 +1716,22 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>95</b></td>
 <td>
+    <a href="#" onclick="openChartModal('NEWT', '뉴턴프로토콜'); return false;" class="coin-link">
+        <b>뉴턴프로토콜</b> <span class="ticker-symbol">(NEWT)</span>
+    </a>
+</td>
+<td>55.6</td>
+<td class="plus">+0.18%</td>
+<td>47.6</td>
+<td><b>61.9%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">12.8점</td>
+<td><b>67.08점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>96</b></td>
+<td>
     <a href="#" onclick="openChartModal('PIEVERSE', '파이버스'); return false;" class="coin-link">
         <b>파이버스</b> <span class="ticker-symbol">(PIEVERSE)</span>
     </a>
@@ -1723,74 +1739,58 @@ window.onkeydown = function(event) {
 <td>1,104.0</td>
 <td class="minus">-1.52%</td>
 <td>12.2</td>
-<td><b>61.9%</b></td>
+<td><b>62.0%</b></td>
 <td class="accumulation">60점</td>
 <td class="liquidity">42.9점</td>
-<td><b>66.9점</b></td>
+<td><b>67.08점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>96</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ESP', '에스프레소'); return false;" class="coin-link">
-        <b>에스프레소</b> <span class="ticker-symbol">(ESP)</span>
-    </a>
-</td>
-<td>101.0</td>
-<td class="plus">+11.48%</td>
-<td>45.5</td>
-<td><b>65.4%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">57.2점</td>
-<td><b>66.7점</b></td>
-<td><span class="plus">▲ 1회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>97</b></td>
 <td>
-    <a href="#" onclick="openChartModal('STEEM', '스팀'); return false;" class="coin-link">
-        <b>스팀</b> <span class="ticker-symbol">(STEEM)</span>
+    <a href="#" onclick="openChartModal('BIRB', '문버드'); return false;" class="coin-link">
+        <b>문버드</b> <span class="ticker-symbol">(BIRB)</span>
     </a>
 </td>
-<td>52.3</td>
-<td class="plus">+1.55%</td>
-<td>50.0</td>
-<td><b>73.6%</b></td>
+<td>74.1</td>
+<td class="plus">+3.2%</td>
+<td>47.4</td>
+<td><b>72.0%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">21.0점</td>
-<td><b>66.52점</b></td>
+<td class="liquidity">37.0점</td>
+<td><b>66.45점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>98</b></td>
 <td>
-    <a href="#" onclick="openChartModal('ATOM', '코스모스'); return false;" class="coin-link">
-        <b>코스모스</b> <span class="ticker-symbol">(ATOM)</span>
+    <a href="#" onclick="openChartModal('STEEM', '스팀'); return false;" class="coin-link">
+        <b>스팀</b> <span class="ticker-symbol">(STEEM)</span>
     </a>
 </td>
-<td>1,940.0</td>
-<td class="minus">-0.61%</td>
-<td>48.4</td>
-<td><b>70.6%</b></td>
+<td>52.5</td>
+<td class="plus">+1.94%</td>
+<td>63.6</td>
+<td><b>73.8%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">13.0점</td>
+<td class="liquidity">20.9점</td>
 <td><b>66.42점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>99</b></td>
 <td>
-    <a href="#" onclick="openChartModal('XRP', '엑스알피(리플)'); return false;" class="coin-link">
-        <b>엑스알피(리플)</b> <span class="ticker-symbol">(XRP)</span>
+    <a href="#" onclick="openChartModal('SLX', '솔스티스'); return false;" class="coin-link">
+        <b>솔스티스</b> <span class="ticker-symbol">(SLX)</span>
     </a>
 </td>
-<td>1,457.0</td>
-<td class="minus">-0.34%</td>
-<td>57.1</td>
-<td><b>75.3%</b></td>
+<td>115.0</td>
+<td class="minus">-1.71%</td>
+<td>50.0</td>
+<td><b>73.6%</b></td>
 <td class="accumulation">30점</td>
-<td class="liquidity">59.8점</td>
-<td><b>66.41점</b></td>
+<td class="liquidity">52.5점</td>
+<td><b>66.33점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -1812,18 +1812,18 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>101</b></td>
 <td>
-    <a href="#" onclick="openChartModal('FF', '팔콘파이낸스'); return false;" class="coin-link">
-        <b>팔콘파이낸스</b> <span class="ticker-symbol">(FF)</span>
+    <a href="#" onclick="openChartModal('USDT', '테더'); return false;" class="coin-link">
+        <b>테더</b> <span class="ticker-symbol">(USDT)</span>
     </a>
 </td>
-<td>89.4</td>
-<td class="minus">-2.08%</td>
-<td>37.0</td>
-<td><b>72.0%</b></td>
-<td class="accumulation">20점</td>
-<td class="liquidity">34.8점</td>
-<td><b>66.2점</b></td>
-<td><span class="plus">▲ 1회</span> / <span class="minus">▼ 0회</span></td>
+<td>1,406.0</td>
+<td class="">0%</td>
+<td>40.0</td>
+<td><b>54.1%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">65.1점</td>
+<td><b>66.23점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>102</b></td>
@@ -1860,22 +1860,6 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>104</b></td>
 <td>
-    <a href="#" onclick="openChartModal('USDT', '테더'); return false;" class="coin-link">
-        <b>테더</b> <span class="ticker-symbol">(USDT)</span>
-    </a>
-</td>
-<td>1,406.0</td>
-<td class="">0%</td>
-<td>50.0</td>
-<td><b>55.0%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">65.1점</td>
-<td><b>66.07점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>105</b></td>
-<td>
     <a href="#" onclick="openChartModal('BEAM', '빔'); return false;" class="coin-link">
         <b>빔</b> <span class="ticker-symbol">(BEAM)</span>
     </a>
@@ -1890,7 +1874,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>106</b></td>
+<td><b>105</b></td>
 <td>
     <a href="#" onclick="openChartModal('CTC', '크레딧코인'); return false;" class="coin-link">
         <b>크레딧코인</b> <span class="ticker-symbol">(CTC)</span>
@@ -1906,7 +1890,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>107</b></td>
+<td><b>106</b></td>
 <td>
     <a href="#" onclick="openChartModal('POLYX', '폴리매쉬'); return false;" class="coin-link">
         <b>폴리매쉬</b> <span class="ticker-symbol">(POLYX)</span>
@@ -1922,39 +1906,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>108</b></td>
+<td><b>107</b></td>
 <td>
-    <a href="#" onclick="openChartModal('DOGE', '도지코인'); return false;" class="coin-link">
-        <b>도지코인</b> <span class="ticker-symbol">(DOGE)</span>
+    <a href="#" onclick="openChartModal('ZKP', '지케이패스'); return false;" class="coin-link">
+        <b>지케이패스</b> <span class="ticker-symbol">(ZKP)</span>
     </a>
 </td>
-<td>98.8</td>
-<td class="minus">-0.2%</td>
-<td>60.0</td>
-<td><b>72.1%</b></td>
+<td>64.3</td>
+<td class="plus">+0.63%</td>
+<td>27.3</td>
+<td><b>71.8%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">43.2점</td>
+<td class="liquidity">30.0점</td>
 <td><b>65.8점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>109</b></td>
-<td>
-    <a href="#" onclick="openChartModal('MEGA', '메가이더'); return false;" class="coin-link">
-        <b>메가이더</b> <span class="ticker-symbol">(MEGA)</span>
-    </a>
-</td>
-<td>50.9</td>
-<td class="">0%</td>
-<td>33.3</td>
-<td><b>62.3%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">29.0점</td>
-<td><b>65.77점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>110</b></td>
+<td><b>108</b></td>
 <td>
     <a href="#" onclick="openChartModal('AKT', '아카시네트워크'); return false;" class="coin-link">
         <b>아카시네트워크</b> <span class="ticker-symbol">(AKT)</span>
@@ -1970,7 +1938,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>111</b></td>
+<td><b>109</b></td>
 <td>
     <a href="#" onclick="openChartModal('ARB', '아비트럼'); return false;" class="coin-link">
         <b>아비트럼</b> <span class="ticker-symbol">(ARB)</span>
@@ -1986,23 +1954,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>112</b></td>
+<td><b>110</b></td>
 <td>
-    <a href="#" onclick="openChartModal('SAND', '샌드박스'); return false;" class="coin-link">
-        <b>샌드박스</b> <span class="ticker-symbol">(SAND)</span>
+    <a href="#" onclick="openChartModal('ATOM', '코스모스'); return false;" class="coin-link">
+        <b>코스모스</b> <span class="ticker-symbol">(ATOM)</span>
     </a>
 </td>
-<td>58.6</td>
-<td class="minus">-0.34%</td>
-<td>25.0</td>
-<td><b>73.8%</b></td>
+<td>1,938.0</td>
+<td class="minus">-0.72%</td>
+<td>45.5</td>
+<td><b>69.3%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">23.5점</td>
-<td><b>65.42점</b></td>
+<td class="liquidity">13.0점</td>
+<td><b>65.58점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>113</b></td>
+<td><b>111</b></td>
 <td>
     <a href="#" onclick="openChartModal('WET', '휴미디파이'); return false;" class="coin-link">
         <b>휴미디파이</b> <span class="ticker-symbol">(WET)</span>
@@ -2018,7 +1986,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>114</b></td>
+<td><b>112</b></td>
+<td>
+    <a href="#" onclick="openChartModal('AVAX', '아발란체'); return false;" class="coin-link">
+        <b>아발란체</b> <span class="ticker-symbol">(AVAX)</span>
+    </a>
+</td>
+<td>9,110.0</td>
+<td class="minus">-0.11%</td>
+<td>46.7</td>
+<td><b>73.5%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">32.2점</td>
+<td><b>65.38점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>113</b></td>
 <td>
     <a href="#" onclick="openChartModal('HIVE', '하이브'); return false;" class="coin-link">
         <b>하이브</b> <span class="ticker-symbol">(HIVE)</span>
@@ -2034,71 +2018,71 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>115</b></td>
+<td><b>114</b></td>
 <td>
-    <a href="#" onclick="openChartModal('NEAR', '니어프로토콜'); return false;" class="coin-link">
-        <b>니어프로토콜</b> <span class="ticker-symbol">(NEAR)</span>
+    <a href="#" onclick="openChartModal('IOST', '아이오에스티'); return false;" class="coin-link">
+        <b>아이오에스티</b> <span class="ticker-symbol">(IOST)</span>
     </a>
 </td>
-<td>2,266.0</td>
-<td class="minus">-0.04%</td>
-<td>26.1</td>
-<td><b>71.4%</b></td>
+<td>0.866</td>
+<td class="plus">+0.58%</td>
+<td>47.4</td>
+<td><b>62.0%</b></td>
+<td class="accumulation">60점</td>
+<td class="liquidity">54.1점</td>
+<td><b>65.21점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 2회</span></td>
+</tr>
+<tr>
+<td><b>115</b></td>
+<td>
+    <a href="#" onclick="openChartModal('VET', '비체인'); return false;" class="coin-link">
+        <b>비체인</b> <span class="ticker-symbol">(VET)</span>
+    </a>
+</td>
+<td>6.7</td>
+<td class="plus">+0.75%</td>
+<td>40.0</td>
+<td><b>74.0%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">35.8점</td>
-<td><b>65.13점</b></td>
+<td class="liquidity">23.1점</td>
+<td><b>65.16점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>116</b></td>
 <td>
-    <a href="#" onclick="openChartModal('HUNT', '헌트'); return false;" class="coin-link">
-        <b>헌트</b> <span class="ticker-symbol">(HUNT)</span>
+    <a href="#" onclick="openChartModal('ESP', '에스프레소'); return false;" class="coin-link">
+        <b>에스프레소</b> <span class="ticker-symbol">(ESP)</span>
     </a>
 </td>
-<td>111.0</td>
-<td class="minus">-0.89%</td>
-<td>42.9</td>
-<td><b>65.6%</b></td>
+<td>102.0</td>
+<td class="plus">+12.58%</td>
+<td>45.5</td>
+<td><b>65.0%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">17.8점</td>
+<td class="liquidity">56.6점</td>
 <td><b>64.83점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>117</b></td>
 <td>
-    <a href="#" onclick="openChartModal('ZRO', '레이어제로'); return false;" class="coin-link">
-        <b>레이어제로</b> <span class="ticker-symbol">(ZRO)</span>
+    <a href="#" onclick="openChartModal('BORA', '보라'); return false;" class="coin-link">
+        <b>보라</b> <span class="ticker-symbol">(BORA)</span>
     </a>
 </td>
-<td>1,194.0</td>
-<td class="plus">+1.62%</td>
-<td><span class='overheat'>72.7 (과열)</span></td>
-<td><b>68.4%</b></td>
+<td>27.7</td>
+<td class="minus">-2.46%</td>
+<td>40.0</td>
+<td><b>70.9%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">23.1점</td>
-<td><b>64.77점</b></td>
+<td class="liquidity">31.9점</td>
+<td><b>64.56점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>118</b></td>
-<td>
-    <a href="#" onclick="openChartModal('CBK', '코박토큰'); return false;" class="coin-link">
-        <b>코박토큰</b> <span class="ticker-symbol">(CBK)</span>
-    </a>
-</td>
-<td>237.0</td>
-<td class="minus">-0.42%</td>
-<td>57.1</td>
-<td><b>70.0%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">16.1점</td>
-<td><b>64.59점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>119</b></td>
 <td>
     <a href="#" onclick="openChartModal('SKY', '스카이프로토콜'); return false;" class="coin-link">
         <b>스카이프로토콜</b> <span class="ticker-symbol">(SKY)</span>
@@ -2114,7 +2098,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>120</b></td>
+<td><b>119</b></td>
 <td>
     <a href="#" onclick="openChartModal('WAXP', '왁스'); return false;" class="coin-link">
         <b>왁스</b> <span class="ticker-symbol">(WAXP)</span>
@@ -2130,39 +2114,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>121</b></td>
-<td>
-    <a href="#" onclick="openChartModal('MOCA', '모카네트워크'); return false;" class="coin-link">
-        <b>모카네트워크</b> <span class="ticker-symbol">(MOCA)</span>
-    </a>
-</td>
-<td>10.9</td>
-<td class="">0%</td>
-<td>50.0</td>
-<td><b>68.6%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">22.7점</td>
-<td><b>64.44점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>122</b></td>
-<td>
-    <a href="#" onclick="openChartModal('CAP', '캡'); return false;" class="coin-link">
-        <b>캡</b> <span class="ticker-symbol">(CAP)</span>
-    </a>
-</td>
-<td>53.5</td>
-<td class="plus">+3.28%</td>
-<td>23.3</td>
-<td><b>76.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">58.4점</td>
-<td><b>64.38점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>123</b></td>
+<td><b>120</b></td>
 <td>
     <a href="#" onclick="openChartModal('SC', '시아코인'); return false;" class="coin-link">
         <b>시아코인</b> <span class="ticker-symbol">(SC)</span>
@@ -2178,23 +2130,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>124</b></td>
-<td>
-    <a href="#" onclick="openChartModal('CKB', '너보스'); return false;" class="coin-link">
-        <b>너보스</b> <span class="ticker-symbol">(CKB)</span>
-    </a>
-</td>
-<td>1.26</td>
-<td class="plus">+4.13%</td>
-<td>58.3</td>
-<td><b>65.6%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">25.1점</td>
-<td><b>64.29점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>125</b></td>
+<td><b>121</b></td>
 <td>
     <a href="#" onclick="openChartModal('ARX', '아르키움'); return false;" class="coin-link">
         <b>아르키움</b> <span class="ticker-symbol">(ARX)</span>
@@ -2203,14 +2139,30 @@ window.onkeydown = function(event) {
 <td>180.0</td>
 <td class="minus">-1.64%</td>
 <td>44.4</td>
-<td><b>69.9%</b></td>
+<td><b>70.0%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">44.3점</td>
-<td><b>64.02점</b></td>
+<td><b>64.3점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>126</b></td>
+<td><b>122</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ETH', '이더리움'); return false;" class="coin-link">
+        <b>이더리움</b> <span class="ticker-symbol">(ETH)</span>
+    </a>
+</td>
+<td>2,700,000.0</td>
+<td class="plus">+0.22%</td>
+<td>50.0</td>
+<td><b>64.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">54.3점</td>
+<td><b>64.14점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>123</b></td>
 <td>
     <a href="#" onclick="openChartModal('GLM', '골렘'); return false;" class="coin-link">
         <b>골렘</b> <span class="ticker-symbol">(GLM)</span>
@@ -2226,71 +2178,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>127</b></td>
+<td><b>124</b></td>
 <td>
-    <a href="#" onclick="openChartModal('ETH', '이더리움'); return false;" class="coin-link">
-        <b>이더리움</b> <span class="ticker-symbol">(ETH)</span>
+    <a href="#" onclick="openChartModal('EUL', '오일러'); return false;" class="coin-link">
+        <b>오일러</b> <span class="ticker-symbol">(EUL)</span>
     </a>
 </td>
-<td>2,701,000.0</td>
-<td class="plus">+0.26%</td>
-<td>50.0</td>
-<td><b>66.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">54.4점</td>
-<td><b>63.96점</b></td>
+<td>1,648.0</td>
+<td class="minus">-2.54%</td>
+<td>25.0</td>
+<td><b>68.6%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">51.0점</td>
+<td><b>63.82점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>128</b></td>
+<td><b>125</b></td>
 <td>
-    <a href="#" onclick="openChartModal('POWR', '파워렛저'); return false;" class="coin-link">
-        <b>파워렛저</b> <span class="ticker-symbol">(POWR)</span>
+    <a href="#" onclick="openChartModal('XRP', '엑스알피(리플)'); return false;" class="coin-link">
+        <b>엑스알피(리플)</b> <span class="ticker-symbol">(XRP)</span>
     </a>
 </td>
-<td>54.6</td>
-<td class="minus">-0.18%</td>
-<td>61.5</td>
-<td><b>72.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">28.7점</td>
-<td><b>63.81점</b></td>
+<td>1,457.0</td>
+<td class="minus">-0.34%</td>
+<td>55.6</td>
+<td><b>76.3%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">59.6점</td>
+<td><b>63.76점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>129</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ZKP', '지케이패스'); return false;" class="coin-link">
-        <b>지케이패스</b> <span class="ticker-symbol">(ZKP)</span>
-    </a>
-</td>
-<td>64.1</td>
-<td class="plus">+0.31%</td>
-<td>27.3</td>
-<td><b>71.2%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">30.0점</td>
-<td><b>63.67점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>130</b></td>
-<td>
-    <a href="#" onclick="openChartModal('XEC', '이캐시'); return false;" class="coin-link">
-        <b>이캐시</b> <span class="ticker-symbol">(XEC)</span>
-    </a>
-</td>
-<td>0.00952</td>
-<td class="minus">-0.94%</td>
-<td>44.0</td>
-<td><b>68.8%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">41.9점</td>
-<td><b>63.62점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>131</b></td>
+<td><b>126</b></td>
 <td>
     <a href="#" onclick="openChartModal('MINA', '미나'); return false;" class="coin-link">
         <b>미나</b> <span class="ticker-symbol">(MINA)</span>
@@ -2306,23 +2226,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>132</b></td>
+<td><b>127</b></td>
 <td>
-    <a href="#" onclick="openChartModal('BIRB', '문버드'); return false;" class="coin-link">
-        <b>문버드</b> <span class="ticker-symbol">(BIRB)</span>
+    <a href="#" onclick="openChartModal('MOCA', '모카네트워크'); return false;" class="coin-link">
+        <b>모카네트워크</b> <span class="ticker-symbol">(MOCA)</span>
     </a>
 </td>
-<td>74.3</td>
-<td class="plus">+3.48%</td>
-<td>52.9</td>
-<td><b>72.8%</b></td>
+<td>10.9</td>
+<td class="">0%</td>
+<td>60.0</td>
+<td><b>68.8%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">37.6점</td>
-<td><b>63.11점</b></td>
+<td class="liquidity">22.7점</td>
+<td><b>63.14점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>133</b></td>
+<td><b>128</b></td>
 <td>
     <a href="#" onclick="openChartModal('STRAX', '저트라'); return false;" class="coin-link">
         <b>저트라</b> <span class="ticker-symbol">(STRAX)</span>
@@ -2338,39 +2258,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>134</b></td>
+<td><b>129</b></td>
 <td>
-    <a href="#" onclick="openChartModal('IOST', '아이오에스티'); return false;" class="coin-link">
-        <b>아이오에스티</b> <span class="ticker-symbol">(IOST)</span>
+    <a href="#" onclick="openChartModal('CKB', '너보스'); return false;" class="coin-link">
+        <b>너보스</b> <span class="ticker-symbol">(CKB)</span>
     </a>
 </td>
-<td>0.863</td>
-<td class="plus">+0.23%</td>
-<td>37.5</td>
-<td><b>62.0%</b></td>
-<td class="accumulation">60점</td>
-<td class="liquidity">54.1점</td>
-<td><b>63.08점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 2회</span></td>
-</tr>
-<tr>
-<td><b>135</b></td>
-<td>
-    <a href="#" onclick="openChartModal('0G', '제로지'); return false;" class="coin-link">
-        <b>제로지</b> <span class="ticker-symbol">(0G)</span>
-    </a>
-</td>
-<td>211.0</td>
-<td class="">0%</td>
-<td>42.9</td>
-<td><b>71.1%</b></td>
+<td>1.24</td>
+<td class="plus">+2.48%</td>
+<td>46.2</td>
+<td><b>65.2%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">47.7점</td>
-<td><b>63.05점</b></td>
+<td class="liquidity">25.1점</td>
+<td><b>62.65점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>136</b></td>
+<td><b>130</b></td>
+<td>
+    <a href="#" onclick="openChartModal('JUP', '주피터'); return false;" class="coin-link">
+        <b>주피터</b> <span class="ticker-symbol">(JUP)</span>
+    </a>
+</td>
+<td>259.0</td>
+<td class="">0%</td>
+<td>45.5</td>
+<td><b>66.4%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">22.6점</td>
+<td><b>62.63점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>131</b></td>
+<td>
+    <a href="#" onclick="openChartModal('WLD', '월드코인'); return false;" class="coin-link">
+        <b>월드코인</b> <span class="ticker-symbol">(WLD)</span>
+    </a>
+</td>
+<td>436.0</td>
+<td class="plus">+1.4%</td>
+<td>42.9</td>
+<td><b>66.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">43.2점</td>
+<td><b>62.55점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>132</b></td>
 <td>
     <a href="#" onclick="openChartModal('MTL', '메탈'); return false;" class="coin-link">
         <b>메탈</b> <span class="ticker-symbol">(MTL)</span>
@@ -2386,23 +2322,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>137</b></td>
+<td><b>133</b></td>
 <td>
-    <a href="#" onclick="openChartModal('UP2', '슈퍼폼'); return false;" class="coin-link">
-        <b>슈퍼폼</b> <span class="ticker-symbol">(UP2)</span>
+    <a href="#" onclick="openChartModal('PRL', '펄'); return false;" class="coin-link">
+        <b>펄</b> <span class="ticker-symbol">(PRL)</span>
     </a>
 </td>
-<td>82.5</td>
-<td class="minus">-1.43%</td>
-<td><span class='overheat'>70.6 (과열)</span></td>
-<td><b>74.0%</b></td>
+<td>419.0</td>
+<td class="minus">-0.95%</td>
+<td>47.6</td>
+<td><b>72.4%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">23.5점</td>
-<td><b>62.53점</b></td>
+<td class="liquidity">35.4점</td>
+<td><b>62.54점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>138</b></td>
+<td><b>134</b></td>
 <td>
     <a href="#" onclick="openChartModal('ALT', '알트레이어'); return false;" class="coin-link">
         <b>알트레이어</b> <span class="ticker-symbol">(ALT)</span>
@@ -2418,7 +2354,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>139</b></td>
+<td><b>135</b></td>
+<td>
+    <a href="#" onclick="openChartModal('IN', '인피닛'); return false;" class="coin-link">
+        <b>인피닛</b> <span class="ticker-symbol">(IN)</span>
+    </a>
+</td>
+<td>47.9</td>
+<td class="minus">-1.03%</td>
+<td>45.5</td>
+<td><b>72.1%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">25.7점</td>
+<td><b>62.46점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>136</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ADA', '에이다'); return false;" class="coin-link">
+        <b>에이다</b> <span class="ticker-symbol">(ADA)</span>
+    </a>
+</td>
+<td>276.0</td>
+<td class="minus">-1.43%</td>
+<td>50.0</td>
+<td><b>68.5%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">37.5점</td>
+<td><b>62.44점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>137</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MEGA', '메가이더'); return false;" class="coin-link">
+        <b>메가이더</b> <span class="ticker-symbol">(MEGA)</span>
+    </a>
+</td>
+<td>51.0</td>
+<td class="plus">+0.2%</td>
+<td>33.3</td>
+<td><b>64.1%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">29.0점</td>
+<td><b>62.42점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>138</b></td>
 <td>
     <a href="#" onclick="openChartModal('DRV', '디라이브'); return false;" class="coin-link">
         <b>디라이브</b> <span class="ticker-symbol">(DRV)</span>
@@ -2434,7 +2418,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
+<td><b>139</b></td>
+<td>
+    <a href="#" onclick="openChartModal('OPEN', '오픈렛저'); return false;" class="coin-link">
+        <b>오픈렛저</b> <span class="ticker-symbol">(OPEN)</span>
+    </a>
+</td>
+<td>299.0</td>
+<td class="plus">+0.67%</td>
+<td><span class='overheat'>70.0 (과열)</span></td>
+<td><b>67.3%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">20.9점</td>
+<td><b>62.4점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
 <td><b>140</b></td>
+<td>
+    <a href="#" onclick="openChartModal('PEPE', '페페'); return false;" class="coin-link">
+        <b>페페</b> <span class="ticker-symbol">(PEPE)</span>
+    </a>
+</td>
+<td>0.00403</td>
+<td class="plus">+0.5%</td>
+<td>39.9</td>
+<td><b>71.3%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">32.1점</td>
+<td><b>62.36점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>141</b></td>
+<td>
+    <a href="#" onclick="openChartModal('STX', '스택스'); return false;" class="coin-link">
+        <b>스택스</b> <span class="ticker-symbol">(STX)</span>
+    </a>
+</td>
+<td>185.0</td>
+<td class="minus">-1.07%</td>
+<td>50.0</td>
+<td><b>69.7%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">32.2점</td>
+<td><b>62.35점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>142</b></td>
 <td>
     <a href="#" onclick="openChartModal('SPK', '스파크'); return false;" class="coin-link">
         <b>스파크</b> <span class="ticker-symbol">(SPK)</span>
@@ -2450,23 +2482,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>141</b></td>
+<td><b>143</b></td>
 <td>
-    <a href="#" onclick="openChartModal('WLD', '월드코인'); return false;" class="coin-link">
-        <b>월드코인</b> <span class="ticker-symbol">(WLD)</span>
+    <a href="#" onclick="openChartModal('MED', '메디블록'); return false;" class="coin-link">
+        <b>메디블록</b> <span class="ticker-symbol">(MED)</span>
     </a>
 </td>
-<td>437.0</td>
-<td class="plus">+1.63%</td>
-<td>50.0</td>
-<td><b>65.7%</b></td>
+<td>1.84</td>
+<td class="plus">+1.1%</td>
+<td>66.7</td>
+<td><b>75.9%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">43.1점</td>
+<td class="liquidity">18.1점</td>
 <td><b>62.21점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>142</b></td>
+<td><b>144</b></td>
 <td>
     <a href="#" onclick="openChartModal('API3', '에이피아이쓰리'); return false;" class="coin-link">
         <b>에이피아이쓰리</b> <span class="ticker-symbol">(API3)</span>
@@ -2482,39 +2514,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>143</b></td>
+<td><b>145</b></td>
+<td>
+    <a href="#" onclick="openChartModal('HUNT', '헌트'); return false;" class="coin-link">
+        <b>헌트</b> <span class="ticker-symbol">(HUNT)</span>
+    </a>
+</td>
+<td>111.0</td>
+<td class="minus">-0.89%</td>
+<td>42.9</td>
+<td><b>66.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">17.8점</td>
+<td><b>62.18점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>146</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ZRO', '레이어제로'); return false;" class="coin-link">
+        <b>레이어제로</b> <span class="ticker-symbol">(ZRO)</span>
+    </a>
+</td>
+<td>1,183.0</td>
+<td class="plus">+0.68%</td>
+<td>54.5</td>
+<td><b>67.5%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">23.1점</td>
+<td><b>62.16점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>147</b></td>
 <td>
     <a href="#" onclick="openChartModal('MEW', '캣인어독스월드'); return false;" class="coin-link">
         <b>캣인어독스월드</b> <span class="ticker-symbol">(MEW)</span>
     </a>
 </td>
-<td>0.481</td>
-<td class="plus">+0.63%</td>
-<td>35.7</td>
-<td><b>72.0%</b></td>
+<td>0.48</td>
+<td class="plus">+0.42%</td>
+<td>28.6</td>
+<td><b>70.4%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">24.9점</td>
-<td><b>62.18점</b></td>
+<td><b>62.13점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>144</b></td>
-<td>
-    <a href="#" onclick="openChartModal('OPEN', '오픈렛저'); return false;" class="coin-link">
-        <b>오픈렛저</b> <span class="ticker-symbol">(OPEN)</span>
-    </a>
-</td>
-<td>299.0</td>
-<td class="plus">+0.67%</td>
-<td>63.6</td>
-<td><b>66.5%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">20.8점</td>
-<td><b>62.14점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>145</b></td>
+<td><b>148</b></td>
 <td>
     <a href="#" onclick="openChartModal('ZAMA', '자마'); return false;" class="coin-link">
         <b>자마</b> <span class="ticker-symbol">(ZAMA)</span>
@@ -2526,11 +2574,11 @@ window.onkeydown = function(event) {
 <td><b>71.2%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">36.2점</td>
-<td><b>62.1점</b></td>
+<td><b>62.11점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>146</b></td>
+<td><b>149</b></td>
 <td>
     <a href="#" onclick="openChartModal('IMX', '이뮤터블엑스'); return false;" class="coin-link">
         <b>이뮤터블엑스</b> <span class="ticker-symbol">(IMX)</span>
@@ -2546,7 +2594,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>147</b></td>
+<td><b>150</b></td>
+<td>
+    <a href="#" onclick="openChartModal('KMNO', '카미노파이낸스'); return false;" class="coin-link">
+        <b>카미노파이낸스</b> <span class="ticker-symbol">(KMNO)</span>
+    </a>
+</td>
+<td>24.6</td>
+<td class="minus">-4.28%</td>
+<td>62.5</td>
+<td><b>75.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">35.7점</td>
+<td><b>62.0점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>151</b></td>
 <td>
     <a href="#" onclick="openChartModal('AHT', '아하토큰'); return false;" class="coin-link">
         <b>아하토큰</b> <span class="ticker-symbol">(AHT)</span>
@@ -2562,39 +2626,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>148</b></td>
+<td><b>152</b></td>
 <td>
-    <a href="#" onclick="openChartModal('XCN', '오닉스코인'); return false;" class="coin-link">
-        <b>오닉스코인</b> <span class="ticker-symbol">(XCN)</span>
+    <a href="#" onclick="openChartModal('UP2', '슈퍼폼'); return false;" class="coin-link">
+        <b>슈퍼폼</b> <span class="ticker-symbol">(UP2)</span>
     </a>
 </td>
-<td>4.31</td>
-<td class="minus">-0.23%</td>
-<td>50.0</td>
-<td><b>70.2%</b></td>
+<td>82.2</td>
+<td class="minus">-1.79%</td>
+<td>63.2</td>
+<td><b>74.7%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">17.9점</td>
-<td><b>61.69점</b></td>
+<td class="liquidity">23.5점</td>
+<td><b>61.88점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>149</b></td>
+<td><b>153</b></td>
 <td>
-    <a href="#" onclick="openChartModal('STX', '스택스'); return false;" class="coin-link">
-        <b>스택스</b> <span class="ticker-symbol">(STX)</span>
+    <a href="#" onclick="openChartModal('T', '쓰레스홀드'); return false;" class="coin-link">
+        <b>쓰레스홀드</b> <span class="ticker-symbol">(T)</span>
     </a>
 </td>
-<td>185.0</td>
-<td class="minus">-1.07%</td>
-<td>50.0</td>
-<td><b>69.5%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">32.2점</td>
-<td><b>61.67점</b></td>
+<td>5.12</td>
+<td class="minus">-1.73%</td>
+<td>33.3</td>
+<td><b>70.1%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">27.3점</td>
+<td><b>61.86점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>150</b></td>
+<td><b>154</b></td>
+<td>
+    <a href="#" onclick="openChartModal('SOL', '솔라나'); return false;" class="coin-link">
+        <b>솔라나</b> <span class="ticker-symbol">(SOL)</span>
+    </a>
+</td>
+<td>107,500.0</td>
+<td class="plus">+0.47%</td>
+<td>50.0</td>
+<td><b>66.7%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">49.5점</td>
+<td><b>61.68점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>155</b></td>
 <td>
     <a href="#" onclick="openChartModal('ICP', '인터넷컴퓨터'); return false;" class="coin-link">
         <b>인터넷컴퓨터</b> <span class="ticker-symbol">(ICP)</span>
@@ -2610,55 +2690,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>151</b></td>
-<td>
-    <a href="#" onclick="openChartModal('BLEND', '플루언트'); return false;" class="coin-link">
-        <b>플루언트</b> <span class="ticker-symbol">(BLEND)</span>
-    </a>
-</td>
-<td>91.0</td>
-<td class="plus">+0.44%</td>
-<td>53.3</td>
-<td><b>74.9%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">45.6점</td>
-<td><b>61.64점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>152</b></td>
-<td>
-    <a href="#" onclick="openChartModal('AXL', '엑셀라'); return false;" class="coin-link">
-        <b>엑셀라</b> <span class="ticker-symbol">(AXL)</span>
-    </a>
-</td>
-<td>52.3</td>
-<td class="plus">+0.19%</td>
-<td>54.5</td>
-<td><b>66.6%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">27.0점</td>
-<td><b>61.64점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>153</b></td>
-<td>
-    <a href="#" onclick="openChartModal('BIGTIME', '빅타임'); return false;" class="coin-link">
-        <b>빅타임</b> <span class="ticker-symbol">(BIGTIME)</span>
-    </a>
-</td>
-<td>7.69</td>
-<td class="plus">+2.53%</td>
-<td>38.2</td>
-<td><b>66.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">24.6점</td>
-<td><b>61.51점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>154</b></td>
+<td><b>156</b></td>
 <td>
     <a href="#" onclick="openChartModal('ANKR', '앵커'); return false;" class="coin-link">
         <b>앵커</b> <span class="ticker-symbol">(ANKR)</span>
@@ -2671,38 +2703,6 @@ window.onkeydown = function(event) {
 <td class="accumulation">0점</td>
 <td class="liquidity">22.5점</td>
 <td><b>61.49점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>155</b></td>
-<td>
-    <a href="#" onclick="openChartModal('GRT', '더그래프'); return false;" class="coin-link">
-        <b>더그래프</b> <span class="ticker-symbol">(GRT)</span>
-    </a><span class="ai-badge">AI추천</span>
-</td>
-<td>20.7</td>
-<td class="plus">+0.98%</td>
-<td>50.0</td>
-<td><b>69.4%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">25.7점</td>
-<td><b>61.49점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>156</b></td>
-<td>
-    <a href="#" onclick="openChartModal('CARV', '카브'); return false;" class="coin-link">
-        <b>카브</b> <span class="ticker-symbol">(CARV)</span>
-    </a>
-</td>
-<td>45.7</td>
-<td class="plus">+4.58%</td>
-<td>50.0</td>
-<td><b>73.4%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">55.6점</td>
-<td><b>61.39점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -2724,38 +2724,6 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>158</b></td>
 <td>
-    <a href="#" onclick="openChartModal('SOL', '솔라나'); return false;" class="coin-link">
-        <b>솔라나</b> <span class="ticker-symbol">(SOL)</span>
-    </a>
-</td>
-<td>107,400.0</td>
-<td class="plus">+0.37%</td>
-<td>44.4</td>
-<td><b>67.9%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">49.5점</td>
-<td><b>61.24점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>159</b></td>
-<td>
-    <a href="#" onclick="openChartModal('JUP', '주피터'); return false;" class="coin-link">
-        <b>주피터</b> <span class="ticker-symbol">(JUP)</span>
-    </a>
-</td>
-<td>259.0</td>
-<td class="">0%</td>
-<td>38.5</td>
-<td><b>66.4%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">22.6점</td>
-<td><b>61.19점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>160</b></td>
-<td>
     <a href="#" onclick="openChartModal('SYRUP', '메이플파이낸스'); return false;" class="coin-link">
         <b>메이플파이낸스</b> <span class="ticker-symbol">(SYRUP)</span>
     </a>
@@ -2770,23 +2738,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>161</b></td>
-<td>
-    <a href="#" onclick="openChartModal('T', '쓰레스홀드'); return false;" class="coin-link">
-        <b>쓰레스홀드</b> <span class="ticker-symbol">(T)</span>
-    </a>
-</td>
-<td>5.14</td>
-<td class="minus">-1.34%</td>
-<td>33.3</td>
-<td><b>68.8%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">27.3점</td>
-<td><b>61.1점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>162</b></td>
+<td><b>159</b></td>
 <td>
     <a href="#" onclick="openChartModal('WIF', '도그위프햇'); return false;" class="coin-link">
         <b>도그위프햇</b> <span class="ticker-symbol">(WIF)</span>
@@ -2802,7 +2754,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>163</b></td>
+<td><b>160</b></td>
 <td>
     <a href="#" onclick="openChartModal('ZK', '지케이싱크'); return false;" class="coin-link">
         <b>지케이싱크</b> <span class="ticker-symbol">(ZK)</span>
@@ -2818,7 +2770,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>164</b></td>
+<td><b>161</b></td>
 <td>
     <a href="#" onclick="openChartModal('USD1', '월드리버티파이낸셜유에스디'); return false;" class="coin-link">
         <b>월드리버티파이낸셜유에스디</b> <span class="ticker-symbol">(USD1)</span>
@@ -2834,7 +2786,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>165</b></td>
+<td><b>162</b></td>
+<td>
+    <a href="#" onclick="openChartModal('TRX', '트론'); return false;" class="coin-link">
+        <b>트론</b> <span class="ticker-symbol">(TRX)</span>
+    </a>
+</td>
+<td>464.0</td>
+<td class="plus">+0.22%</td>
+<td>50.0</td>
+<td><b>54.4%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">37.6점</td>
+<td><b>60.89점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>163</b></td>
 <td>
     <a href="#" onclick="openChartModal('KAVA', '카바'); return false;" class="coin-link">
         <b>카바</b> <span class="ticker-symbol">(KAVA)</span>
@@ -2850,55 +2818,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
+<td><b>164</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BIGTIME', '빅타임'); return false;" class="coin-link">
+        <b>빅타임</b> <span class="ticker-symbol">(BIGTIME)</span>
+    </a>
+</td>
+<td>7.71</td>
+<td class="plus">+2.8%</td>
+<td>46.9</td>
+<td><b>66.7%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">24.6점</td>
+<td><b>60.69점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>165</b></td>
+<td>
+    <a href="#" onclick="openChartModal('BLEND', '플루언트'); return false;" class="coin-link">
+        <b>플루언트</b> <span class="ticker-symbol">(BLEND)</span>
+    </a>
+</td>
+<td>91.3</td>
+<td class="plus">+0.77%</td>
+<td>54.8</td>
+<td><b>71.4%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">45.4점</td>
+<td><b>60.66점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
 <td><b>166</b></td>
-<td>
-    <a href="#" onclick="openChartModal('MED', '메디블록'); return false;" class="coin-link">
-        <b>메디블록</b> <span class="ticker-symbol">(MED)</span>
-    </a>
-</td>
-<td>1.84</td>
-<td class="plus">+1.1%</td>
-<td>57.1</td>
-<td><b>76.2%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">18.1점</td>
-<td><b>60.84점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>167</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ZKC', '바운드리스'); return false;" class="coin-link">
-        <b>바운드리스</b> <span class="ticker-symbol">(ZKC)</span>
-    </a>
-</td>
-<td>54.9</td>
-<td class="">0%</td>
-<td>52.6</td>
-<td><b>71.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">16.0점</td>
-<td><b>60.79점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>168</b></td>
-<td>
-    <a href="#" onclick="openChartModal('MASK', '마스크네트워크'); return false;" class="coin-link">
-        <b>마스크네트워크</b> <span class="ticker-symbol">(MASK)</span>
-    </a>
-</td>
-<td>526.0</td>
-<td class="plus">+1.15%</td>
-<td>53.8</td>
-<td><b>71.5%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">12.2점</td>
-<td><b>60.63점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>169</b></td>
 <td>
     <a href="#" onclick="openChartModal('BOUNTY', '체인바운티'); return false;" class="coin-link">
         <b>체인바운티</b> <span class="ticker-symbol">(BOUNTY)</span>
@@ -2914,23 +2866,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>170</b></td>
-<td>
-    <a href="#" onclick="openChartModal('XLM', '스텔라루멘'); return false;" class="coin-link">
-        <b>스텔라루멘</b> <span class="ticker-symbol">(XLM)</span>
-    </a>
-</td>
-<td>230.0</td>
-<td class="minus">-0.43%</td>
-<td>55.6</td>
-<td><b>71.2%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">48.0점</td>
-<td><b>60.61점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>171</b></td>
+<td><b>167</b></td>
 <td>
     <a href="#" onclick="openChartModal('RLUSD', '리플유에스디'); return false;" class="coin-link">
         <b>리플유에스디</b> <span class="ticker-symbol">(RLUSD)</span>
@@ -2946,39 +2882,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>172</b></td>
+<td><b>168</b></td>
 <td>
-    <a href="#" onclick="openChartModal('LINEA', '리네아'); return false;" class="coin-link">
-        <b>리네아</b> <span class="ticker-symbol">(LINEA)</span>
-    </a>
+    <a href="#" onclick="openChartModal('GRT', '더그래프'); return false;" class="coin-link">
+        <b>더그래프</b> <span class="ticker-symbol">(GRT)</span>
+    </a><span class="ai-badge">AI추천</span>
 </td>
-<td>3.17</td>
-<td class="plus">+1.28%</td>
-<td>60.0</td>
-<td><b>76.7%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">15.8점</td>
-<td><b>60.23점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>173</b></td>
-<td>
-    <a href="#" onclick="openChartModal('IN', '인피닛'); return false;" class="coin-link">
-        <b>인피닛</b> <span class="ticker-symbol">(IN)</span>
-    </a>
-</td>
-<td>47.8</td>
-<td class="minus">-1.24%</td>
-<td>40.0</td>
-<td><b>71.8%</b></td>
+<td>20.7</td>
+<td class="plus">+0.98%</td>
+<td>50.0</td>
+<td><b>71.0%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">25.6점</td>
-<td><b>60.1점</b></td>
+<td><b>60.37점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>174</b></td>
+<td><b>169</b></td>
+<td>
+    <a href="#" onclick="openChartModal('XPL', '플라즈마'); return false;" class="coin-link">
+        <b>플라즈마</b> <span class="ticker-symbol">(XPL)</span>
+    </a>
+</td>
+<td>108.0</td>
+<td class="">0%</td>
+<td>50.0</td>
+<td><b>55.2%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">36.1점</td>
+<td><b>60.13점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>170</b></td>
 <td>
     <a href="#" onclick="openChartModal('EDGE', '디피니티브'); return false;" class="coin-link">
         <b>디피니티브</b> <span class="ticker-symbol">(EDGE)</span>
@@ -2994,55 +2930,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>175</b></td>
+<td><b>171</b></td>
+<td>
+    <a href="#" onclick="openChartModal('WLFI', '월드리버티파이낸셜'); return false;" class="coin-link">
+        <b>월드리버티파이낸셜</b> <span class="ticker-symbol">(WLFI)</span>
+    </a>
+</td>
+<td>72.6</td>
+<td class="plus">+0.69%</td>
+<td>42.1</td>
+<td><b>72.3%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">37.5점</td>
+<td><b>60.05점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>172</b></td>
 <td>
     <a href="#" onclick="openChartModal('KAT', '카타나'); return false;" class="coin-link">
         <b>카타나</b> <span class="ticker-symbol">(KAT)</span>
     </a>
 </td>
-<td>6.47</td>
-<td class="minus">-0.77%</td>
-<td>46.2</td>
-<td><b>65.2%</b></td>
+<td>6.45</td>
+<td class="minus">-1.07%</td>
+<td>30.8</td>
+<td><b>65.0%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">29.3점</td>
-<td><b>60.05점</b></td>
+<td><b>60.0점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>176</b></td>
-<td>
-    <a href="#" onclick="openChartModal('WAL', '월러스'); return false;" class="coin-link">
-        <b>월러스</b> <span class="ticker-symbol">(WAL)</span>
-    </a>
-</td>
-<td>35.7</td>
-<td class="">0%</td>
-<td>42.9</td>
-<td><b>69.0%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">21.6점</td>
-<td><b>59.78점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>177</b></td>
-<td>
-    <a href="#" onclick="openChartModal('NXPC', '넥스페이스'); return false;" class="coin-link">
-        <b>넥스페이스</b> <span class="ticker-symbol">(NXPC)</span>
-    </a>
-</td>
-<td>330.0</td>
-<td class="minus">-1.49%</td>
-<td>42.9</td>
-<td><b>68.9%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">22.0점</td>
-<td><b>59.54점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>178</b></td>
+<td><b>173</b></td>
 <td>
     <a href="#" onclick="openChartModal('AWE', '에이더블유이'); return false;" class="coin-link">
         <b>에이더블유이</b> <span class="ticker-symbol">(AWE)</span>
@@ -3058,7 +2978,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>179</b></td>
+<td><b>174</b></td>
 <td>
     <a href="#" onclick="openChartModal('LSK', '리스크'); return false;" class="coin-link">
         <b>리스크</b> <span class="ticker-symbol">(LSK)</span>
@@ -3074,23 +2994,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>180</b></td>
+<td><b>175</b></td>
 <td>
-    <a href="#" onclick="openChartModal('XPL', '플라즈마'); return false;" class="coin-link">
-        <b>플라즈마</b> <span class="ticker-symbol">(XPL)</span>
+    <a href="#" onclick="openChartModal('AXL', '엑셀라'); return false;" class="coin-link">
+        <b>엑셀라</b> <span class="ticker-symbol">(AXL)</span>
     </a>
 </td>
-<td>107.0</td>
-<td class="minus">-0.93%</td>
-<td>42.9</td>
-<td><b>54.9%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">36.1점</td>
-<td><b>59.38점</b></td>
+<td>52.3</td>
+<td class="plus">+0.19%</td>
+<td>50.0</td>
+<td><b>66.7%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">27.0점</td>
+<td><b>59.37점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>181</b></td>
+<td><b>176</b></td>
 <td>
     <a href="#" onclick="openChartModal('ATH', '에이셔'); return false;" class="coin-link">
         <b>에이셔</b> <span class="ticker-symbol">(ATH)</span>
@@ -3106,87 +3026,119 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>182</b></td>
+<td><b>177</b></td>
+<td>
+    <a href="#" onclick="openChartModal('NXPC', '넥스페이스'); return false;" class="coin-link">
+        <b>넥스페이스</b> <span class="ticker-symbol">(NXPC)</span>
+    </a>
+</td>
+<td>330.0</td>
+<td class="minus">-1.49%</td>
+<td>42.9</td>
+<td><b>66.9%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">21.9점</td>
+<td><b>59.33점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>178</b></td>
 <td>
     <a href="#" onclick="openChartModal('GEOD', '지오드넷'); return false;" class="coin-link">
         <b>지오드넷</b> <span class="ticker-symbol">(GEOD)</span>
     </a>
 </td>
-<td>257.0</td>
-<td class="plus">+0.39%</td>
-<td>28.6</td>
-<td><b>60.8%</b></td>
+<td>256.0</td>
+<td class="">0%</td>
+<td>14.3</td>
+<td><b>60.9%</b></td>
 <td class="accumulation">30점</td>
 <td class="liquidity">16.8점</td>
+<td><b>59.3점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>179</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MANA', '디센트럴랜드'); return false;" class="coin-link">
+        <b>디센트럴랜드</b> <span class="ticker-symbol">(MANA)</span>
+    </a>
+</td>
+<td>92.9</td>
+<td class="minus">-1.06%</td>
+<td>45.5</td>
+<td><b>70.5%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">17.0점</td>
 <td><b>59.29점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>180</b></td>
+<td>
+    <a href="#" onclick="openChartModal('SAND', '샌드박스'); return false;" class="coin-link">
+        <b>샌드박스</b> <span class="ticker-symbol">(SAND)</span>
+    </a>
+</td>
+<td>58.6</td>
+<td class="minus">-0.34%</td>
+<td>42.9</td>
+<td><b>72.5%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">23.8점</td>
+<td><b>59.22점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>181</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ETHFI', '이더파이'); return false;" class="coin-link">
+        <b>이더파이</b> <span class="ticker-symbol">(ETHFI)</span>
+    </a>
+</td>
+<td>545.0</td>
+<td class="plus">+1.3%</td>
+<td>61.5</td>
+<td><b>68.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">22.5점</td>
+<td><b>59.06점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>182</b></td>
+<td>
+    <a href="#" onclick="openChartModal('SNT', '스테이터스네트워크토큰'); return false;" class="coin-link">
+        <b>스테이터스네트워크토큰</b> <span class="ticker-symbol">(SNT)</span>
+    </a>
+</td>
+<td>7.69</td>
+<td class="minus">-1.16%</td>
+<td>45.5</td>
+<td><b>64.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">20.8점</td>
+<td><b>59.06점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>183</b></td>
 <td>
-    <a href="#" onclick="openChartModal('ADA', '에이다'); return false;" class="coin-link">
-        <b>에이다</b> <span class="ticker-symbol">(ADA)</span>
+    <a href="#" onclick="openChartModal('ZIL', '질리카'); return false;" class="coin-link">
+        <b>질리카</b> <span class="ticker-symbol">(ZIL)</span>
     </a>
 </td>
-<td>277.0</td>
-<td class="minus">-1.07%</td>
-<td>60.0</td>
-<td><b>67.2%</b></td>
+<td>3.11</td>
+<td class="minus">-0.64%</td>
+<td>42.9</td>
+<td><b>73.4%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">37.2점</td>
-<td><b>59.26점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>184</b></td>
-<td>
-    <a href="#" onclick="openChartModal('KMNO', '카미노파이낸스'); return false;" class="coin-link">
-        <b>카미노파이낸스</b> <span class="ticker-symbol">(KMNO)</span>
-    </a>
-</td>
-<td>24.6</td>
-<td class="minus">-4.28%</td>
-<td>55.6</td>
-<td><b>70.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">35.8점</td>
-<td><b>59.23점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>185</b></td>
-<td>
-    <a href="#" onclick="openChartModal('CHIP', '유에스디에이아이'); return false;" class="coin-link">
-        <b>유에스디에이아이</b> <span class="ticker-symbol">(CHIP)</span>
-    </a>
-</td>
-<td>32.5</td>
-<td class="minus">-6.07%</td>
-<td>57.1</td>
-<td><b>75.8%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">39.3점</td>
-<td><b>59.21점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>186</b></td>
-<td>
-    <a href="#" onclick="openChartModal('FIL', '파일코인'); return false;" class="coin-link">
-        <b>파일코인</b> <span class="ticker-symbol">(FIL)</span>
-    </a>
-</td>
-<td>995.0</td>
-<td class="minus">-0.3%</td>
-<td>35.3</td>
-<td><b>63.9%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">26.5점</td>
+<td class="liquidity">25.5점</td>
 <td><b>59.06점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>187</b></td>
+<td><b>184</b></td>
 <td>
     <a href="#" onclick="openChartModal('RED', '레드스톤'); return false;" class="coin-link">
         <b>레드스톤</b> <span class="ticker-symbol">(RED)</span>
@@ -3202,7 +3154,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>188</b></td>
+<td><b>185</b></td>
+<td>
+    <a href="#" onclick="openChartModal('FLUID', '플루이드'); return false;" class="coin-link">
+        <b>플루이드</b> <span class="ticker-symbol">(FLUID)</span>
+    </a>
+</td>
+<td>1,711.0</td>
+<td class="minus">-0.75%</td>
+<td>43.6</td>
+<td><b>67.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">21.2점</td>
+<td><b>59.05점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>186</b></td>
+<td>
+    <a href="#" onclick="openChartModal('POL', '폴리곤에코시스템토큰'); return false;" class="coin-link">
+        <b>폴리곤에코시스템토큰</b> <span class="ticker-symbol">(POL)</span>
+    </a>
+</td>
+<td>109.0</td>
+<td class="plus">+1.87%</td>
+<td>50.0</td>
+<td><b>70.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">33.1점</td>
+<td><b>58.99점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>187</b></td>
 <td>
     <a href="#" onclick="openChartModal('GMT', '스테픈'); return false;" class="coin-link">
         <b>스테픈</b> <span class="ticker-symbol">(GMT)</span>
@@ -3218,23 +3202,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>189</b></td>
+<td><b>188</b></td>
 <td>
-    <a href="#" onclick="openChartModal('SNT', '스테이터스네트워크토큰'); return false;" class="coin-link">
-        <b>스테이터스네트워크토큰</b> <span class="ticker-symbol">(SNT)</span>
+    <a href="#" onclick="openChartModal('ONDO', '온도파이낸스'); return false;" class="coin-link">
+        <b>온도파이낸스</b> <span class="ticker-symbol">(ONDO)</span>
     </a>
 </td>
-<td>7.7</td>
-<td class="minus">-1.03%</td>
-<td>45.5</td>
-<td><b>64.8%</b></td>
+<td>489.0</td>
+<td class="minus">-1.21%</td>
+<td>25.0</td>
+<td><b>70.7%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">20.8점</td>
-<td><b>58.79점</b></td>
+<td class="liquidity">49.3점</td>
+<td><b>58.9점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>190</b></td>
+<td><b>189</b></td>
 <td>
     <a href="#" onclick="openChartModal('ONT', '온톨로지'); return false;" class="coin-link">
         <b>온톨로지</b> <span class="ticker-symbol">(ONT)</span>
@@ -3250,23 +3234,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>191</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ETHFI', '이더파이'); return false;" class="coin-link">
-        <b>이더파이</b> <span class="ticker-symbol">(ETHFI)</span>
-    </a>
-</td>
-<td>545.0</td>
-<td class="plus">+1.3%</td>
-<td>47.1</td>
-<td><b>67.2%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">22.6점</td>
-<td><b>58.73점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>192</b></td>
+<td><b>190</b></td>
 <td>
     <a href="#" onclick="openChartModal('DKA', '디카르고'); return false;" class="coin-link">
         <b>디카르고</b> <span class="ticker-symbol">(DKA)</span>
@@ -3282,23 +3250,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>193</b></td>
-<td>
-    <a href="#" onclick="openChartModal('MANA', '디센트럴랜드'); return false;" class="coin-link">
-        <b>디센트럴랜드</b> <span class="ticker-symbol">(MANA)</span>
-    </a>
-</td>
-<td>93.0</td>
-<td class="minus">-0.96%</td>
-<td>54.5</td>
-<td><b>70.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">17.0점</td>
-<td><b>58.53점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>194</b></td>
+<td><b>191</b></td>
 <td>
     <a href="#" onclick="openChartModal('SUN', '썬'); return false;" class="coin-link">
         <b>썬</b> <span class="ticker-symbol">(SUN)</span>
@@ -3314,23 +3266,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>195</b></td>
+<td><b>192</b></td>
 <td>
-    <a href="#" onclick="openChartModal('ZIL', '질리카'); return false;" class="coin-link">
-        <b>질리카</b> <span class="ticker-symbol">(ZIL)</span>
+    <a href="#" onclick="openChartModal('FIL', '파일코인'); return false;" class="coin-link">
+        <b>파일코인</b> <span class="ticker-symbol">(FIL)</span>
     </a>
 </td>
-<td>3.11</td>
-<td class="minus">-0.64%</td>
-<td>40.0</td>
-<td><b>73.8%</b></td>
+<td>996.0</td>
+<td class="minus">-0.2%</td>
+<td>31.2</td>
+<td><b>64.9%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">25.6점</td>
-<td><b>58.46점</b></td>
+<td class="liquidity">26.6점</td>
+<td><b>58.42점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>196</b></td>
+<td><b>193</b></td>
+<td>
+    <a href="#" onclick="openChartModal('0G', '제로지'); return false;" class="coin-link">
+        <b>제로지</b> <span class="ticker-symbol">(0G)</span>
+    </a>
+</td>
+<td>211.0</td>
+<td class="">0%</td>
+<td>42.9</td>
+<td><b>69.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">47.4점</td>
+<td><b>58.38점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>194</b></td>
+<td>
+    <a href="#" onclick="openChartModal('YGG', '일드길드게임즈'); return false;" class="coin-link">
+        <b>일드길드게임즈</b> <span class="ticker-symbol">(YGG)</span>
+    </a>
+</td>
+<td>28.2</td>
+<td class="plus">+4.83%</td>
+<td>50.0</td>
+<td><b>70.7%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">47.0점</td>
+<td><b>58.38점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>195</b></td>
 <td>
     <a href="#" onclick="openChartModal('THETA', '쎄타토큰'); return false;" class="coin-link">
         <b>쎄타토큰</b> <span class="ticker-symbol">(THETA)</span>
@@ -3346,7 +3330,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
+<td><b>196</b></td>
+<td>
+    <a href="#" onclick="openChartModal('QTUM', '퀀텀'); return false;" class="coin-link">
+        <b>퀀텀</b> <span class="ticker-symbol">(QTUM)</span>
+    </a>
+</td>
+<td>943.0</td>
+<td class="plus">+0.96%</td>
+<td>62.5</td>
+<td><b>75.4%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">18.5점</td>
+<td><b>58.33점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
 <td><b>197</b></td>
+<td>
+    <a href="#" onclick="openChartModal('MOODENG', '무뎅'); return false;" class="coin-link">
+        <b>무뎅</b> <span class="ticker-symbol">(MOODENG)</span>
+    </a>
+</td>
+<td>53.6</td>
+<td class="minus">-1.29%</td>
+<td>35.3</td>
+<td><b>71.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">28.2점</td>
+<td><b>58.31점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>198</b></td>
 <td>
     <a href="#" onclick="openChartModal('AI', '젠신'); return false;" class="coin-link">
         <b>젠신</b> <span class="ticker-symbol">(AI)</span>
@@ -3362,7 +3378,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>198</b></td>
+<td><b>199</b></td>
 <td>
     <a href="#" onclick="openChartModal('ASTR', '아스타'); return false;" class="coin-link">
         <b>아스타</b> <span class="ticker-symbol">(ASTR)</span>
@@ -3378,23 +3394,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>199</b></td>
+<td><b>200</b></td>
 <td>
-    <a href="#" onclick="openChartModal('TAIKO', '타이코'); return false;" class="coin-link">
-        <b>타이코</b> <span class="ticker-symbol">(TAIKO)</span>
+    <a href="#" onclick="openChartModal('CHIP', '유에스디에이아이'); return false;" class="coin-link">
+        <b>유에스디에이아이</b> <span class="ticker-symbol">(CHIP)</span>
     </a>
 </td>
-<td>102.0</td>
-<td class="">0%</td>
-<td>66.7</td>
-<td><b>53.5%</b></td>
+<td>32.6</td>
+<td class="minus">-5.78%</td>
+<td>62.5</td>
+<td><b>75.5%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">20.6점</td>
+<td class="liquidity">39.3점</td>
 <td><b>58.17점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>200</b></td>
+<td><b>201</b></td>
 <td>
     <a href="#" onclick="openChartModal('MORPHO', '모포'); return false;" class="coin-link">
         <b>모포</b> <span class="ticker-symbol">(MORPHO)</span>
@@ -3410,39 +3426,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>201</b></td>
+<td><b>202</b></td>
 <td>
-    <a href="#" onclick="openChartModal('FLUID', '플루이드'); return false;" class="coin-link">
-        <b>플루이드</b> <span class="ticker-symbol">(FLUID)</span>
+    <a href="#" onclick="openChartModal('NEAR', '니어프로토콜'); return false;" class="coin-link">
+        <b>니어프로토콜</b> <span class="ticker-symbol">(NEAR)</span>
     </a>
 </td>
-<td>1,720.0</td>
-<td class="minus">-0.23%</td>
-<td>43.3</td>
-<td><b>68.0%</b></td>
+<td>2,266.0</td>
+<td class="minus">-0.04%</td>
+<td>19.0</td>
+<td><b>70.0%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">21.2점</td>
-<td><b>57.93점</b></td>
+<td class="liquidity">35.3점</td>
+<td><b>57.99점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>202</b></td>
+<td><b>203</b></td>
 <td>
-    <a href="#" onclick="openChartModal('PROVE', '서싱트'); return false;" class="coin-link">
-        <b>서싱트</b> <span class="ticker-symbol">(PROVE)</span>
+    <a href="#" onclick="openChartModal('AGLD', '어드벤처골드'); return false;" class="coin-link">
+        <b>어드벤처골드</b> <span class="ticker-symbol">(AGLD)</span>
     </a>
 </td>
-<td>223.0</td>
-<td class="plus">+2.29%</td>
-<td>44.4</td>
-<td><b>69.3%</b></td>
+<td>234.0</td>
+<td class="plus">+2.18%</td>
+<td>41.7</td>
+<td><b>70.7%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">49.5점</td>
-<td><b>57.85점</b></td>
-<td><span class="plus">▲ 1회</span> / <span class="minus">▼ 2회</span></td>
+<td class="liquidity">35.9점</td>
+<td><b>57.97점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>203</b></td>
+<td><b>204</b></td>
+<td>
+    <a href="#" onclick="openChartModal('XLM', '스텔라루멘'); return false;" class="coin-link">
+        <b>스텔라루멘</b> <span class="ticker-symbol">(XLM)</span>
+    </a>
+</td>
+<td>230.0</td>
+<td class="minus">-0.43%</td>
+<td>62.5</td>
+<td><b>69.9%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">48.0점</td>
+<td><b>57.85점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>205</b></td>
 <td>
     <a href="#" onclick="openChartModal('MBL', '무비블록'); return false;" class="coin-link">
         <b>무비블록</b> <span class="ticker-symbol">(MBL)</span>
@@ -3458,23 +3490,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>204</b></td>
+<td><b>206</b></td>
 <td>
-    <a href="#" onclick="openChartModal('TRX', '트론'); return false;" class="coin-link">
-        <b>트론</b> <span class="ticker-symbol">(TRX)</span>
+    <a href="#" onclick="openChartModal('ZKC', '바운드리스'); return false;" class="coin-link">
+        <b>바운드리스</b> <span class="ticker-symbol">(ZKC)</span>
     </a>
 </td>
-<td>463.0</td>
-<td class="">0%</td>
-<td>50.0</td>
-<td><b>54.5%</b></td>
+<td>55.0</td>
+<td class="plus">+0.18%</td>
+<td>55.0</td>
+<td><b>71.6%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">37.5점</td>
-<td><b>57.7점</b></td>
+<td class="liquidity">16.2점</td>
+<td><b>57.79점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>205</b></td>
+<td><b>207</b></td>
+<td>
+    <a href="#" onclick="openChartModal('XEC', '이캐시'); return false;" class="coin-link">
+        <b>이캐시</b> <span class="ticker-symbol">(XEC)</span>
+    </a>
+</td>
+<td>0.00952</td>
+<td class="minus">-0.94%</td>
+<td>40.0</td>
+<td><b>68.3%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">41.8점</td>
+<td><b>57.71점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>208</b></td>
 <td>
     <a href="#" onclick="openChartModal('W', '웜홀'); return false;" class="coin-link">
         <b>웜홀</b> <span class="ticker-symbol">(W)</span>
@@ -3490,7 +3538,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>206</b></td>
+<td><b>209</b></td>
+<td>
+    <a href="#" onclick="openChartModal('TT', '썬더코어'); return false;" class="coin-link">
+        <b>썬더코어</b> <span class="ticker-symbol">(TT)</span>
+    </a>
+</td>
+<td>0.503</td>
+<td class="minus">-3.08%</td>
+<td>56.5</td>
+<td><b>71.4%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">34.8점</td>
+<td><b>57.65점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>210</b></td>
 <td>
     <a href="#" onclick="openChartModal('ARKM', '아캄'); return false;" class="coin-link">
         <b>아캄</b> <span class="ticker-symbol">(ARKM)</span>
@@ -3506,7 +3570,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>207</b></td>
+<td><b>211</b></td>
 <td>
     <a href="#" onclick="openChartModal('COMP', '컴파운드'); return false;" class="coin-link">
         <b>컴파운드</b> <span class="ticker-symbol">(COMP)</span>
@@ -3522,7 +3586,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>208</b></td>
+<td><b>212</b></td>
 <td>
     <a href="#" onclick="openChartModal('RVN', '레이븐코인'); return false;" class="coin-link">
         <b>레이븐코인</b> <span class="ticker-symbol">(RVN)</span>
@@ -3538,39 +3602,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>209</b></td>
+<td><b>213</b></td>
 <td>
-    <a href="#" onclick="openChartModal('DEEP', '딥북'); return false;" class="coin-link">
-        <b>딥북</b> <span class="ticker-symbol">(DEEP)</span>
+    <a href="#" onclick="openChartModal('TAIKO', '타이코'); return false;" class="coin-link">
+        <b>타이코</b> <span class="ticker-symbol">(TAIKO)</span>
     </a>
 </td>
-<td>23.8</td>
-<td class="minus">-4.03%</td>
-<td>28.6</td>
-<td><b>66.4%</b></td>
+<td>102.0</td>
+<td class="">0%</td>
+<td>66.7</td>
+<td><b>54.5%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">38.7점</td>
-<td><b>57.45점</b></td>
+<td class="liquidity">20.1점</td>
+<td><b>57.42점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>210</b></td>
-<td>
-    <a href="#" onclick="openChartModal('QTUM', '퀀텀'); return false;" class="coin-link">
-        <b>퀀텀</b> <span class="ticker-symbol">(QTUM)</span>
-    </a>
-</td>
-<td>942.0</td>
-<td class="plus">+0.86%</td>
-<td>60.0</td>
-<td><b>72.5%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">18.4점</td>
-<td><b>57.43점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>211</b></td>
+<td><b>214</b></td>
 <td>
     <a href="#" onclick="openChartModal('BABY', '바빌론'); return false;" class="coin-link">
         <b>바빌론</b> <span class="ticker-symbol">(BABY)</span>
@@ -3586,7 +3634,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>212</b></td>
+<td><b>215</b></td>
+<td>
+    <a href="#" onclick="openChartModal('SEI', '세이'); return false;" class="coin-link">
+        <b>세이</b> <span class="ticker-symbol">(SEI)</span>
+    </a>
+</td>
+<td>58.4</td>
+<td class="plus">+0.17%</td>
+<td>50.0</td>
+<td><b>74.8%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">29.8점</td>
+<td><b>57.26점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>216</b></td>
 <td>
     <a href="#" onclick="openChartModal('SUPER', '슈퍼버스'); return false;" class="coin-link">
         <b>슈퍼버스</b> <span class="ticker-symbol">(SUPER)</span>
@@ -3602,39 +3666,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>213</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ERA', '칼데라'); return false;" class="coin-link">
-        <b>칼데라</b> <span class="ticker-symbol">(ERA)</span>
-    </a>
-</td>
-<td>94.6</td>
-<td class="minus">-3.07%</td>
-<td>47.8</td>
-<td><b>78.4%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">34.9점</td>
-<td><b>57.21점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>214</b></td>
-<td>
-    <a href="#" onclick="openChartModal('AGLD', '어드벤처골드'); return false;" class="coin-link">
-        <b>어드벤처골드</b> <span class="ticker-symbol">(AGLD)</span>
-    </a>
-</td>
-<td>233.0</td>
-<td class="plus">+1.75%</td>
-<td>36.4</td>
-<td><b>70.2%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">35.9점</td>
-<td><b>57.1점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>215</b></td>
+<td><b>217</b></td>
 <td>
     <a href="#" onclick="openChartModal('JTO', '지토'); return false;" class="coin-link">
         <b>지토</b> <span class="ticker-symbol">(JTO)</span>
@@ -3646,27 +3678,43 @@ window.onkeydown = function(event) {
 <td><b>66.5%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">28.3점</td>
-<td><b>56.91점</b></td>
+<td><b>57.05점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>216</b></td>
+<td><b>218</b></td>
 <td>
-    <a href="#" onclick="openChartModal('TAO', '비트텐서'); return false;" class="coin-link">
-        <b>비트텐서</b> <span class="ticker-symbol">(TAO)</span>
+    <a href="#" onclick="openChartModal('ERA', '칼데라'); return false;" class="coin-link">
+        <b>칼데라</b> <span class="ticker-symbol">(ERA)</span>
     </a>
 </td>
-<td>288,000.0</td>
-<td class="plus">+0.38%</td>
-<td>32.5</td>
-<td><b>70.9%</b></td>
+<td>94.6</td>
+<td class="minus">-3.07%</td>
+<td>51.7</td>
+<td><b>77.5%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">38.7점</td>
-<td><b>56.89점</b></td>
+<td class="liquidity">34.9점</td>
+<td><b>56.82점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>217</b></td>
+<td><b>219</b></td>
+<td>
+    <a href="#" onclick="openChartModal('WAL', '월러스'); return false;" class="coin-link">
+        <b>월러스</b> <span class="ticker-symbol">(WAL)</span>
+    </a>
+</td>
+<td>35.8</td>
+<td class="plus">+0.28%</td>
+<td>46.7</td>
+<td><b>69.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">21.5점</td>
+<td><b>56.82점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>220</b></td>
 <td>
     <a href="#" onclick="openChartModal('STORJ', '스토리지'); return false;" class="coin-link">
         <b>스토리지</b> <span class="ticker-symbol">(STORJ)</span>
@@ -3682,7 +3730,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>218</b></td>
+<td><b>221</b></td>
 <td>
     <a href="#" onclick="openChartModal('EGLD', '멀티버스엑스'); return false;" class="coin-link">
         <b>멀티버스엑스</b> <span class="ticker-symbol">(EGLD)</span>
@@ -3698,7 +3746,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>219</b></td>
+<td><b>222</b></td>
 <td>
     <a href="#" onclick="openChartModal('BERA', '베라체인'); return false;" class="coin-link">
         <b>베라체인</b> <span class="ticker-symbol">(BERA)</span>
@@ -3714,7 +3762,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>220</b></td>
+<td><b>223</b></td>
+<td>
+    <a href="#" onclick="openChartModal('DEEP', '딥북'); return false;" class="coin-link">
+        <b>딥북</b> <span class="ticker-symbol">(DEEP)</span>
+    </a>
+</td>
+<td>24.0</td>
+<td class="minus">-3.23%</td>
+<td>53.3</td>
+<td><b>66.9%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">38.6점</td>
+<td><b>56.68점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>224</b></td>
 <td>
     <a href="#" onclick="openChartModal('JST', '저스트'); return false;" class="coin-link">
         <b>저스트</b> <span class="ticker-symbol">(JST)</span>
@@ -3730,23 +3794,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>221</b></td>
+<td><b>225</b></td>
 <td>
-    <a href="#" onclick="openChartModal('YGG', '일드길드게임즈'); return false;" class="coin-link">
-        <b>일드길드게임즈</b> <span class="ticker-symbol">(YGG)</span>
+    <a href="#" onclick="openChartModal('BTT', '비트토렌트'); return false;" class="coin-link">
+        <b>비트토렌트</b> <span class="ticker-symbol">(BTT)</span>
     </a>
 </td>
-<td>28.1</td>
-<td class="plus">+4.46%</td>
-<td>44.4</td>
-<td><b>69.5%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">47.0점</td>
-<td><b>56.53점</b></td>
+<td>0.000371</td>
+<td class="">0%</td>
+<td>58.4</td>
+<td><b>54.4%</b></td>
+<td class="accumulation">30점</td>
+<td class="liquidity">18.2점</td>
+<td><b>56.56점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>222</b></td>
+<td><b>226</b></td>
 <td>
     <a href="#" onclick="openChartModal('USDE', '유에스디이'); return false;" class="coin-link">
         <b>유에스디이</b> <span class="ticker-symbol">(USDE)</span>
@@ -3762,23 +3826,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>223</b></td>
-<td>
-    <a href="#" onclick="openChartModal('MOODENG', '무뎅'); return false;" class="coin-link">
-        <b>무뎅</b> <span class="ticker-symbol">(MOODENG)</span>
-    </a>
-</td>
-<td>53.5</td>
-<td class="minus">-1.47%</td>
-<td>40.0</td>
-<td><b>72.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">28.8점</td>
-<td><b>56.49점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>224</b></td>
+<td><b>227</b></td>
 <td>
     <a href="#" onclick="openChartModal('ORCA', '오르카'); return false;" class="coin-link">
         <b>오르카</b> <span class="ticker-symbol">(ORCA)</span>
@@ -3794,23 +3842,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>225</b></td>
-<td>
-    <a href="#" onclick="openChartModal('TIA', '셀레스티아'); return false;" class="coin-link">
-        <b>셀레스티아</b> <span class="ticker-symbol">(TIA)</span>
-    </a>
-</td>
-<td>459.0</td>
-<td class="minus">-0.43%</td>
-<td>45.5</td>
-<td><b>68.9%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">17.0점</td>
-<td><b>56.32점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>226</b></td>
+<td><b>228</b></td>
 <td>
     <a href="#" onclick="openChartModal('MNT', '맨틀'); return false;" class="coin-link">
         <b>맨틀</b> <span class="ticker-symbol">(MNT)</span>
@@ -3819,30 +3851,14 @@ window.onkeydown = function(event) {
 <td>597.0</td>
 <td class="minus">-1.32%</td>
 <td>33.3</td>
-<td><b>64.0%</b></td>
+<td><b>63.7%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">31.9점</td>
-<td><b>56.26점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>227</b></td>
-<td>
-    <a href="#" onclick="openChartModal('TT', '썬더코어'); return false;" class="coin-link">
-        <b>썬더코어</b> <span class="ticker-symbol">(TT)</span>
-    </a>
-</td>
-<td>0.501</td>
-<td class="minus">-3.47%</td>
-<td>52.0</td>
-<td><b>70.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">34.8점</td>
 <td><b>56.2점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>228</b></td>
+<td><b>229</b></td>
 <td>
     <a href="#" onclick="openChartModal('AAVE', '에이브'); return false;" class="coin-link">
         <b>에이브</b> <span class="ticker-symbol">(AAVE)</span>
@@ -3855,22 +3871,6 @@ window.onkeydown = function(event) {
 <td class="accumulation">0점</td>
 <td class="liquidity">31.7점</td>
 <td><b>56.17점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>229</b></td>
-<td>
-    <a href="#" onclick="openChartModal('SEI', '세이'); return false;" class="coin-link">
-        <b>세이</b> <span class="ticker-symbol">(SEI)</span>
-    </a>
-</td>
-<td>58.4</td>
-<td class="plus">+0.17%</td>
-<td>40.0</td>
-<td><b>72.9%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">29.8점</td>
-<td><b>56.11점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -3892,21 +3892,37 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>231</b></td>
 <td>
-    <a href="#" onclick="openChartModal('RE', '리'); return false;" class="coin-link">
-        <b>리</b> <span class="ticker-symbol">(RE)</span>
+    <a href="#" onclick="openChartModal('PROVE', '서싱트'); return false;" class="coin-link">
+        <b>서싱트</b> <span class="ticker-symbol">(PROVE)</span>
     </a>
 </td>
-<td>569.0</td>
-<td class="minus">-1.04%</td>
-<td>54.5</td>
-<td><b>69.7%</b></td>
+<td>223.0</td>
+<td class="plus">+2.29%</td>
+<td>37.5</td>
+<td><b>68.2%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">57.0점</td>
-<td><b>56.03점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+<td class="liquidity">49.6점</td>
+<td><b>55.99점</b></td>
+<td><span class="plus">▲ 1회</span> / <span class="minus">▼ 2회</span></td>
 </tr>
 <tr>
 <td><b>232</b></td>
+<td>
+    <a href="#" onclick="openChartModal('LINEA', '리네아'); return false;" class="coin-link">
+        <b>리네아</b> <span class="ticker-symbol">(LINEA)</span>
+    </a>
+</td>
+<td>3.17</td>
+<td class="plus">+1.28%</td>
+<td>60.0</td>
+<td><b>65.0%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">15.8점</td>
+<td><b>55.96점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>233</b></td>
 <td>
     <a href="#" onclick="openChartModal('CFG', '센트리퓨즈'); return false;" class="coin-link">
         <b>센트리퓨즈</b> <span class="ticker-symbol">(CFG)</span>
@@ -3922,7 +3938,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>233</b></td>
+<td><b>234</b></td>
 <td>
     <a href="#" onclick="openChartModal('DOT', '폴카닷'); return false;" class="coin-link">
         <b>폴카닷</b> <span class="ticker-symbol">(DOT)</span>
@@ -3938,7 +3954,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>234</b></td>
+<td><b>235</b></td>
 <td>
     <a href="#" onclick="openChartModal('ELSA', '헤이엘사'); return false;" class="coin-link">
         <b>헤이엘사</b> <span class="ticker-symbol">(ELSA)</span>
@@ -3954,39 +3970,39 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>235</b></td>
-<td>
-    <a href="#" onclick="openChartModal('SKR', '시커'); return false;" class="coin-link">
-        <b>시커</b> <span class="ticker-symbol">(SKR)</span>
-    </a>
-</td>
-<td>11.1</td>
-<td class="plus">+0.91%</td>
-<td>46.2</td>
-<td><b>73.0%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">35.5점</td>
-<td><b>55.83점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
 <td><b>236</b></td>
 <td>
-    <a href="#" onclick="openChartModal('BTT', '비트토렌트'); return false;" class="coin-link">
-        <b>비트토렌트</b> <span class="ticker-symbol">(BTT)</span>
+    <a href="#" onclick="openChartModal('TAO', '비트텐서'); return false;" class="coin-link">
+        <b>비트텐서</b> <span class="ticker-symbol">(TAO)</span>
     </a>
 </td>
-<td>0.00037</td>
-<td class="minus">-0.27%</td>
-<td>48.3</td>
-<td><b>53.1%</b></td>
-<td class="accumulation">30점</td>
-<td class="liquidity">18.5점</td>
-<td><b>55.82점</b></td>
+<td>287,900.0</td>
+<td class="plus">+0.35%</td>
+<td>30.0</td>
+<td><b>69.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">38.7점</td>
+<td><b>55.81점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
 <td><b>237</b></td>
+<td>
+    <a href="#" onclick="openChartModal('RE', '리'); return false;" class="coin-link">
+        <b>리</b> <span class="ticker-symbol">(RE)</span>
+    </a>
+</td>
+<td>569.0</td>
+<td class="minus">-1.04%</td>
+<td>47.4</td>
+<td><b>71.7%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">57.0점</td>
+<td><b>55.73점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>238</b></td>
 <td>
     <a href="#" onclick="openChartModal('VIRTUAL', '버추얼프로토콜'); return false;" class="coin-link">
         <b>버추얼프로토콜</b> <span class="ticker-symbol">(VIRTUAL)</span>
@@ -4002,7 +4018,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>238</b></td>
+<td><b>239</b></td>
 <td>
     <a href="#" onclick="openChartModal('ENA', '에테나'); return false;" class="coin-link">
         <b>에테나</b> <span class="ticker-symbol">(ENA)</span>
@@ -4018,23 +4034,55 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>239</b></td>
+<td><b>240</b></td>
 <td>
-    <a href="#" onclick="openChartModal('POL', '폴리곤에코시스템토큰'); return false;" class="coin-link">
-        <b>폴리곤에코시스템토큰</b> <span class="ticker-symbol">(POL)</span>
+    <a href="#" onclick="openChartModal('SOON', '쑨'); return false;" class="coin-link">
+        <b>쑨</b> <span class="ticker-symbol">(SOON)</span>
     </a>
 </td>
-<td>108.0</td>
-<td class="plus">+0.93%</td>
-<td>42.9</td>
-<td><b>66.9%</b></td>
+<td>307.0</td>
+<td class="">0%</td>
+<td>33.3</td>
+<td><b>73.0%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">33.1점</td>
-<td><b>55.44점</b></td>
+<td class="liquidity">46.3점</td>
+<td><b>55.62점</b></td>
+<td><span class="plus">▲ 1회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>241</b></td>
+<td>
+    <a href="#" onclick="openChartModal('SKR', '시커'); return false;" class="coin-link">
+        <b>시커</b> <span class="ticker-symbol">(SKR)</span>
+    </a>
+</td>
+<td>11.1</td>
+<td class="plus">+0.91%</td>
+<td>46.2</td>
+<td><b>71.0%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">35.5점</td>
+<td><b>55.41점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>240</b></td>
+<td><b>242</b></td>
+<td>
+    <a href="#" onclick="openChartModal('SAHARA', '사하라에이아이'); return false;" class="coin-link">
+        <b>사하라에이아이</b> <span class="ticker-symbol">(SAHARA)</span>
+    </a>
+</td>
+<td>11.9</td>
+<td class="minus">-0.83%</td>
+<td>50.0</td>
+<td><b>56.0%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">39.5점</td>
+<td><b>55.4점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>243</b></td>
 <td>
     <a href="#" onclick="openChartModal('BAT', '베이직어텐션토큰'); return false;" class="coin-link">
         <b>베이직어텐션토큰</b> <span class="ticker-symbol">(BAT)</span>
@@ -4050,7 +4098,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>241</b></td>
+<td><b>244</b></td>
 <td>
     <a href="#" onclick="openChartModal('TRUMP', '오피셜트럼프'); return false;" class="coin-link">
         <b>오피셜트럼프</b> <span class="ticker-symbol">(TRUMP)</span>
@@ -4066,39 +4114,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>242</b></td>
+<td><b>245</b></td>
 <td>
     <a href="#" onclick="openChartModal('SUI', '수이'); return false;" class="coin-link">
         <b>수이</b> <span class="ticker-symbol">(SUI)</span>
     </a>
 </td>
-<td>973.0</td>
-<td class="minus">-0.21%</td>
-<td>40.0</td>
-<td><b>70.8%</b></td>
+<td>972.0</td>
+<td class="minus">-0.31%</td>
+<td>36.4</td>
+<td><b>70.0%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">37.8점</td>
-<td><b>55.27점</b></td>
+<td><b>55.11점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>243</b></td>
-<td>
-    <a href="#" onclick="openChartModal('IRYS', '아이리스'); return false;" class="coin-link">
-        <b>아이리스</b> <span class="ticker-symbol">(IRYS)</span>
-    </a>
-</td>
-<td>22.3</td>
-<td class="minus">-0.45%</td>
-<td>37.5</td>
-<td><b>67.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">38.2점</td>
-<td><b>55.19점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>244</b></td>
+<td><b>246</b></td>
 <td>
     <a href="#" onclick="openChartModal('HOLO', '홀로월드에이아이'); return false;" class="coin-link">
         <b>홀로월드에이아이</b> <span class="ticker-symbol">(HOLO)</span>
@@ -4106,15 +4138,31 @@ window.onkeydown = function(event) {
 </td>
 <td>97.9</td>
 <td class="minus">-0.61%</td>
-<td>63.6</td>
-<td><b>66.1%</b></td>
+<td>57.9</td>
+<td><b>65.8%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">28.4점</td>
-<td><b>55.13점</b></td>
+<td><b>55.06점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>245</b></td>
+<td><b>247</b></td>
+<td>
+    <a href="#" onclick="openChartModal('PLUME', '플룸'); return false;" class="coin-link">
+        <b>플룸</b> <span class="ticker-symbol">(PLUME)</span>
+    </a>
+</td>
+<td>16.8</td>
+<td class="plus">+3.07%</td>
+<td>44.4</td>
+<td><b>71.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">39.1점</td>
+<td><b>55.04점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>248</b></td>
 <td>
     <a href="#" onclick="openChartModal('BREV', '브레비스'); return false;" class="coin-link">
         <b>브레비스</b> <span class="ticker-symbol">(BREV)</span>
@@ -4130,23 +4178,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>246</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ALGO', '알고랜드'); return false;" class="coin-link">
-        <b>알고랜드</b> <span class="ticker-symbol">(ALGO)</span>
-    </a>
-</td>
-<td>120.0</td>
-<td class="minus">-2.44%</td>
-<td>25.0</td>
-<td><b>71.8%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">34.8점</td>
-<td><b>54.84점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>247</b></td>
+<td><b>249</b></td>
 <td>
     <a href="#" onclick="openChartModal('GAME2', '게임빌드'); return false;" class="coin-link">
         <b>게임빌드</b> <span class="ticker-symbol">(GAME2)</span>
@@ -4162,7 +4194,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>248</b></td>
+<td><b>250</b></td>
 <td>
     <a href="#" onclick="openChartModal('ID', '스페이스아이디'); return false;" class="coin-link">
         <b>스페이스아이디</b> <span class="ticker-symbol">(ID)</span>
@@ -4178,7 +4210,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>249</b></td>
+<td><b>251</b></td>
+<td>
+    <a href="#" onclick="openChartModal('O', '오원익스체인지'); return false;" class="coin-link">
+        <b>오원익스체인지</b> <span class="ticker-symbol">(O)</span>
+    </a>
+</td>
+<td>654.0</td>
+<td class="minus">-0.3%</td>
+<td>50.0</td>
+<td><b>65.2%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">22.3점</td>
+<td><b>54.58점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>252</b></td>
 <td>
     <a href="#" onclick="openChartModal('SAFE', '세이프'); return false;" class="coin-link">
         <b>세이프</b> <span class="ticker-symbol">(SAFE)</span>
@@ -4194,7 +4242,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>250</b></td>
+<td><b>253</b></td>
 <td>
     <a href="#" onclick="openChartModal('BARD', '롬바드'); return false;" class="coin-link">
         <b>롬바드</b> <span class="ticker-symbol">(BARD)</span>
@@ -4210,7 +4258,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>251</b></td>
+<td><b>254</b></td>
 <td>
     <a href="#" onclick="openChartModal('HBAR', '헤데라'); return false;" class="coin-link">
         <b>헤데라</b> <span class="ticker-symbol">(HBAR)</span>
@@ -4223,54 +4271,6 @@ window.onkeydown = function(event) {
 <td class="accumulation">0점</td>
 <td class="liquidity">28.9점</td>
 <td><b>54.3점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>252</b></td>
-<td>
-    <a href="#" onclick="openChartModal('SOON', '쑨'); return false;" class="coin-link">
-        <b>쑨</b> <span class="ticker-symbol">(SOON)</span>
-    </a>
-</td>
-<td>307.0</td>
-<td class="">0%</td>
-<td>18.2</td>
-<td><b>69.7%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">46.3점</td>
-<td><b>54.3점</b></td>
-<td><span class="plus">▲ 1회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>253</b></td>
-<td>
-    <a href="#" onclick="openChartModal('PLUME', '플룸'); return false;" class="coin-link">
-        <b>플룸</b> <span class="ticker-symbol">(PLUME)</span>
-    </a>
-</td>
-<td>16.8</td>
-<td class="plus">+3.07%</td>
-<td>40.0</td>
-<td><b>70.4%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">39.1점</td>
-<td><b>54.23점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>254</b></td>
-<td>
-    <a href="#" onclick="openChartModal('IOTA', '아이오타'); return false;" class="coin-link">
-        <b>아이오타</b> <span class="ticker-symbol">(IOTA)</span>
-    </a>
-</td>
-<td>49.5</td>
-<td class="minus">-0.2%</td>
-<td>28.6</td>
-<td><b>63.0%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">28.5점</td>
-<td><b>54.19점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -4292,6 +4292,22 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>256</b></td>
 <td>
+    <a href="#" onclick="openChartModal('ETC', '이더리움클래식'); return false;" class="coin-link">
+        <b>이더리움클래식</b> <span class="ticker-symbol">(ETC)</span>
+    </a>
+</td>
+<td>9,120.0</td>
+<td class="minus">-0.44%</td>
+<td>40.0</td>
+<td><b>66.1%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">28.8점</td>
+<td><b>53.93점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>257</b></td>
+<td>
     <a href="#" onclick="openChartModal('COW', '카우프로토콜'); return false;" class="coin-link">
         <b>카우프로토콜</b> <span class="ticker-symbol">(COW)</span>
     </a>
@@ -4306,34 +4322,18 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>257</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ICX', '아이콘'); return false;" class="coin-link">
-        <b>아이콘</b> <span class="ticker-symbol">(ICX)</span>
-    </a>
-</td>
-<td>32.3</td>
-<td class="">0%</td>
-<td>28.6</td>
-<td><b>65.3%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">19.7점</td>
-<td><b>53.75점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
 <td><b>258</b></td>
 <td>
-    <a href="#" onclick="openChartModal('ETC', '이더리움클래식'); return false;" class="coin-link">
-        <b>이더리움클래식</b> <span class="ticker-symbol">(ETC)</span>
+    <a href="#" onclick="openChartModal('ALGO', '알고랜드'); return false;" class="coin-link">
+        <b>알고랜드</b> <span class="ticker-symbol">(ALGO)</span>
     </a>
 </td>
-<td>9,125.0</td>
-<td class="minus">-0.38%</td>
-<td>42.1</td>
-<td><b>66.6%</b></td>
+<td>121.0</td>
+<td class="minus">-1.63%</td>
+<td>50.0</td>
+<td><b>74.1%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">28.7점</td>
+<td class="liquidity">34.8점</td>
 <td><b>53.57점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
@@ -4356,6 +4356,22 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>260</b></td>
 <td>
+    <a href="#" onclick="openChartModal('IRYS', '아이리스'); return false;" class="coin-link">
+        <b>아이리스</b> <span class="ticker-symbol">(IRYS)</span>
+    </a>
+</td>
+<td>22.3</td>
+<td class="minus">-0.45%</td>
+<td>42.9</td>
+<td><b>66.4%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">38.0점</td>
+<td><b>53.45점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>261</b></td>
+<td>
     <a href="#" onclick="openChartModal('META2', '메타다오'); return false;" class="coin-link">
         <b>메타다오</b> <span class="ticker-symbol">(META2)</span>
     </a>
@@ -4370,7 +4386,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>261</b></td>
+<td><b>262</b></td>
 <td>
     <a href="#" onclick="openChartModal('TRAC', '오리진트레일'); return false;" class="coin-link">
         <b>오리진트레일</b> <span class="ticker-symbol">(TRAC)</span>
@@ -4386,23 +4402,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>262</b></td>
+<td><b>263</b></td>
 <td>
-    <a href="#" onclick="openChartModal('SAHARA', '사하라에이아이'); return false;" class="coin-link">
-        <b>사하라에이아이</b> <span class="ticker-symbol">(SAHARA)</span>
+    <a href="#" onclick="openChartModal('XTZ', '테조스'); return false;" class="coin-link">
+        <b>테조스</b> <span class="ticker-symbol">(XTZ)</span>
     </a>
 </td>
-<td>11.8</td>
-<td class="minus">-1.67%</td>
-<td>40.0</td>
-<td><b>56.4%</b></td>
+<td>288.0</td>
+<td class="minus">-1.37%</td>
+<td>50.0</td>
+<td><b>68.5%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">39.5점</td>
-<td><b>53.0점</b></td>
+<td class="liquidity">16.1점</td>
+<td><b>52.83점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>263</b></td>
+<td><b>264</b></td>
 <td>
     <a href="#" onclick="openChartModal('TFUEL', '쎄타퓨엘'); return false;" class="coin-link">
         <b>쎄타퓨엘</b> <span class="ticker-symbol">(TFUEL)</span>
@@ -4418,7 +4434,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>264</b></td>
+<td><b>265</b></td>
 <td>
     <a href="#" onclick="openChartModal('CPOOL', '클리어풀'); return false;" class="coin-link">
         <b>클리어풀</b> <span class="ticker-symbol">(CPOOL)</span>
@@ -4434,39 +4450,7 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>265</b></td>
-<td>
-    <a href="#" onclick="openChartModal('ONDO', '온도파이낸스'); return false;" class="coin-link">
-        <b>온도파이낸스</b> <span class="ticker-symbol">(ONDO)</span>
-    </a>
-</td>
-<td>490.0</td>
-<td class="minus">-1.01%</td>
-<td>40.0</td>
-<td><b>71.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">49.4점</td>
-<td><b>52.58점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
 <td><b>266</b></td>
-<td>
-    <a href="#" onclick="openChartModal('O', '오원익스체인지'); return false;" class="coin-link">
-        <b>오원익스체인지</b> <span class="ticker-symbol">(O)</span>
-    </a>
-</td>
-<td>652.0</td>
-<td class="minus">-0.61%</td>
-<td>41.7</td>
-<td><b>63.1%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">22.2점</td>
-<td><b>52.33점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>267</b></td>
 <td>
     <a href="#" onclick="openChartModal('SPX', '에스피엑스6900'); return false;" class="coin-link">
         <b>에스피엑스6900</b> <span class="ticker-symbol">(SPX)</span>
@@ -4482,19 +4466,35 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>268</b></td>
+<td><b>267</b></td>
 <td>
-    <a href="#" onclick="openChartModal('XTZ', '테조스'); return false;" class="coin-link">
-        <b>테조스</b> <span class="ticker-symbol">(XTZ)</span>
+    <a href="#" onclick="openChartModal('PENGU', '펏지펭귄'); return false;" class="coin-link">
+        <b>펏지펭귄</b> <span class="ticker-symbol">(PENGU)</span>
     </a>
 </td>
-<td>287.0</td>
-<td class="minus">-1.71%</td>
-<td>40.0</td>
-<td><b>68.3%</b></td>
+<td>8.88</td>
+<td class="plus">+0.11%</td>
+<td>28.6</td>
+<td><b>68.2%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">16.1점</td>
-<td><b>52.12점</b></td>
+<td class="liquidity">35.0점</td>
+<td><b>52.15점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>268</b></td>
+<td>
+    <a href="#" onclick="openChartModal('CRO', '크로노스'); return false;" class="coin-link">
+        <b>크로노스</b> <span class="ticker-symbol">(CRO)</span>
+    </a>
+</td>
+<td>68.4</td>
+<td class="minus">-0.44%</td>
+<td>46.7</td>
+<td><b>70.0%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">35.7점</td>
+<td><b>52.07점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -4532,22 +4532,6 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>271</b></td>
 <td>
-    <a href="#" onclick="openChartModal('PENGU', '펏지펭귄'); return false;" class="coin-link">
-        <b>펏지펭귄</b> <span class="ticker-symbol">(PENGU)</span>
-    </a>
-</td>
-<td>8.88</td>
-<td class="plus">+0.11%</td>
-<td>25.0</td>
-<td><b>67.9%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">35.1점</td>
-<td><b>51.94점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>272</b></td>
-<td>
     <a href="#" onclick="openChartModal('1INCH', '1인치네트워크'); return false;" class="coin-link">
         <b>1인치네트워크</b> <span class="ticker-symbol">(1INCH)</span>
     </a>
@@ -4562,23 +4546,23 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>273</b></td>
+<td><b>272</b></td>
 <td>
-    <a href="#" onclick="openChartModal('PEPE', '페페'); return false;" class="coin-link">
-        <b>페페</b> <span class="ticker-symbol">(PEPE)</span>
+    <a href="#" onclick="openChartModal('TIA', '셀레스티아'); return false;" class="coin-link">
+        <b>셀레스티아</b> <span class="ticker-symbol">(TIA)</span>
     </a>
 </td>
-<td>0.00403</td>
-<td class="plus">+0.5%</td>
-<td>39.9</td>
-<td><b>70.7%</b></td>
+<td>459.0</td>
+<td class="minus">-0.43%</td>
+<td>50.0</td>
+<td><b>68.1%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">31.7점</td>
-<td><b>51.64점</b></td>
+<td class="liquidity">17.0점</td>
+<td><b>51.39점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>274</b></td>
+<td><b>273</b></td>
 <td>
     <a href="#" onclick="openChartModal('MON', '모나드'); return false;" class="coin-link">
         <b>모나드</b> <span class="ticker-symbol">(MON)</span>
@@ -4591,6 +4575,22 @@ window.onkeydown = function(event) {
 <td class="accumulation">0점</td>
 <td class="liquidity">23.4점</td>
 <td><b>51.33점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>274</b></td>
+<td>
+    <a href="#" onclick="openChartModal('WAVES', '웨이브'); return false;" class="coin-link">
+        <b>웨이브</b> <span class="ticker-symbol">(WAVES)</span>
+    </a>
+</td>
+<td>293.0</td>
+<td class="plus">+0.34%</td>
+<td>33.3</td>
+<td><b>59.9%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">24.6점</td>
+<td><b>51.14점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -4612,22 +4612,6 @@ window.onkeydown = function(event) {
 <tr>
 <td><b>276</b></td>
 <td>
-    <a href="#" onclick="openChartModal('CRO', '크로노스'); return false;" class="coin-link">
-        <b>크로노스</b> <span class="ticker-symbol">(CRO)</span>
-    </a>
-</td>
-<td>68.4</td>
-<td class="minus">-0.44%</td>
-<td>57.9</td>
-<td><b>67.5%</b></td>
-<td class="accumulation">0점</td>
-<td class="liquidity">35.7점</td>
-<td><b>50.69점</b></td>
-<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
-</tr>
-<tr>
-<td><b>277</b></td>
-<td>
     <a href="#" onclick="openChartModal('BLUR', '블러'); return false;" class="coin-link">
         <b>블러</b> <span class="ticker-symbol">(BLUR)</span>
     </a>
@@ -4642,35 +4626,51 @@ window.onkeydown = function(event) {
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>278</b></td>
+<td><b>277</b></td>
 <td>
-    <a href="#" onclick="openChartModal('WAVES', '웨이브'); return false;" class="coin-link">
-        <b>웨이브</b> <span class="ticker-symbol">(WAVES)</span>
+    <a href="#" onclick="openChartModal('IOTA', '아이오타'); return false;" class="coin-link">
+        <b>아이오타</b> <span class="ticker-symbol">(IOTA)</span>
     </a>
 </td>
-<td>293.0</td>
-<td class="plus">+0.34%</td>
-<td>42.9</td>
-<td><b>59.3%</b></td>
+<td>49.5</td>
+<td class="minus">-0.2%</td>
+<td>28.6</td>
+<td><b>63.7%</b></td>
 <td class="accumulation">0점</td>
-<td class="liquidity">24.6점</td>
-<td><b>50.16점</b></td>
+<td class="liquidity">28.5점</td>
+<td><b>50.14점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
-<td><b>279</b></td>
+<td><b>278</b></td>
 <td>
     <a href="#" onclick="openChartModal('VANA', '바나'); return false;" class="coin-link">
         <b>바나</b> <span class="ticker-symbol">(VANA)</span>
     </a>
 </td>
-<td>1,220.0</td>
-<td class="minus">-0.57%</td>
-<td>23.7</td>
+<td>1,221.0</td>
+<td class="minus">-0.49%</td>
+<td>27.0</td>
 <td><b>61.4%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">25.0점</td>
-<td><b>49.35점</b></td>
+<td><b>49.42점</b></td>
+<td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
+</tr>
+<tr>
+<td><b>279</b></td>
+<td>
+    <a href="#" onclick="openChartModal('ICX', '아이콘'); return false;" class="coin-link">
+        <b>아이콘</b> <span class="ticker-symbol">(ICX)</span>
+    </a>
+</td>
+<td>32.3</td>
+<td class="">0%</td>
+<td>33.3</td>
+<td><b>63.0%</b></td>
+<td class="accumulation">0점</td>
+<td class="liquidity">19.6점</td>
+<td><b>48.97점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
@@ -4680,13 +4680,13 @@ window.onkeydown = function(event) {
         <b>체인링크</b> <span class="ticker-symbol">(LINK)</span>
     </a>
 </td>
-<td>11,680.0</td>
-<td class="">0%</td>
-<td>54.5</td>
-<td><b>69.4%</b></td>
+<td>11,670.0</td>
+<td class="minus">-0.09%</td>
+<td>33.3</td>
+<td><b>66.6%</b></td>
 <td class="accumulation">0점</td>
 <td class="liquidity">29.2점</td>
-<td><b>49.08점</b></td>
+<td><b>48.74점</b></td>
 <td><span class="plus">▲ 0회</span> / <span class="minus">▼ 0회</span></td>
 </tr>
 <tr>
