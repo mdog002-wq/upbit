@@ -190,20 +190,20 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights):
     accumulation_score = min(100.0, accumulation_score)
 
     # --- [수정안 1] 저가 대비 고가 폭(순수 변동폭) 기준 5% 이상 측정 ---
-# 15분 동안 저점 대비 고점이 5% 이상 뛴 캔들 수 (가장 직관적인 5% 변동성)
-up_5pct_count = sum(
-    1 for _, row in df.iterrows()
-    if ((row["high_price"] - row["low_price"]) / (row["low_price"] + 1e-8)) * 100 >= 5.0
-    and row["trade_price"] >= row["opening_price"] # 양봉 마감인 경우 상승으로 분류
-)
+# --- [수정안 1] 15분봉 기준 5% 이상 상승/하락 캔들 수 측정 ---
+    up_5pct_count = sum(
+        1 for _, row in df.iterrows()
+        if ((row["high_price"] - row["low_price"]) / (row["low_price"] + 1e-8)) * 100 >= 5.0
+        and row["trade_price"] >= row["opening_price"]
+    )
 
-down_5pct_count = sum(
-    1 for _, row in df.iterrows()
-    if ((row["high_price"] - row["low_price"]) / (row["high_price"] + 1e-8)) * 100 >= 5.0
-    and row["trade_price"] < row["opening_price"] # 음봉 마감인 경우 하락으로 분류
-)
+    down_5pct_count = sum(
+        1 for _, row in df.iterrows()
+        if ((row["high_price"] - row["low_price"]) / (row["high_price"] + 1e-8)) * 100 >= 5.0
+        and row["trade_price"] < row["opening_price"]
+    )
 
-
+    # 24시간 거래대금 및 유동성 지수 계산
     df_24h = df.iloc[-96:] if len(df) >= 96 else df
     acc_24h_krw = df_24h["candle_acc_trade_price"].sum()
     if acc_24h_krw > 0:
@@ -214,6 +214,7 @@ down_5pct_count = sum(
         liquidity_index = 0.0
 
     market_history = history_db.get(market, [])
+
     now_ts = time.time()
     three_hours_ago = now_ts - 3 * 3600
     recent_top10_count = sum(
