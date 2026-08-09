@@ -80,11 +80,22 @@ class UpbitWebSocketManager:
 # [3순위 반영] DTW 기반 패턴 유사도 산출 함수
 # ==========================================
 def calculate_dtw_similarity(seq1, seq2):
-    """DTW(Dynamic Time Warping) 거리 기반 유사도 계산 (0~100점)"""
-    distance, _ = fastdtw(seq1, seq2, dist=euclidean)
-    # 24개 데이터 정규화 규격 상 최대 거리는 약 5.0 근방
-    similarity = max(0.0, (1.0 - (distance / 5.0))) * 100
-    return round(similarity, 1)
+    """DTW(Dynamic Time Warping) 기반 패턴 유사도 산출 (1차원 평탄화 보장)"""
+    try:
+        # 입력 데이터가 리스트나 2차원 형태일 경우 1차원으로 강제 변환
+        s1 = np.asarray(seq1, dtype=np.float64).ravel()
+        s2 = np.asarray(seq2, dtype=np.float64).ravel()
+
+        if len(s1) == 0 or len(s2) == 0:
+            return 0.0
+
+        distance, _ = fastdtw(s1, s2, dist=euclidean)
+        # 24개 데이터 정규화 규격 상 최대 거리는 약 5.0 근방
+        similarity = max(0.0, (1.0 - (distance / 5.0))) * 100
+        return round(similarity, 1)
+    except Exception as e:
+        print(f"⚠️ DTW 계산 중 오류: {e}")
+        return 0.0
 
 
 def fetch_ai_recommendations():
@@ -373,13 +384,18 @@ def main():
         },
     )
 
+     # 기존 pattern_data 로드 부분을 아래와 같이 1차원 평탄화(flatten)되도록 수정
     pattern_data = load_json(PATTERN_FILE, {})
-    ideal_price_pattern = pattern_data.get(
-        "golden_pattern", np.linspace(0.2, 1.0, 24).tolist()
-    )
-    ideal_vol_pattern = pattern_data.get(
-        "golden_volume_pattern", np.linspace(0.1, 1.0, 24).tolist()
-    )
+
+    ideal_price_pattern = np.array(
+        pattern_data.get("golden_pattern", np.linspace(0.2, 1.0, 24)),
+        dtype=np.float64,
+    ).ravel()
+
+    ideal_vol_pattern = np.array(
+        pattern_data.get("golden_volume_pattern", np.linspace(0.1, 1.0, 24)),
+        dtype=np.float64,
+    ).ravel()
 
     results = []
     print("🔍 1, 2, 3순위 고도화 로직 기반 종목 분석 시작...")
