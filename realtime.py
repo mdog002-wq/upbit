@@ -257,11 +257,12 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
     price_to_high_ratio = current_price / (high_24h + 1e-8)
     breakout_score = 100.0 if price_to_high_ratio >= 0.98 else float(price_to_high_ratio * 100)
 
-    df["vol_ma20"] = df["candle_acc_trade_volume"].rolling(20).mean()
-    latest_vol = df.iloc[-1]["candle_acc_trade_volume"]
-    prev_avg_vol = df.iloc[-2]["vol_ma20"] if len(df) >= 2 else 0.0
-    vol_surge_ratio = latest_vol / (prev_avg_vol + 1e-8)
-    volume_surge_score = float(min(100.0, vol_surge_ratio * 20.0))
+    # ================= [개선점 이식 1: 실시간 거래량 폭증 지표 개선] =================
+    # 단기 거래량(최근 1시간 = 4개 봉) 대비 이전 평균 거래량 비율을 반영
+    recent_vol_1h = df.iloc[-4:]["candle_acc_trade_volume"].sum()
+    avg_vol_1h = (df.iloc[-40:-4]["candle_acc_trade_volume"].sum() / 36) * 4 if len(df) >= 40 else 1.0
+    vol_surge_ratio = recent_vol_1h / (avg_vol_1h + 1e-8)
+    volume_surge_score = float(min(100.0, vol_surge_ratio * 25.0))
 
     df["ma5"] = df["trade_price"].rolling(5).mean()
     df["ma20"] = df["trade_price"].rolling(20).mean()
@@ -299,20 +300,27 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
 
     rsi = calculate_rsi(df["trade_price"])
 
-    overheat_penalty = 15.0 if change_rate >= 25.0 else 0.0
+    # ================= [개선점 이식 2: 과열 페널티 제거 및 당일 상승률 직접 가중] =================
+    # 당일 상승률(change_rate) 자체를 모멘텀 점수로 환산 (최대 100점 반영)
+    daily_momentum_score = min(100.0, max(0.0, change_rate * 3.33))
 
     base_score = (
-        pattern_similarity * weights.get("w_pattern", 0.15)
-        + (positive_count / 24.0 * 100) * weights.get("w_buy_sell", 0.10)
-        + min(100.0, recent_top10_count * 20) * weights.get("w_recent_rank", 0.10)
+        pattern_similarity * weights.get("w_pattern", 0.10)
+        + (positive_count / 24.0 * 100) * weights.get("w_buy_sell", 0.05)
+        + min(100.0, recent_top10_count * 20) * weights.get("w_recent_rank", 0.05)
         + ai_volatility_score * weights.get("w_ai_volatility", 0.05)
-        + accumulation_score * weights.get("w_accumulation", 0.15)
-        + breakout_score * weights.get("w_breakout", 0.20)
-        + volume_surge_score * weights.get("w_vol_surge", 0.15)
+        + accumulation_score * weights.get("w_accumulation", 0.10)
+        + breakout_score * weights.get("w_breakout", 0.15)
+        + volume_surge_score * weights.get("w_vol_surge", 0.20)
         + ma_momentum_score * weights.get("w_ma_alignment", 0.10)
+        + daily_momentum_score * weights.get("w_daily_momentum", 0.25) # 당일 실시간 상승률 비중 추가
     )
 
-    final_score = max(0.0, (base_score - overheat_penalty) * btc_multiplier)
+    final_score = max(0.0, base_score * btc_multiplier)
+
+    # ================= [개선점 이식 3: 실시간 상승률 1~3위 급등주 보너스 (Booster)] =================
+    if change_rate >= 15.0:
+        final_score *= 1.2 # 15% 이상 급등 시 20% 보너스 점수 부여
 
     if is_ai_recommended:
         final_score *= 1.1
@@ -640,17 +648,19 @@ def main():
     win_rate, total_trades, wins, losses = backtest_stats
     print(f"📈 [백테스팅 결과] 승률: {win_rate}% (총 {total_trades}건 / {wins}승 {losses}패)")
 
+    # ================= [개선점 이식 4: 기본 가중치 재설정] =================
     weights = load_json(
         WEIGHTS_FILE,
         {
-            "w_pattern": 0.15,
-            "w_buy_sell": 0.10,
-            "w_recent_rank": 0.10,
+            "w_pattern": 0.10,
+            "w_buy_sell": 0.05,
+            "w_recent_rank": 0.05,
             "w_ai_volatility": 0.05,
-            "w_accumulation": 0.15,
-            "w_breakout": 0.20,
-            "w_vol_surge": 0.15,
+            "w_accumulation": 0.10,
+            "w_breakout": 0.15,
+            "w_vol_surge": 0.20,
             "w_ma_alignment": 0.10,
+            "w_daily_momentum": 0.25, # 당일 상승률 반영 비중 추가
         },
     )
 
