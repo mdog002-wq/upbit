@@ -320,10 +320,10 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
 
     # ================= [개선점 이식 3: 실시간 상승률 1~3위 급등주 보너스 (Booster)] =================
     if change_rate >= 15.0:
-        final_score *= 1.2 # 15% 이상 급등 시 20% 보너스 점수 부여
+        final_score *= 1.1 # 15% 이상 급등 시 20% 보너스 점수 부여
 
     if is_ai_recommended:
-        final_score *= 1.1
+        final_score *= 1.05
 
     return {
         "market": market,
