@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 import json
 import os
+import re
 import threading
 import time
 import websockets
@@ -10,7 +11,6 @@ from fastdtw import fastdtw
 import numpy as np
 import pandas as pd
 import requests
-from scipy.spatial.distance import euclidean
 
 DATA_DIR = "data"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
@@ -23,7 +23,109 @@ KST = timezone(timedelta(hours=9))
 
 
 # ==========================================
-# 1. 웹소켓 매니저 (1순위)
+# 1. AI 추천 종목 파싱 (전공정 이전 완벽 복원)
+# ==========================================
+def fetch_ai_recommendations():
+    """upbit-a 레포지토리 docs/ai_recommend_tracker.json에서 AI 추천 티커 추출"""
+    refined_set = set()
+
+    def parse_item(item):
+        """문자열, 딕셔너리, 리스트 등 모든 형태에서 티커(RED, ELF, SPK 등) 추출"""
+        if isinstance(item, str):
+            # "레드스톤 (RED)" -> "RED" 추출 / "KRW-RED" -> "RED" 추출
+            match = re.search(r"\(([A-Z0-9]+)\)", item.upper())
+            if match:
+                ticker = match.group(1)
+            else:
+                ticker = item.strip().upper().replace("KRW-", "")
+
+            if ticker and len(ticker) <= 10:
+                refined_set.add(ticker)
+                refined_set.add(f"KRW-{ticker}")
+
+        elif isinstance(item, dict):
+            # 딕셔너리 내부 모든 필드 확인
+            for k, v in item.items():
+                if k in [
+                    "ticker",
+                    "symbol",
+                    "market",
+                    "code",
+                    "korean_name",
+                    "name",
+                    "coin_name",
+                ]:
+                    parse_item(v)
+                elif isinstance(v, (dict, list)):
+                    parse_item(v)
+
+        elif isinstance(item, list):
+            for sub_item in item:
+                parse_item(sub_item)
+
+    data = None
+
+    # 1차: 로컬 docs/ai_recommend_tracker.json 파일 읽기 시도
+    local_path = os.path.join("docs", "ai_recommend_tracker.json")
+    if os.path.exists(local_path):
+        try:
+            with open(local_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                print("📁 [AI 추천] 로컬 docs/ai_recommend_tracker.json 연동 성공")
+        except Exception:
+            pass
+
+    # 2차: 로컬에 없으면 GitHub Raw에서 직접 연동 (캐시 무력화 파라미터 적용)
+    if data is None:
+        url = f"https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json?t={int(time.time())}"
+        try:
+            res = requests.get(
+                url, timeout=5, headers={"Cache-Control": "no-cache"}
+            )
+            if res.status_code == 200:
+                data = res.json()
+                print("🌐 [AI 추천] GitHub Raw 데이터 연동 성공")
+        except Exception as e:
+            print(f"⚠️ AI 추천 원격 요청 실패: {e}")
+
+    if data:
+        parse_item(data)
+
+    print(f"🤖 [AI 추천 연동 결과] 감지된 추천 티커: {sorted(list(refined_set))}")
+    return refined_set
+
+
+# ==========================================
+# 2. DTW 계산 (Input vector 1-D 에러 완전 해결)
+# ==========================================
+def calculate_dtw_similarity(seq1, seq2):
+    try:
+        s1 = np.asarray(seq1, dtype=np.float64).reshape(-1)
+        s2 = np.asarray(seq2, dtype=np.float64).reshape(-1)
+
+        if s1.size == 0 or s2.size == 0:
+            return 0.0
+
+        min_len = min(len(s1), len(s2))
+        if min_len == 0:
+            return 0.0
+
+        s1 = s1[-min_len:]
+        s2 = s2[-min_len:]
+
+        # scipy.spatial.distance.euclidean 대신 abs(x - y) 적용으로 차원 에러 방지
+        distance, _ = fastdtw(s1, s2, dist=lambda x, y: abs(x - y))
+        avg_dist = distance / min_len
+
+        # 지수 감쇄 모델 적용 (0~100% 매끄러운 스케일링)
+        similarity = np.exp(-1.5 * avg_dist) * 100.0
+        return round(float(similarity), 1)
+    except Exception:
+        return 0.0
+
+
+# ==========================================
+# 3. 웹소켓 매니저
 # ==========================================
 class UpbitWebSocketManager:
 
@@ -73,92 +175,8 @@ class UpbitWebSocketManager:
 
 
 # ==========================================
-# 2. DTW 유사도 산출 (3순위 - 1차원 예외 방지)
+# 4. 유틸리티 & 데이터 수집 함수
 # ==========================================
-def calculate_dtw_similarity(seq1, seq2):
-    """DTW(Dynamic Time Warping) 기반 패턴 유사도 산출 (dist 함수 예외 및 1D 차원 완전 해결)"""
-    try:
-        # 1. 넘파이 배열 변환 및 평탄화 (1D 스칼라 배열 확보)
-        s1 = np.asarray(seq1, dtype=np.float64).reshape(-1)
-        s2 = np.asarray(seq2, dtype=np.float64).reshape(-1)
-
-        if s1.size == 0 or s2.size == 0:
-            return 0.0
-
-        # 2. 두 시열의 데이터 길이를 최소 길이에 맞춤
-        min_len = min(len(s1), len(s2))
-        if min_len == 0:
-            return 0.0
-        
-        s1 = s1[-min_len:]
-        s2 = s2[-min_len:]
-
-        # 3. scipy의 euclidean 대신 단일 스칼라 차이(abs) 거리 함수 사용 (핵심 수정 부분)
-        # scipy.spatial.distance.euclidean 사용 시 'Input vector should be 1-D' 발생 원인 방지
-        distance, _ = fastdtw(s1, s2, dist=lambda x, y: abs(x - y))
-        
-        # 4. 포인트당 평균 거리 계산
-        avg_dist = distance / min_len
-
-        # 5. 지수 감쇄(Exponential Decay) 모델로 0~100% 유사도 변환
-        similarity = np.exp(-1.5 * avg_dist) * 100.0
-        
-        return round(float(similarity), 1)
-    except Exception as e:
-        print(f"⚠️ DTW 계산 예외 발생: {e}")
-        return 0.0
-
-# ==========================================
-# 3. 데이터 수집 및 백테스팅 함수들
-# ==========================================
-def fetch_ai_recommendations():
-    """upbit-a 레포지토리의 AI 추천 데이터 구조 완벽 재귀 분석 및 티커 추출"""
-    url = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json"
-    refined_set = set()
-    
-    def extract_tickers_from_obj(obj):
-        """다양한 형태의 JSON 구조에서 티커/코인명 추출하는 내부 함수"""
-        if isinstance(obj, str):
-            clean = obj.strip().upper().replace("KRW-", "")
-            if clean and len(clean) <= 10: # 티커 길이 검증
-                refined_set.add(clean)
-                refined_set.add(f"KRW-{clean}")
-        elif isinstance(obj, dict):
-            # 1. 객체 내부의 티커 관련 필드 직접 확인
-            for field in ["ticker", "symbol", "market", "code", "coin_symbol"]:
-                if field in obj and isinstance(obj[field], str):
-                    extract_tickers_from_obj(obj[field])
-            
-            # 2. 괄호 안의 티커 추출 (예: "레드스톤 (RED)" -> "RED")
-            for field in ["name", "korean_name", "coin_name", "title"]:
-                if field in obj and isinstance(obj[field], str):
-                    val = obj[field]
-                    if "(" in val and ")" in val:
-                        symbol_inside = val.split("(")[1].split(")")[0].strip()
-                        extract_tickers_from_obj(symbol_inside)
-
-            # 3. 딕셔너리의 모든 value 탐색
-            for v in obj.values():
-                if isinstance(v, (dict, list)):
-                    extract_tickers_from_obj(v)
-
-        elif isinstance(obj, list):
-            for item in obj:
-                extract_tickers_from_obj(item)
-
-    try:
-        res = requests.get(url, timeout=5)
-        if res.status_code == 200:
-            data = res.json()
-            extract_tickers_from_obj(data)
-            print(f"🤖 [AI 추천 연동 완료] 추출된 티커 목록: {sorted(list(refined_set))}")
-            return refined_set
-    except Exception as e:
-        print(f"⚠️ AI 추천 데이터 로드 예외: {e}")
-        
-    return set()
-
-
 def fetch_krw_markets():
     url = "https://api.upbit.com/v1/market/all"
     try:
@@ -283,7 +301,7 @@ def save_json(filepath, data):
 
 
 # ==========================================
-# 4. 개별 코인 단일 분석 함수
+# 5. 개별 종목 분석
 # ==========================================
 def analyze_single_coin(
     market,
@@ -318,19 +336,19 @@ def analyze_single_coin(
     prices = df_2h["trade_price"].values
     volumes = df_2h["candle_acc_trade_volume"].values
 
-    # analyze_single_coin 함수 내부 정규화 수정
     p_min, p_max = prices.min(), prices.max()
     v_min, v_max = volumes.min(), volumes.max()
 
     p_range = (p_max - p_min) if (p_max - p_min) > 1e-8 else 1.0
     v_range = (v_max - v_min) if (v_max - v_min) > 1e-8 else 1.0
 
-    norm_prices = np.squeeze((prices - p_min) / p_range).flatten()
-    norm_volumes = np.squeeze((volumes - v_min) / v_range).flatten()
+    norm_prices = (prices - p_min) / p_range
+    norm_volumes = (volumes - v_min) / v_range
 
     price_sim = calculate_dtw_similarity(norm_prices, ideal_price_pattern)
     vol_sim = calculate_dtw_similarity(norm_volumes, ideal_vol_pattern)
     combined_pattern_sim = round(price_sim * 0.7 + vol_sim * 0.3, 1)
+
     positive_count = sum(
         1
         for _, row in df_2h.iterrows()
@@ -441,6 +459,8 @@ def analyze_single_coin(
     )
 
     final_score = max(0.0, base_score * btc_multiplier)
+
+    # AI 추천 종목일 경우 점수 5% 가산
     if is_ai_recommended:
         final_score *= 1.05
 
@@ -459,12 +479,12 @@ def analyze_single_coin(
         "up_5pct_count": up_5pct_count,
         "down_5pct_count": down_5pct_count,
         "liquidity_index": liquidity_index,
-        "is_ai_recommended": is_ai_recommended,
+        "is_ai_recommended": is_ai_recommended, # 추천 여부 전달
     }
 
 
 # ==========================================
-# 5. 모든 UI 기능이 완벽 복원된 HTML 생성 함수
+# 6. HTML 생성 (AI추천 마크 렌더링 포함)
 # ==========================================
 def generate_full_dashboard_html(
     analysis_results,
@@ -485,6 +505,7 @@ def generate_full_dashboard_html(
         )
         change_sign = "+" if item["change_rate"] > 0 else ""
 
+        # AI 추천 뱃지 출력 조건
         ai_badge_html = (
             '<span class="ai-badge">AI추천</span>'
             if item.get("is_ai_recommended")
@@ -543,16 +564,17 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .winrate-card { border-left: 6px solid #2b8a3e; }
 .winrate-val { font-size: 18px; color: #e03131; }
 
+/* AI 추천 뱃지 전용 CSS */
 .ai-badge {
-    background-color: #e03131;
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-    display: inline-block;
-    vertical-align: middle;
+    background-color: #e03131 !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    margin-left: 6px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
 }
 
 .coin-link { color: #333333; text-decoration: none; cursor: pointer; }
@@ -561,7 +583,6 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .search-box { margin-bottom: 20px; }
 .search-box input { width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }
 
-/* 고정 헤더 및 테이블 스크롤 처리 */
 .table-container { max-height: 75vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); background: #ffffff; }
 table { width: 100%; border-collapse: collapse; background: #ffffff; }
 th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }
@@ -587,7 +608,6 @@ tbody tr:hover { background-color: #e9ecef !important; }
 .accumulation { color: #d9480f; font-weight: bold; }
 .liquidity { color: #2b8a3e; font-weight: bold; }
 
-/* 모달 차트 스타일 */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -761,7 +781,7 @@ window.onkeydown = function(event) {
 
 
 # ==========================================
-# 6. 메인 실행 함수
+# 7. 메인 실행 함수
 # ==========================================
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
@@ -812,7 +832,6 @@ def main():
 
     analysis_results = []
 
-    # main() 함수 내 스레드 실행 부분의 매칭 로직
     with ThreadPoolExecutor(max_workers=4) as executor:
         futures = {
             executor.submit(
@@ -825,9 +844,13 @@ def main():
                 weights,
                 btc_multiplier,
                 ws_manager.ticker_data.get(market, {}),
-                # AI 추천 뱃지 조건식 강화
-                (market in ai_recommend_set or market.replace("KRW-", "") in ai_recommend_set)
-            ): market for market in krw_markets
+                # AI 추천 뱃지 매칭 조건 (RED, KRW-RED, 레드스톤 등 모든 형식 호환)
+                (
+                    market in ai_recommend_set
+                    or market.replace("KRW-", "") in ai_recommend_set
+                ),
+            ): market
+            for market in krw_markets
         }
 
         for future in as_completed(futures):
@@ -870,7 +893,7 @@ def main():
         backtest_stats,
         HTML_OUTPUT,
     )
-    print("🎨 [대시보드] 모든 UI 기능 및 DTW 고도화 적용 HTML 생성 완료!")
+    print("🎨 [대시보드] AI추천 마크 복원 및 대시보드 생성 완료!")
 
 
 if __name__ == "__main__":
