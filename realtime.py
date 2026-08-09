@@ -670,7 +670,7 @@ function sortTable(columnIndex) {
     rows.forEach(row => tbody.appendChild(row));
 }
 
-unction openChartModal(ticker, name) {
+function openChartModal(ticker, name) {
     document.getElementById('modalTitle').innerText = name + ' (' + ticker + ') 실시간 차트';
     document.getElementById('chartModal').style.display = 'flex';
     document.getElementById('tvChartContainer').innerHTML = '';
