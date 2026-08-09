@@ -450,9 +450,9 @@ def analyze_single_coin(
 
     final_score = max(0.0, base_score * btc_multiplier)
 
-    # AI 추천 종목일 경우 점수 5% 가산
+    # AI 추천 종목일 경우 점수 1.5% 가산
     if is_ai_recommended:
-        final_score *= 1.05
+        final_score *= 1.015
 
     return {
         "market": market,
