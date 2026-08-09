@@ -384,7 +384,7 @@ def generate_upbit_r_dashboard(
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>업비트 실시간 급등주 포착 대시보드</title>
+  <title>Upbit Realtime Analyzer</title>
   <meta http-equiv="refresh" content="300">
 <style>
 body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
