@@ -167,7 +167,6 @@ def calculate_rsi(series, period=14):
     return rsi.iloc[-1] if not rsi.empty else 50.0
 
 def calculate_atr(df, period=14):
-    """ATR (Average True Range) 변동성 지표 계산"""
     try:
         high = df['high_price']
         low = df['low_price']
@@ -182,6 +181,50 @@ def calculate_atr(df, period=14):
         return atr if not np.isnan(atr) else (df['trade_price'].iloc[-1] * 0.015)
     except Exception:
         return df['trade_price'].iloc[-1] * 0.015
+
+def calculate_resistance_levels(df, current_price):
+    """
+    과거 거래량이 폭발했으나 하락했던 구간(시체 매물대) 및 주요 저항선 추적
+    """
+    try:
+        # 거래량이 평균 이상이면서 음봉이거나 위꼬리가 길었던 악성 매물대 추적
+        avg_vol = df['candle_acc_trade_volume'].mean()
+        high_vol_df = df[df['candle_acc_trade_volume'] > avg_vol * 1.3]
+        
+        # 현재가보다 위에 존재하는 악성 매물 구간 추출
+        overhead_candles = high_vol_df[high_vol_df['high_price'] > current_price]
+        
+        resistance_1 = None
+        resistance_2 = None
+        
+        if not overhead_candles.empty:
+            # 거래량 가중치가 높은 가격대 순으로 정렬
+            overhead_sorted = overhead_candles.sort_values(by='candle_acc_trade_volume', ascending=False)
+            
+            # 1차 저항: 가장 가까운 대량 거래 매물 구간의 고가/종가 평단
+            r1_candidates = overhead_sorted[overhead_sorted['trade_price'] > current_price]
+            if not r1_candidates.empty:
+                resistance_1 = r1_candidates.iloc[0]['trade_price']
+            else:
+                resistance_1 = overhead_sorted.iloc[0]['high_price']
+                
+            # 2차 저항: 그 다음으로 강력한 상방 매물대 가격
+            r2_candidates = overhead_sorted[overhead_sorted['high_price'] > resistance_1]
+            if not r2_candidates.empty:
+                resistance_2 = r2_candidates.iloc[0]['high_price']
+
+        # 만약 매물대가 명확치 않다면 최근 120개 봉(10시간) 최고가로 설정
+        if not resistance_1:
+            resistance_1 = df['high_price'].max()
+        if not resistance_2 or resistance_2 <= resistance_1:
+            resistance_2 = resistance_1 * 1.03
+
+        # 시체 쌓임 정도 (상방 저항 매물대의 거래량 비중)
+        corpse_volume_ratio = round((overhead_candles['candle_acc_trade_volume'].sum() / (df['candle_acc_trade_volume'].sum() + 1e-8)) * 100, 1)
+
+        return resistance_1, resistance_2, corpse_volume_ratio
+    except Exception:
+        return current_price * 1.05, current_price * 1.10, 0.0
 
 def check_btc_status():
     try:
@@ -347,23 +390,31 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         elif liquidity_index < 10.0 or combined_pattern_sim < 30.0:
             final_score *= 0.95
 
-    # ================= [추천가 고도화 계산 영역] =================
+    # ================= [시체 매물대 & 추천가 고도화 계산 영역] =================
     atr = calculate_atr(df, period=14)
-    resistance_2h = df_2h["high_price"].max()
+    res_1, res_2, corpse_ratio = calculate_resistance_levels(df, current_price)
     support_2h = df_2h["low_price"].min()
 
-    # 1차 목표가: (현재가 + ATR * 1.5)와 최근 Resistance 중 높은 값 적용
-    calculated_tp1 = max(current_price * 1.025, max(current_price + (atr * 1.5), resistance_2h))
-    # 2차 목표가: (1차 목표가 + ATR * 2.0)
-    calculated_tp2 = max(calculated_tp1 * 1.03, current_price + (atr * 3.5))
-    # 손절가: (현재가 - ATR * 1.2)와 최근 Support 중 안전한 라인 선택
+    # 상방 매물대(시체)가 두꺼울 경우 스코어 미세 감점
+    if corpse_ratio >= 40.0:
+        final_score *= 0.97
+
+    # 1차 목표가: 상방 악성 매물대(res_1) 직전 또는 ATR 적용값 중 현실적인 수치 반영
+    calculated_tp1 = min(res_1 * 0.998, max(current_price * 1.02, current_price + (atr * 1.2)))
+    if calculated_tp1 <= current_price:
+        calculated_tp1 = current_price * 1.025
+
+    # 2차 목표가: 2차 매물대(res_2) 직전 또는 ATR 확장 수치
+    calculated_tp2 = max(calculated_tp1 * 1.025, min(res_2 * 0.998, current_price + (atr * 3.0)))
+
+    # 손절가: 최근 지지선 하단 또는 ATR 기반
     calculated_sl = min(current_price * 0.985, min(current_price - (atr * 1.2), support_2h * 0.995))
 
     # 퍼센트 비율 계산
     tp1_pct = round(((calculated_tp1 - current_price) / current_price) * 100, 2)
     tp2_pct = round(((calculated_tp2 - current_price) / current_price) * 100, 2)
     sl_pct = round(((calculated_sl - current_price) / current_price) * 100, 2)
-    # ==============================================================
+    # =========================================================================
 
     return {
         "market": market,
@@ -386,7 +437,10 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         "sl": round(calculated_sl, 4),
         "tp1_pct": tp1_pct,
         "tp2_pct": tp2_pct,
-        "sl_pct": sl_pct
+        "sl_pct": sl_pct,
+        "corpse_ratio": corpse_ratio,
+        "res_1": round(res_1, 4),
+        "res_2": round(res_2, 4)
     }
 
 def generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, html_path=HTML_OUTPUT):
@@ -623,26 +677,24 @@ function runAiDiagnosis() {
         return;
     }
 
-    // 진입가 입력을 바탕으로 한 ATR 비율 비례 고도화 추천가산출
     const ratio = entryPrice / coin.current_price;
     const tp1 = coin.tp1 * ratio;
     const tp2 = coin.tp2 * ratio;
     const sl = coin.sl * ratio;
 
-    let comment = `📊 현재 예측 점수 <strong>${coin.score}점</strong>, DTW 유사도 <strong>${coin.pattern_similarity}%</strong>를 형성 중인 차트입니다. `;
-    if (coin.rsi >= 70) {
-        comment += `⚠️ 단기 RSI(${coin.rsi})가 과열 구간이므로 목표가 분할 매도를 권장합니다.`;
-    } else if (coin.vol_cliff_score >= 50) {
-        comment += `💡 거래량 절벽 지표(${coin.vol_cliff_score}점)가 높게 포착되어 변동성 확대 가능성이 있습니다.`;
+    let comment = `📊 현재 예측 점수 <strong>${coin.score}점</strong>, DTW 유사도 <strong>${coin.pattern_similarity}%</strong>차트입니다.<br>`;
+    
+    if (coin.corpse_ratio >= 35.0) {
+        comment += `⚠️ <strong>매물대 경고:</strong> 상방에 악성 물린 매물(시체 비중: ${coin.corpse_ratio}%)이 강하게 형성되어 있습니다. 1차 저항선(${coin.res_1.toLocaleString()} KRW) 부근에서 강한 돌파 여부를 반드시 확인하세요.`;
     } else {
-        comment += `🎯 ATR 기반 최적 변동성 구간을 유지 중입니다. 설정된 손익비에 따라 전략 이행을 추천합니다.`;
+        comment += `✅ <strong>매물대 상태:</strong> 상방 매물 저항이 비교적 가벼운 상태(${coin.corpse_ratio}%)로, 목표가까지 모멘텀 유지가 가능해 보입니다.`;
     }
 
     resultCard.style.display = 'block';
     resultCard.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
-                <strong style="font-size: 16px; color: #1e222d;">🤖 [${coin.name} / ${coin.ticker}] AI 스마트 진단 리포트</strong>
+                <strong style="font-size: 16px; color: #1e222d;">🤖 [${coin.name} / ${coin.ticker}] AI 저항선 기반 진단 리포트</strong>
                 <span style="font-size: 13px; color: #555; margin-left: 8px;">(현재가: ${coin.current_price.toLocaleString()} KRW)</span>
             </div>
             <div style="font-size: 14px;">
