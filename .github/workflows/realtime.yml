@@ -16,13 +16,14 @@ jobs:
       - name: Check Blocked Time Window (02:00 ~ 02:14 KST)
         run: |
           # 한국 시간(KST) 기준 현재 '시'와 '분' 구하기
-          HOUR=$(TZ="Asia/Seoul" date +%H)
-          MINUTE=$(TZ="Asia/Seoul" date +%M)
+          HOUR=$(TZ="Asia/Seoul" date +%k | tr -d ' ')
+          MINUTE=$(TZ="Asia/Seoul" date +%M | sed 's/^0//')
+          MINUTE=${MINUTE:-0}
           
           echo "Current KST Time: ${HOUR}:${MINUTE}"
           
-          # 새벽 2시(02시) 전체 (02:00 ~ 02:14 KST) 차단
-          if [ "$HOUR" -eq 02 ]; then
+          # 새벽 2시(02시)이고, 분이 00분 ~ 14분 사이인 경우 차단
+          if [ "$HOUR" -eq 2 ] && [ "$MINUTE" -ge 0 ] && [ "$MINUTE" -le 14 ]; then
             echo "Notice: Current time is within the restricted window (02:00 ~ 02:14 KST). Skipping workflow execution."
             exit 0
           fi
@@ -48,12 +49,14 @@ jobs:
 
       - name: Commit and push generated dashboard & db
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin ${{ github.ref_name }}
-          git reset --soft origin/${{ github.ref_name }}
-          git add docs/index.html data/
-          if git commit -m "Auto: Update realtime dashboard & evolution data [skip ci]"; then
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git pull origin ${{ github.ref_name }} --rebase --autostash || echo "No rebase needed"
+          git add docs/index.html data/ 2>/dev/null || git add .
+          
+          if ! git diff --staged --quiet; then
+            git commit -m "🤖 Auto: Update realtime dashboard & evolution data [skip ci]"
             git push origin ${{ github.ref_name }}
           else
             echo "No changes to commit"
