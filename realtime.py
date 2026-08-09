@@ -1,16 +1,15 @@
 import asyncio
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timedelta, timezone
 import json
-import os
-import re
-import threading
-import time
 import websockets
-from fastdtw import fastdtw
-import numpy as np
 import pandas as pd
+import numpy as np
 import requests
+import time
+import re
+import os
+from datetime import datetime, timezone, timedelta
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from fastdtw import fastdtw
 
 DATA_DIR = "data"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
@@ -21,22 +20,17 @@ HTML_OUTPUT = os.path.join(DOCS_DIR, "index.html")
 
 KST = timezone(timedelta(hours=9))
 
-
-# ==========================================
-# 1. AI 추천 종목 파싱
-# ==========================================
 def fetch_ai_recommendations():
-    """upbit-a 레포지토리 docs/ai_recommend_tracker.json에서 AI 추천 티커 추출"""
     refined_set = set()
-
+    
     def parse_item(item):
         if isinstance(item, str):
-            match = re.search(r"\(([A-Z0-9]+)\)", item.upper())
+            match = re.search(r'\(([A-Z0-9]+)\)', item.upper())
             ticker = match.group(1) if match else item.strip().upper().replace("KRW-", "")
             if ticker and len(ticker) <= 10:
                 refined_set.add(ticker)
                 refined_set.add(f"KRW-{ticker}")
-
+        
         elif isinstance(item, dict):
             for k, v in item.items():
                 if k.isupper() and len(k) <= 10:
@@ -47,47 +41,40 @@ def fetch_ai_recommendations():
                     parse_item(v)
                 elif isinstance(v, (dict, list)):
                     parse_item(v)
-
+                    
         elif isinstance(item, list):
             for sub_item in item:
                 parse_item(sub_item)
 
     data = None
-
+    
     local_path = os.path.join("docs", "ai_recommend_tracker.json")
     if os.path.exists(local_path):
         try:
             with open(local_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                print("📁 [AI 추천] 로컬 docs/ai_recommend_tracker.json 연동 성공")
         except Exception:
             pass
-
+            
     if data is None:
         url = f"https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json?t={int(time.time())}"
         try:
             res = requests.get(url, timeout=5, headers={"Cache-Control": "no-cache"})
             if res.status_code == 200:
                 data = res.json()
-                print("🌐 [AI 추천] GitHub Raw 데이터 연동 성공")
         except Exception as e:
             print(f"⚠️ AI 추천 원격 요청 실패: {e}")
 
     if data:
         parse_item(data)
-
-    print(f"🤖 [AI 추천 연동 결과] 감지된 추천 티커: {sorted(list(refined_set))}")
+        
     return refined_set
 
-
-# ==========================================
-# 2. DTW 계산
-# ==========================================
 def calculate_dtw_similarity(seq1, seq2):
     try:
         s1 = np.asarray(seq1, dtype=np.float64).reshape(-1)
         s2 = np.asarray(seq2, dtype=np.float64).reshape(-1)
-
+        
         if s1.size == 0 or s2.size == 0:
             return 0.0
 
@@ -97,7 +84,7 @@ def calculate_dtw_similarity(seq1, seq2):
 
         s1 = s1[-min_len:]
         s2 = s2[-min_len:]
-
+        
         distance, _ = fastdtw(s1, s2, dist=lambda x, y: abs(x - y))
         avg_dist = distance / min_len
         similarity = np.exp(-1.5 * avg_dist) * 100.0
@@ -105,12 +92,7 @@ def calculate_dtw_similarity(seq1, seq2):
     except Exception:
         return 0.0
 
-
-# ==========================================
-# 3. 웹소켓 매니저
-# ==========================================
 class UpbitWebSocketManager:
-
     def __init__(self, markets):
         self.markets = markets
         self.ticker_data = {}
@@ -120,9 +102,9 @@ class UpbitWebSocketManager:
         url = "wss://api.upbit.com/websocket/v1"
         subscribe_fmt = [
             {"ticket": "TEST_TICKET"},
-            {"type": "ticker", "codes": self.markets},
+            {"type": "ticker", "codes": self.markets}
         ]
-
+        
         while self.is_running:
             try:
                 async with websockets.connect(url) as websocket:
@@ -134,7 +116,7 @@ class UpbitWebSocketManager:
                         if code:
                             self.ticker_data[code] = {
                                 "trade_price": res.get("trade_price"),
-                                "signed_change_rate": res.get("signed_change_rate", 0) * 100,
+                                "signed_change_rate": res.get("signed_change_rate", 0) * 100
                             }
             except Exception:
                 await asyncio.sleep(2)
@@ -146,16 +128,13 @@ class UpbitWebSocketManager:
 
     def start(self):
         self.is_running = True
+        import threading
         t = threading.Thread(target=self._start_async_loop, daemon=True)
         t.start()
 
     def stop(self):
         self.is_running = False
 
-
-# ==========================================
-# 4. 유틸리티 & 데이터 수집 함수
-# ==========================================
 def fetch_krw_markets():
     url = "https://api.upbit.com/v1/market/all"
     try:
@@ -169,7 +148,6 @@ def fetch_krw_markets():
         pass
     return [], {}
 
-
 def fetch_5m_candles(market, count=120):
     url = f"https://api.upbit.com/v1/candles/minutes/5?market={market}&count={count}"
     try:
@@ -180,7 +158,6 @@ def fetch_5m_candles(market, count=120):
         pass
     return []
 
-
 def calculate_rsi(series, period=14):
     delta = series.diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
@@ -189,6 +166,22 @@ def calculate_rsi(series, period=14):
     rsi = 100 - (100 / (1 + rs))
     return rsi.iloc[-1] if not rsi.empty else 50.0
 
+def calculate_atr(df, period=14):
+    """ATR (Average True Range) 변동성 지표 계산"""
+    try:
+        high = df['high_price']
+        low = df['low_price']
+        close = df['trade_price'].shift(1)
+        
+        tr1 = high - low
+        tr2 = (high - close).abs()
+        tr3 = (low - close).abs()
+        
+        tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
+        atr = tr.rolling(window=period).mean().iloc[-1]
+        return atr if not np.isnan(atr) else (df['trade_price'].iloc[-1] * 0.015)
+    except Exception:
+        return df['trade_price'].iloc[-1] * 0.015
 
 def check_btc_status():
     try:
@@ -205,7 +198,6 @@ def check_btc_status():
     except Exception:
         return "NEUTRAL (보통)", 1.0
 
-
 def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2.0):
     total_trades = 0
     wins = 0
@@ -214,7 +206,7 @@ def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2
     for market, records in history_db.items():
         if len(records) < 2:
             continue
-
+            
         for i in range(len(records) - 1):
             entry = records[i]
             if entry.get("rank", 99) > 10:
@@ -226,7 +218,7 @@ def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2
             if not entry_price or entry_price <= 0:
                 continue
 
-            subsequent_prices = [r["price"] for r in records[i + 1 :] if r["timestamp"] > entry_ts]
+            subsequent_prices = [r["price"] for r in records[i+1:] if r["timestamp"] > entry_ts]
 
             if not subsequent_prices:
                 continue
@@ -247,7 +239,6 @@ def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2
     win_rate = (wins / total_trades * 100) if total_trades > 0 else 0.0
     return round(win_rate, 1), total_trades, wins, losses
 
-
 def load_json(filepath, default):
     if os.path.exists(filepath):
         try:
@@ -257,27 +248,12 @@ def load_json(filepath, default):
             pass
     return default
 
-
 def save_json(filepath, data):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-
-# ==========================================
-# 5. 개별 종목 분석 (거래량절벽 지표 적용)
-# ==========================================
-def analyze_single_coin(
-    market,
-    k_name,
-    ideal_price_pattern,
-    ideal_vol_pattern,
-    history_db,
-    weights,
-    btc_multiplier,
-    ws_data,
-    is_ai_recommended,
-):
+def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, history_db, weights, btc_multiplier, ws_data, is_ai_recommended):
     ticker = market.replace("KRW-", "")
     candles = fetch_5m_candles(market, count=120)
     if len(candles) < 60:
@@ -316,7 +292,6 @@ def analyze_single_coin(
     volume_mean = df_2h["candle_acc_trade_volume"].mean()
     ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
 
-    # 거래량절벽 지표 계산
     recent_vol_current = df.iloc[-1]["candle_acc_trade_volume"]
     avg_prev_vol = df.iloc[-21:-1]["candle_acc_trade_volume"].mean()
     
@@ -345,35 +320,23 @@ def analyze_single_coin(
     else:
         ma_momentum_score = 20.0
 
-    up_5pct_count = sum(
-        1 for _, row in df.iterrows()
-        if ((row["high_price"] - row["low_price"]) / (row["low_price"] + 1e-8)) * 100 >= 5.0
-        and row["trade_price"] >= row["opening_price"]
-    )
-
-    down_5pct_count = sum(
-        1 for _, row in df.iterrows()
-        if ((row["high_price"] - row["low_price"]) / (row["high_price"] + 1e-8)) * 100 >= 5.0
-        and row["trade_price"] < row["opening_price"]
-    )
+    up_5pct_count = sum(1 for _, row in df.iterrows() if ((row["high_price"] - row["low_price"]) / (row["low_price"] + 1e-8)) * 100 >= 5.0 and row["trade_price"] >= row["opening_price"])
+    down_5pct_count = sum(1 for _, row in df.iterrows() if ((row["high_price"] - row["low_price"]) / (row["high_price"] + 1e-8)) * 100 >= 5.0 and row["trade_price"] < row["opening_price"])
 
     acc_24h_krw = df["candle_acc_trade_price"].sum()
-    liquidity_index = (
-        round(min(100.0, max(0.0, (np.log10(acc_24h_krw + 1e-8) - 7) * 20)), 1)
-        if acc_24h_krw > 0 else 0.0
-    )
+    liquidity_index = round(min(100.0, max(0.0, (np.log10(acc_24h_krw + 1e-8) - 7) * 20)), 1) if acc_24h_krw > 0 else 0.0
 
     rsi = calculate_rsi(df["trade_price"])
 
     base_score = (
-        combined_pattern_sim * weights.get("w_pattern", 0.10)
-        + (positive_count / 24.0 * 100) * weights.get("w_buy_sell", 0.05)
-        + ai_volatility_score * weights.get("w_ai_volatility", 0.05)
-        + vol_cliff_score * weights.get("w_vol_cliff", 0.10)
-        + breakout_score * weights.get("w_breakout", 0.15)
-        + vol_surge_score * weights.get("w_vol_surge", 0.20)
-        + ma_momentum_score * weights.get("w_ma_alignment", 0.10)
-        + min(100.0, max(0.0, change_rate * 3.33)) * weights.get("w_daily_momentum", 0.25)
+        combined_pattern_sim * weights.get("w_pattern", 0.10) +
+        (positive_count / 24.0 * 100) * weights.get("w_buy_sell", 0.05) +
+        ai_volatility_score * weights.get("w_ai_volatility", 0.05) +
+        vol_cliff_score * weights.get("w_vol_cliff", 0.10) +
+        breakout_score * weights.get("w_breakout", 0.15) +
+        vol_surge_score * weights.get("w_vol_surge", 0.20) +
+        ma_momentum_score * weights.get("w_ma_alignment", 0.10) +
+        min(100.0, max(0.0, change_rate * 3.33)) * weights.get("w_daily_momentum", 0.25)
     )
 
     final_score = max(0.0, base_score * btc_multiplier)
@@ -383,6 +346,24 @@ def analyze_single_coin(
             final_score *= 1.015
         elif liquidity_index < 10.0 or combined_pattern_sim < 30.0:
             final_score *= 0.95
+
+    # ================= [추천가 고도화 계산 영역] =================
+    atr = calculate_atr(df, period=14)
+    resistance_2h = df_2h["high_price"].max()
+    support_2h = df_2h["low_price"].min()
+
+    # 1차 목표가: (현재가 + ATR * 1.5)와 최근 Resistance 중 높은 값 적용
+    calculated_tp1 = max(current_price * 1.025, max(current_price + (atr * 1.5), resistance_2h))
+    # 2차 목표가: (1차 목표가 + ATR * 2.0)
+    calculated_tp2 = max(calculated_tp1 * 1.03, current_price + (atr * 3.5))
+    # 손절가: (현재가 - ATR * 1.2)와 최근 Support 중 안전한 라인 선택
+    calculated_sl = min(current_price * 0.985, min(current_price - (atr * 1.2), support_2h * 0.995))
+
+    # 퍼센트 비율 계산
+    tp1_pct = round(((calculated_tp1 - current_price) / current_price) * 100, 2)
+    tp2_pct = round(((calculated_tp2 - current_price) / current_price) * 100, 2)
+    sl_pct = round(((calculated_sl - current_price) / current_price) * 100, 2)
+    # ==============================================================
 
     return {
         "market": market,
@@ -400,30 +381,25 @@ def analyze_single_coin(
         "down_5pct_count": down_5pct_count,
         "liquidity_index": liquidity_index,
         "is_ai_recommended": is_ai_recommended,
+        "tp1": round(calculated_tp1, 4),
+        "tp2": round(calculated_tp2, 4),
+        "sl": round(calculated_sl, 4),
+        "tp1_pct": tp1_pct,
+        "tp2_pct": tp2_pct,
+        "sl_pct": sl_pct
     }
 
-
-# ==========================================
-# 6. HTML 생성
-# ==========================================
-def generate_full_dashboard_html(
-    analysis_results,
-    current_time_str,
-    btc_status,
-    backtest_stats,
-    html_path=HTML_OUTPUT,
-):
+def generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, html_path=HTML_OUTPUT):
     os.makedirs(os.path.dirname(html_path), exist_ok=True)
     win_rate, total_trades, wins, losses = backtest_stats
 
-    # 클라이언트 자바스크립트에 전달할 데이터 JSON 변환
     dashboard_json_data = json.dumps(analysis_results, ensure_ascii=False)
 
     rows_list = []
     for item in analysis_results:
         change_class = "plus" if item["change_rate"] > 0 else ("minus" if item["change_rate"] < 0 else "")
         change_sign = "+" if item["change_rate"] > 0 else ""
-
+        
         ai_badge_html = '<span class="ai-badge">AI추천</span>' if item.get("is_ai_recommended") else ""
 
         rsi_display = f"{item['rsi']}"
@@ -493,7 +469,6 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .coin-link { color: #333333; text-decoration: none; cursor: pointer; }
 .coin-link:hover { color: #007bff; text-decoration: underline; }
 
-/* 💡 검색 바 및 AI 진입가 진단 레이아웃 */
 .toolbar-container {
     display: flex;
     justify-content: space-between;
@@ -627,7 +602,6 @@ function sortTable(columnIndex) {
     rows.forEach(row => tbody.appendChild(row));
 }
 
-/* 💡 AI 진입가 진단 로직 */
 function runAiDiagnosis() {
     const inputKeyword = document.getElementById('aiCoinInput').value.trim().toUpperCase();
     const entryPrice = parseFloat(document.getElementById('aiPriceInput').value);
@@ -649,30 +623,32 @@ function runAiDiagnosis() {
         return;
     }
 
-    const tp1 = entryPrice * 1.035; // 1차 익절 (+3.5%)
-    const tp2 = entryPrice * 1.070; // 2차 익절 (+7.0%)
-    const sl = entryPrice * 0.970;  // 손절 (-3.0%)
+    // 진입가 입력을 바탕으로 한 ATR 비율 비례 고도화 추천가산출
+    const ratio = entryPrice / coin.current_price;
+    const tp1 = coin.tp1 * ratio;
+    const tp2 = coin.tp2 * ratio;
+    const sl = coin.sl * ratio;
 
-    let comment = "";
+    let comment = `📊 현재 예측 점수 <strong>${coin.score}점</strong>, DTW 유사도 <strong>${coin.pattern_similarity}%</strong>를 형성 중인 차트입니다. `;
     if (coin.rsi >= 70) {
-        comment = "⚠️ 현재 RSI(" + coin.rsi + ")가 과열 상태입니다. 단기 눌림목에 유의하시고 1차 익절가 도달 시 적극 수익 확정을 권장합니다.";
-    } else if (entryPrice > coin.current_price * 1.03) {
-        comment = "ℹ️ 입력하신 진입가가 현재가(" + coin.current_price.toLocaleString() + " KRW) 대비 높습니다. 분할 매수로 접근하세요.";
+        comment += `⚠️ 단기 RSI(${coin.rsi})가 과열 구간이므로 목표가 분할 매도를 권장합니다.`;
+    } else if (coin.vol_cliff_score >= 50) {
+        comment += `💡 거래량 절벽 지표(${coin.vol_cliff_score}점)가 높게 포착되어 변동성 확대 가능성이 있습니다.`;
     } else {
-        comment = "🚀 DTW 패턴 유사도(" + coin.pattern_similarity + "%) 및 수급이 유효한 상태입니다. 손절 라인을 지키며 대응하세요.";
+        comment += `🎯 ATR 기반 최적 변동성 구간을 유지 중입니다. 설정된 손익비에 따라 전략 이행을 추천합니다.`;
     }
 
     resultCard.style.display = 'block';
     resultCard.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
-                <strong style="font-size: 16px; color: #1e222d;">🤖 [${coin.name} / ${coin.ticker}] AI 진단 결과</strong>
-                <span style="font-size: 13px; color: #555; margin-left: 8px;">(현재가: ${coin.current_price.toLocaleString()} KRW | RSI: ${coin.rsi})</span>
+                <strong style="font-size: 16px; color: #1e222d;">🤖 [${coin.name} / ${coin.ticker}] AI 스마트 진단 리포트</strong>
+                <span style="font-size: 13px; color: #555; margin-left: 8px;">(현재가: ${coin.current_price.toLocaleString()} KRW)</span>
             </div>
             <div style="font-size: 14px;">
-                <span style="color: #2b8a3e; font-weight: bold; margin-right: 12px;">🎯 1차 익절가: ${tp1.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (+3.5%)</span>
-                <span style="color: #2b8a3e; font-weight: bold; margin-right: 12px;">🎯 2차 익절가: ${tp2.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (+7.0%)</span>
-                <span style="color: #e03131; font-weight: bold;">🛑 손절가: ${sl.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (-3.0%)</span>
+                <span style="color: #2b8a3e; font-weight: bold; margin-right: 12px;">🎯 1차 목표가: ${tp1.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (+${coin.tp1_pct}%)</span>
+                <span style="color: #2b8a3e; font-weight: bold; margin-right: 12px;">🎯 2차 목표가: ${tp2.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (+${coin.tp2_pct}%)</span>
+                <span style="color: #e03131; font-weight: bold;">🛑 손절가: ${sl.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (${coin.sl_pct}%)</span>
             </div>
         </div>
         <div style="margin-top: 8px; font-size: 13px; color: #333; background: #ffffff; padding: 8px 12px; border-radius: 4px; border-left: 4px solid #007bff;">
@@ -729,20 +705,18 @@ window.onkeydown = function(event) {
 🌐 비트코인(BTC) 시장 상황: <span style="color:#007bff;">{{BTC_STATUS}}</span> (약세장 감점 적용 여부 판별)
 </div>
 
-<!-- 💡 검색 바 및 우측 AI 진입가 진단 폼 -->
 <div class="toolbar-container">
     <div class="search-box">
         <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색...">
     </div>
     <div class="ai-diagnosis-box">
-        <span style="font-weight: bold; font-size: 13px; color: #007bff;">🤖 AI 진입가 진단:</span>
+        <span style="font-weight: bold; font-size: 13px; color: #007bff;">🤖 AI 스마트 진단:</span>
         <input type="text" id="aiCoinInput" placeholder="종목명/티커" style="width: 100px;">
         <input type="number" id="aiPriceInput" placeholder="진입가 (KRW)" style="width: 110px;">
         <button class="ai-diagnosis-btn" onclick="runAiDiagnosis()">분석하기</button>
     </div>
 </div>
 
-<!-- AI 진단 결과 카드 -->
 <div id="aiResultCard" class="ai-result-card"></div>
 
 <div class="table-container">
@@ -781,24 +755,18 @@ window.onkeydown = function(event) {
 </html>
 """
 
-    final_html = (
-        html_template.replace("{{CURRENT_TIME}}", current_time_str)
-        .replace("{{BTC_STATUS}}", btc_status)
-        .replace("{{WIN_RATE}}", str(win_rate))
-        .replace("{{TOTAL_TRADES}}", str(total_trades))
-        .replace("{{WINS}}", str(wins))
-        .replace("{{LOSSES}}", str(losses))
-        .replace("{{DASHBOARD_JSON_DATA}}", dashboard_json_data)
-        .replace("{{ROWS}}", rows_html)
-    )
+    final_html = html_template.replace("{{CURRENT_TIME}}", current_time_str)\
+                              .replace("{{BTC_STATUS}}", btc_status)\
+                              .replace("{{WIN_RATE}}", str(win_rate))\
+                              .replace("{{TOTAL_TRADES}}", str(total_trades))\
+                              .replace("{{WINS}}", str(wins))\
+                              .replace("{{LOSSES}}", str(losses))\
+                              .replace("{{DASHBOARD_JSON_DATA}}", dashboard_json_data)\
+                              .replace("{{ROWS}}", rows_html)
 
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(final_html)
 
-
-# ==========================================
-# 7. 메인 실행 함수
-# ==========================================
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(DOCS_DIR, exist_ok=True)
@@ -813,23 +781,18 @@ def main():
     btc_status, btc_multiplier = check_btc_status()
 
     history_db = load_json(HISTORY_FILE, {})
-    backtest_stats = calculate_historical_win_rate(
-        history_db, target_tp_pct=5.0, target_sl_pct=2.0
-    )
+    backtest_stats = calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2.0)
 
-    weights = load_json(
-        WEIGHTS_FILE,
-        {
-            "w_pattern": 0.10,
-            "w_buy_sell": 0.05,
-            "w_ai_volatility": 0.05,
-            "w_vol_cliff": 0.10,
-            "w_breakout": 0.15,
-            "w_vol_surge": 0.20,
-            "w_ma_alignment": 0.10,
-            "w_daily_momentum": 0.25,
-        },
-    )
+    weights = load_json(WEIGHTS_FILE, {
+        "w_pattern": 0.10,
+        "w_buy_sell": 0.05,
+        "w_ai_volatility": 0.05,
+        "w_vol_cliff": 0.10,
+        "w_breakout": 0.15,
+        "w_vol_surge": 0.20,
+        "w_ma_alignment": 0.10,
+        "w_daily_momentum": 0.25
+    })
 
     pattern_data = load_json(PATTERN_FILE, {})
     raw_price = pattern_data.get("golden_pattern", np.linspace(0.2, 1.0, 24).tolist())
@@ -852,12 +815,8 @@ def main():
                 weights,
                 btc_multiplier,
                 ws_manager.ticker_data.get(market, {}),
-                (
-                    market in ai_recommend_set
-                    or market.replace("KRW-", "") in ai_recommend_set
-                ),
-            ): market
-            for market in krw_markets
+                (market in ai_recommend_set or market.replace("KRW-", "") in ai_recommend_set)
+            ): market for market in krw_markets
         }
 
         for future in as_completed(futures):
@@ -867,7 +826,6 @@ def main():
 
     ws_manager.stop()
 
-    # 최종 점수 기준 내림차순 정렬
     analysis_results.sort(key=lambda x: x["score"], reverse=True)
 
     for idx, item in enumerate(analysis_results):
@@ -876,31 +834,20 @@ def main():
         m_code = item["market"]
         if m_code not in history_db:
             history_db[m_code] = []
-        history_db[m_code].append(
-            {
-                "timestamp": time.time(),
-                "score": item["score"],
-                "rank": rank,
-                "price": item["current_price"],
-            }
-        )
-        history_db[m_code] = [
-            h for h in history_db[m_code] if h["timestamp"] >= time.time() - 86400
-        ][-50:]
+        history_db[m_code].append({
+            "timestamp": time.time(),
+            "score": item["score"],
+            "rank": rank,
+            "price": item["current_price"]
+        })
+        history_db[m_code] = [h for h in history_db[m_code] if h["timestamp"] >= time.time() - 86400][-50:]
 
     save_json(HISTORY_FILE, history_db)
     save_json(WEIGHTS_FILE, weights)
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
-    generate_full_dashboard_html(
-        analysis_results,
-        current_time_str,
-        btc_status,
-        backtest_stats,
-        HTML_OUTPUT,
-    )
-    print("🎨 [대시보드] AI 진입가 진단 기능 추가 및 대시보드 생성 완료!")
-
+    generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
+    print("🎨 [대시보드] 실시간 HTML 생성 완료!")
 
 if __name__ == "__main__":
     main()
