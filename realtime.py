@@ -359,16 +359,25 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
 
     rsi = calculate_rsi(df["trade_price"])
 
+  # ================= [스코어링 계산 및 유동성/RSI 보정 영역] =================
     base_score = (
         combined_pattern_sim * weights.get("w_pattern", 0.10) +
         (positive_count / 24.0 * 100) * weights.get("w_buy_sell", 0.05) +
         ai_volatility_score * weights.get("w_ai_volatility", 0.05) +
-        vol_cliff_score * weights.get("w_vol_cliff", 0.10) +
-        breakout_score * weights.get("w_breakout", 0.15) +
-        vol_surge_score * weights.get("w_vol_surge", 0.20) +
-        ma_momentum_score * weights.get("w_ma_alignment", 0.10) +
-        min(100.0, max(0.0, change_rate * 3.33)) * weights.get("w_daily_momentum", 0.25)
+        vol_cliff_score * weights.get("w_vol_cliff", 0.03) +  # 거래량 절벽 착시 방지 (0.10 -> 0.03)
+        breakout_score * weights.get("w_breakout", 0.20) +    # 고점 돌파 상향 (0.15 -> 0.20)
+        vol_surge_score * weights.get("w_vol_surge", 0.25) +   # 거래량 폭발 상향 (0.20 -> 0.25)
+        ma_momentum_score * weights.get("w_ma_alignment", 0.12) + # 이평선 보정 (0.10 -> 0.12)
+        min(100.0, max(0.0, change_rate * 3.33)) * weights.get("w_daily_momentum", 0.20)
     )
+
+    # 🚨 [보정 1] RSI 과열(72 이상) 무리한 추격 매수 차단 및 하락세(35 이하) 감점
+    if rsi >= 72.0 or rsi <= 35.0:
+        base_score *= 0.80
+
+    # 🚨 [보정 2] 유동성 결여(거래대금 부족) 종목 강제 감점 (가짜 고득점 방지)
+    if liquidity_index < 10.0:
+        base_score *= 0.70
 
     final_score = max(0.0, base_score * btc_multiplier)
 
@@ -383,8 +392,12 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     res_1, res_2, corpse_ratio = calculate_resistance_levels(df, current_price)
     support_2h = df_2h["low_price"].min()
 
+    # 시체 매물대 비중 높을 시 감점
     if corpse_ratio >= 40.0:
         final_score *= 0.97
+
+    # 최종 점수 반올림
+    final_score = round(final_score, 2)
 
     # 1차 목표가
     calculated_tp1 = min(res_1 * 0.998, max(current_price * 1.02, current_price + (atr * 1.2)))
@@ -417,7 +430,7 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         "pattern_similarity": combined_pattern_sim,
         "positive_count": positive_count,
         "vol_cliff_score": round(vol_cliff_score, 1),
-        "score": round(final_score, 2),
+        "score": final_score,
         "rsi": round(rsi, 1),
         "ai_volatility_score": round(ai_volatility_score, 1),
         "up_5pct_count": up_5pct_count,
@@ -436,7 +449,6 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         "res_1": round(res_1, 4),
         "res_2": round(res_2, 4)
     }
-
 def generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, html_path=HTML_OUTPUT):
     os.makedirs(os.path.dirname(html_path), exist_ok=True)
     win_rate, total_trades, wins, losses = backtest_stats
