@@ -112,42 +112,49 @@ def calculate_dtw_similarity(seq1, seq2):
 # 3. 데이터 수집 및 백테스팅 함수들
 # ==========================================
 def fetch_ai_recommendations():
-    """upbit-a 레포지토리의 AI 추천 파일 로드 및 티커 집합 생성"""
+    """upbit-a 레포지토리의 AI 추천 데이터 구조 완벽 재귀 분석 및 티커 추출"""
     url = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json"
     refined_set = set()
     
+    def extract_tickers_from_obj(obj):
+        """다양한 형태의 JSON 구조에서 티커/코인명 추출하는 내부 함수"""
+        if isinstance(obj, str):
+            clean = obj.strip().upper().replace("KRW-", "")
+            if clean and len(clean) <= 10: # 티커 길이 검증
+                refined_set.add(clean)
+                refined_set.add(f"KRW-{clean}")
+        elif isinstance(obj, dict):
+            # 1. 객체 내부의 티커 관련 필드 직접 확인
+            for field in ["ticker", "symbol", "market", "code", "coin_symbol"]:
+                if field in obj and isinstance(obj[field], str):
+                    extract_tickers_from_obj(obj[field])
+            
+            # 2. 괄호 안의 티커 추출 (예: "레드스톤 (RED)" -> "RED")
+            for field in ["name", "korean_name", "coin_name", "title"]:
+                if field in obj and isinstance(obj[field], str):
+                    val = obj[field]
+                    if "(" in val and ")" in val:
+                        symbol_inside = val.split("(")[1].split(")")[0].strip()
+                        extract_tickers_from_obj(symbol_inside)
+
+            # 3. 딕셔너리의 모든 value 탐색
+            for v in obj.values():
+                if isinstance(v, (dict, list)):
+                    extract_tickers_from_obj(v)
+
+        elif isinstance(obj, list):
+            for item in obj:
+                extract_tickers_from_obj(item)
+
     try:
         res = requests.get(url, timeout=5)
         if res.status_code == 200:
             data = res.json()
-            raw_list = []
-            
-            # JSON 데이터 구조에 따른 예외 처리
-            if isinstance(data, list):
-                raw_list = data
-            elif isinstance(data, dict):
-                # 가능한 키값들 모두 검색
-                for key in ["recommended_tickers", "recommended_coins", "tickers", "data", "recommendations"]:
-                    if key in data and isinstance(data[key], list):
-                        raw_list = data[key]
-                        break
-            
-            for item in raw_list:
-                ticker_str = ""
-                if isinstance(item, str):
-                    ticker_str = item
-                elif isinstance(item, dict):
-                    ticker_str = item.get("market") or item.get("symbol") or item.get("ticker") or ""
-                
-                if ticker_str:
-                    clean_ticker = str(ticker_str).strip().upper().replace("KRW-", "")
-                    refined_set.add(clean_ticker) # 예: "BTC"
-                    refined_set.add(f"KRW-{clean_ticker}") # 예: "KRW-BTC"
-                    
-            print(f"🤖 [AI 추천 연동] 총 {len(refined_set)//2}개 종목 로드 완료: {refined_set}")
+            extract_tickers_from_obj(data)
+            print(f"🤖 [AI 추천 연동 완료] 추출된 티커 목록: {sorted(list(refined_set))}")
             return refined_set
     except Exception as e:
-        print(f"⚠️ AI 추천 데이터 로드 실패: {e}")
+        print(f"⚠️ AI 추천 데이터 로드 예외: {e}")
         
     return set()
 
