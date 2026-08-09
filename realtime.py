@@ -265,7 +265,7 @@ def save_json(filepath, data):
 
 
 # ==========================================
-# 5. 개별 종목 분석 (승률 극대화 조건부 가산 적용)
+# 5. 개별 종목 분석 (거래량절벽 지표 적용)
 # ==========================================
 def analyze_single_coin(
     market,
@@ -316,26 +316,18 @@ def analyze_single_coin(
     volume_mean = df_2h["candle_acc_trade_volume"].mean()
     ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
 
-    accumulation_score = 0
-    df_2h["vol_ma"] = df_2h["candle_acc_trade_volume"].rolling(window=5).mean().fillna(0)
-
-    for i in range(1, len(df_2h)):
-        row = df_2h.iloc[i]
-        prev_vol_ma = df_2h.iloc[i - 1]["vol_ma"]
-        if prev_vol_ma == 0:
-            continue
-
-        if row["candle_acc_trade_volume"] > prev_vol_ma * 2:
-            body = abs(row["trade_price"] - row["opening_price"])
-            upper_wick = row["high_price"] - max(row["trade_price"], row["opening_price"])
-            lower_wick = min(row["trade_price"], row["opening_price"]) - row["low_price"]
-
-            if lower_wick > (body * 1.5):
-                accumulation_score += 30
-            if row["trade_price"] > row["opening_price"] and upper_wick > (body * 2):
-                accumulation_score += 20
-
-    accumulation_score = min(100.0, accumulation_score)
+    # -------------------------------------------------------------
+    # 📉 [거래량절벽 지표 계산] 최근 거래량이 직전 평균 거래량 대비 급감한 정도 측정
+    # -------------------------------------------------------------
+    recent_vol_current = df.iloc[-1]["candle_acc_trade_volume"]
+    avg_prev_vol = df.iloc[-21:-1]["candle_acc_trade_volume"].mean()
+    
+    if avg_prev_vol > 0:
+        vol_ratio = recent_vol_current / avg_prev_vol
+        # 거래량이 줄어들수록(절벽일수록) 높은 점수 산출
+        vol_cliff_score = min(100.0, max(0.0, (1.0 - vol_ratio) * 100.0))
+    else:
+        vol_cliff_score = 0.0
 
     high_24h = df["high_price"].max()
     breakout_score = 100.0 if current_price >= high_24h else (current_price / high_24h) * 100
@@ -380,7 +372,7 @@ def analyze_single_coin(
         combined_pattern_sim * weights.get("w_pattern", 0.10)
         + (positive_count / 24.0 * 100) * weights.get("w_buy_sell", 0.05)
         + ai_volatility_score * weights.get("w_ai_volatility", 0.05)
-        + accumulation_score * weights.get("w_accumulation", 0.10)
+        + vol_cliff_score * weights.get("w_vol_cliff", 0.10)
         + breakout_score * weights.get("w_breakout", 0.15)
         + vol_surge_score * weights.get("w_vol_surge", 0.20)
         + ma_momentum_score * weights.get("w_ma_alignment", 0.10)
@@ -389,14 +381,9 @@ def analyze_single_coin(
 
     final_score = max(0.0, base_score * btc_multiplier)
 
-    # -------------------------------------------------------------
-    # 🎯 [승률 극대화 핵심] 손절 방어형 조건부 1.5% 가산 및 필터링
-    # -------------------------------------------------------------
     if is_ai_recommended:
-        # 조건 1: RSI 68 미만 (과열 영역 아님) + 거래량 유입(vol_surge_score >= 10.0) 만족 시 1.5% 가산
         if rsi < 68.0 and vol_surge_score >= 10.0:
             final_score *= 1.015
-        # 조건 2: 유동성 또는 패턴 유사도가 너무 부실한 AI 추천 코인은 감점 처리 (손절 방어)
         elif liquidity_index < 10.0 or combined_pattern_sim < 30.0:
             final_score *= 0.95
 
@@ -408,7 +395,7 @@ def analyze_single_coin(
         "change_rate": round(change_rate, 2),
         "pattern_similarity": combined_pattern_sim,
         "positive_count": positive_count,
-        "accumulation_score": round(accumulation_score, 1),
+        "vol_cliff_score": round(vol_cliff_score, 1),
         "score": round(final_score, 2),
         "rsi": round(rsi, 1),
         "ai_volatility_score": round(ai_volatility_score, 1),
@@ -455,7 +442,7 @@ def generate_full_dashboard_html(
 <td class="{change_class}">{change_sign}{item['change_rate']}%</td>
 <td>{rsi_display}</td>
 <td><b>{item['pattern_similarity']}%</b></td>
-<td class="accumulation">{item['accumulation_score']}점</td>
+<td class="vol-cliff">{item['vol_cliff_score']}점</td>
 <td class="liquidity">{item['liquidity_index']}점</td>
 <td><b>{item['score']}점</b></td>
 <td><span class="plus">▲ {item['up_5pct_count']}회</span> / <span class="minus">▼ {item['down_5pct_count']}회</span></td>
@@ -531,7 +518,7 @@ tbody tr:hover { background-color: #e9ecef !important; }
 .minus { color: #1971c2; font-weight: bold; }
 .overheat { color: #d9480f; font-weight: bold; }
 .ticker-symbol { font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }
-.accumulation { color: #d9480f; font-weight: bold; }
+.vol-cliff { color: #d9480f; font-weight: bold; }
 .liquidity { color: #2b8a3e; font-weight: bold; }
 
 .modal-overlay {
@@ -666,7 +653,7 @@ window.onkeydown = function(event) {
 <th onclick="sortTable(3)">전일대비 등락률</th>
 <th onclick="sortTable(4)">RSI(14)</th>
 <th onclick="sortTable(5)">DTW패턴유사도</th>
-<th onclick="sortTable(6)">세력매집</th>
+<th onclick="sortTable(6)">거래량절벽</th>
 <th onclick="sortTable(7)">유동성</th>
 <th onclick="sortTable(8)">최종예측점수</th>
 <th onclick="sortTable(9)">5% 변동 (상승/하락)</th>
@@ -733,7 +720,7 @@ def main():
             "w_pattern": 0.10,
             "w_buy_sell": 0.05,
             "w_ai_volatility": 0.05,
-            "w_accumulation": 0.10,
+            "w_vol_cliff": 0.10,
             "w_breakout": 0.15,
             "w_vol_surge": 0.20,
             "w_ma_alignment": 0.10,
@@ -809,7 +796,7 @@ def main():
         backtest_stats,
         HTML_OUTPUT,
     )
-    print("🎨 [대시보드] 승률 극대화 조건부 가산 적용 및 대시보드 생성 완료!")
+    print("🎨 [대시보드] 거래량절벽 지표 적용 및 대시보드 생성 완료!")
 
 
 if __name__ == "__main__":
