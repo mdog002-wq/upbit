@@ -300,6 +300,14 @@ def generate_upbit_r_dashboard(
     html_template = """<!DOCTYPE html>
 <html lang="ko">
 <head>
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  
+  <!-- Render 배포 지연을 고려해 5분 10초(310초)마다 브라우저 자동 새로고침 -->
+  <meta http-equiv="refresh" content="310">
+</head>
+          
 <meta charset="UTF-8">
 <title>업비트 실시간 급등주 포착 대시보드</title>
 <style>
