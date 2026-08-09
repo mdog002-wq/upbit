@@ -3,7 +3,7 @@ name: Upbit Realtime Analyzer
 on:
   workflow_dispatch:
   repository_dispatch:
-    types: [backend_complete]  # 👈 upbit-a에서 보내는 event_type과 동일하게 수정
+    types: [backend_complete]
 
 permissions:
   contents: write
@@ -28,10 +28,23 @@ jobs:
             exit 0
           fi
 
+      # 1. 최신 커밋 상태의 레포지토리를 확실하게 체크아웃
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main  # 최신 main 브랜치의 커밋(전 단계에서 푸시된 json 포함)을 강제로 끌어옴
+
+      # 2. 전 단계에서 넘어온 JSON 파일 최신화 및 존재 여부 확인
+      - name: Verify scan result file
+        run: |
+          git pull origin main
+          if [ -f "data/market_scan_result.json" ]; then
+            echo "✅ market_scan_result.json 파일 확인 완료!"
+          else
+            echo "⚠️ data/market_scan_result.json 파일이 존재하지 않습니다. 디렉터리 확인:"
+            ls -la data/ || true
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -43,26 +56,28 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install pyupbit pandas numpy requests openpyxl tqdm google-genai websockets; fi
 
+      # 3. 실시간 대시보드 스크립트 실행
       - name: Run Realtime Analyzer
         env:
-          PYTHONUNBUFFERED: "1"  # 실시간 로그 출력 핵심 설정
+          PYTHONUNBUFFERED: "1"  # 실시간 로그 출력
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python realtime.py
 
+      # 4. 결과물 커밋 및 푸시
       - name: Commit and push generated dashboard & db
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           
-          git pull origin ${{ github.ref_name }} --rebase --autostash || echo "No rebase needed"
+          git pull origin main --rebase --autostash || echo "No rebase needed"
           git add docs/index.html data/ 2>/dev/null || git add .
           
           if ! git diff --staged --quiet; then
             git commit -m "🤖 Auto: Update realtime dashboard & evolution data [skip ci]"
-            git push origin ${{ github.ref_name }}
+            git push origin main
           else
             echo "No changes to commit"
           fi
