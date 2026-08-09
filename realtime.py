@@ -94,22 +94,7 @@ def send_telegram_alert(message):
         try: requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage", json={"chat_id": chat_id, "text": message, "parse_mode": "Markdown"}, timeout=5)
         except Exception: pass
 
-def upload_html_to_oracle_server(local_file_path):
-    hostname = os.environ.get("ORACLE_DSN")
-    username = os.environ.get("ORACLE_USER", "ubuntu")
-    ssh_key_content = os.environ.get("ORACLE_SSH_KEY")
 
-    if not hostname or not ssh_key_content: return
-    try:
-        pkey = paramiko.RSAKey.from_private_key(io.StringIO(ssh_key_content))
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname, port=22, username=username, pkey=pkey, timeout=10)
-        sftp = ssh.open_sftp()
-        sftp.put(local_file_path, "templates/dashboard.html")
-        sftp.close(); ssh.close()
-        print("🚀 오라클 서버 전송 완료!")
-    except Exception as e: print(f"❌ 오라클 서버 전송 실패: {e}")
 
 
 # ==============================================================================
@@ -133,19 +118,23 @@ def generate_gemini_report(df_top):
 
 def process_realtime_decisions():
     if not os.path.exists(SCAN_RESULT_JSON):
-        print("⚠️ 백엔드 수집 데이터(`market_scan_result.json`)가 존재하지 않습니다.")
+        print(f"❌ [오류] 데이터 파일이 존재하지 않습니다: {SCAN_RESULT_JSON}")
         return
 
     with open(SCAN_RESULT_JSON, "r", encoding="utf-8") as f:
         scan_payload = json.load(f)
 
     raw_list = scan_payload.get("data", [])
+    if not raw_list:
+        print("⚠️ [경고] 수집된 코인 데이터가 0건입니다.")
+        return
+
     markets = [item["market"] for item in raw_list]
 
-    # 웹소켓 실행 및 시세 동기화
+    # 웹소켓 연결 및 초기 시세 수신 대기 (2초 -> 4초로 변경)
     ws = UpbitRealtimeWS(markets)
     ws.start()
-    time.sleep(2)
+    time.sleep(4) 
 
     final_results = []
     for item in raw_list:
