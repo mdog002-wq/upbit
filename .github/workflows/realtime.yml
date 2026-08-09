@@ -20,8 +20,8 @@ jobs:
           echo "Current KST Time: ${HOUR}:${MINUTE}"
           
           # 새벽 2시(02시)이고, 분이 00분 ~ 14분 사이인 경우
-          if [ "$HOUR" -eq 02 ] && [ "$MINUTE" -ge 00 ] && [ "$MINUTE" -le 14 ]; then
-            echo "Notice: Current time is within the restricted window (02:00 ~ 02:14 KST). Skipping workflow execution."
+          if [ "$HOUR" -eq 02 ] && [ "$MINUTE" -ge 00 ] && [ "$MINUTE" -le 30 ]; then
+            echo "Notice: Current time is within the restricted window (02:00 ~ 02:30 KST). Skipping workflow execution."
             exit 0
           fi
 
