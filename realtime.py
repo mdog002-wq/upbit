@@ -316,15 +316,12 @@ def analyze_single_coin(
     volume_mean = df_2h["candle_acc_trade_volume"].mean()
     ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
 
-    # -------------------------------------------------------------
-    # 📉 [거래량절벽 지표 계산] 최근 거래량이 직전 평균 거래량 대비 급감한 정도 측정
-    # -------------------------------------------------------------
+    # 거래량절벽 지표 계산
     recent_vol_current = df.iloc[-1]["candle_acc_trade_volume"]
     avg_prev_vol = df.iloc[-21:-1]["candle_acc_trade_volume"].mean()
     
     if avg_prev_vol > 0:
         vol_ratio = recent_vol_current / avg_prev_vol
-        # 거래량이 줄어들수록(절벽일수록) 높은 점수 산출
         vol_cliff_score = min(100.0, max(0.0, (1.0 - vol_ratio) * 100.0))
     else:
         vol_cliff_score = 0.0
@@ -419,6 +416,9 @@ def generate_full_dashboard_html(
     os.makedirs(os.path.dirname(html_path), exist_ok=True)
     win_rate, total_trades, wins, losses = backtest_stats
 
+    # 클라이언트 자바스크립트에 전달할 데이터 JSON 변환
+    dashboard_json_data = json.dumps(analysis_results, ensure_ascii=False)
+
     rows_list = []
     for item in analysis_results:
         change_class = "plus" if item["change_rate"] > 0 else ("minus" if item["change_rate"] < 0 else "")
@@ -493,8 +493,40 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .coin-link { color: #333333; text-decoration: none; cursor: pointer; }
 .coin-link:hover { color: #007bff; text-decoration: underline; }
 
-.search-box { margin-bottom: 20px; }
-.search-box input { width: 100%; padding: 12px 15px; font-size: 16px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; outline: none; background: #ffffff; }
+/* 💡 검색 바 및 AI 진입가 진단 레이아웃 */
+.toolbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.search-box { flex: 1; }
+.search-box input { width: 100%; padding: 10px 15px; font-size: 15px; border: 1px solid #ced4da; border-radius: 6px; outline: none; background: #ffffff; box-sizing: border-box; }
+
+.ai-diagnosis-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.ai-diagnosis-box input { padding: 8px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; outline: none; }
+.ai-diagnosis-btn { background-color: #2b8a3e; color: white; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+.ai-diagnosis-btn:hover { background-color: #216a2f; }
+
+.ai-result-card {
+    display: none;
+    background: #eef3fc;
+    border: 1px solid #b3d4ff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
 
 .table-container { max-height: 75vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); background: #ffffff; }
 table { width: 100%; border-collapse: collapse; background: #ffffff; }
@@ -556,6 +588,8 @@ tbody tr:hover { background-color: #e9ecef !important; }
 </style>
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script>
+const dashboardData = {{DASHBOARD_JSON_DATA}};
+
 function filterTable() {
     let input = document.getElementById('searchInput').value.toLowerCase();
     let tr = document.getElementById('coinTable').getElementsByTagName('tr');
@@ -591,6 +625,60 @@ function sortTable(columnIndex) {
     });
 
     rows.forEach(row => tbody.appendChild(row));
+}
+
+/* 💡 AI 진입가 진단 로직 */
+function runAiDiagnosis() {
+    const inputKeyword = document.getElementById('aiCoinInput').value.trim().toUpperCase();
+    const entryPrice = parseFloat(document.getElementById('aiPriceInput').value);
+    const resultCard = document.getElementById('aiResultCard');
+
+    if (!inputKeyword || isNaN(entryPrice) || entryPrice <= 0) {
+        alert('올바른 종목명/티커와 진입가를 입력해주세요.');
+        return;
+    }
+
+    const coin = dashboardData.find(item => 
+        item.ticker.toUpperCase() === inputKeyword || 
+        item.name.toUpperCase() === inputKeyword || 
+        item.market.toUpperCase() === 'KRW-' + inputKeyword
+    );
+
+    if (!coin) {
+        alert('대시보드 리스트에서 해당 코인을 찾을 수 없습니다.');
+        return;
+    }
+
+    const tp1 = entryPrice * 1.035; // 1차 익절 (+3.5%)
+    const tp2 = entryPrice * 1.070; // 2차 익절 (+7.0%)
+    const sl = entryPrice * 0.970;  // 손절 (-3.0%)
+
+    let comment = "";
+    if (coin.rsi >= 70) {
+        comment = "⚠️ 현재 RSI(" + coin.rsi + ")가 과열 상태입니다. 단기 눌림목에 유의하시고 1차 익절가 도달 시 적극 수익 확정을 권장합니다.";
+    } else if (entryPrice > coin.current_price * 1.03) {
+        comment = "ℹ️ 입력하신 진입가가 현재가(" + coin.current_price.toLocaleString() + " KRW) 대비 높습니다. 분할 매수로 접근하세요.";
+    } else {
+        comment = "🚀 DTW 패턴 유사도(" + coin.pattern_similarity + "%) 및 수급이 유효한 상태입니다. 손절 라인을 지키며 대응하세요.";
+    }
+
+    resultCard.style.display = 'block';
+    resultCard.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <strong style="font-size: 16px; color: #1e222d;">🤖 [${coin.name} / ${coin.ticker}] AI 진단 결과</strong>
+                <span style="font-size: 13px; color: #555; margin-left: 8px;">(현재가: ${coin.current_price.toLocaleString()} KRW | RSI: ${coin.rsi})</span>
+            </div>
+            <div style="font-size: 14px;">
+                <span style="color: #2b8a3e; font-weight: bold; margin-right: 12px;">🎯 1차 익절가: ${tp1.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (+3.5%)</span>
+                <span style="color: #2b8a3e; font-weight: bold; margin-right: 12px;">🎯 2차 익절가: ${tp2.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (+7.0%)</span>
+                <span style="color: #e03131; font-weight: bold;">🛑 손절가: ${sl.toLocaleString(undefined, {maximumFractionDigits: 2})} KRW (-3.0%)</span>
+            </div>
+        </div>
+        <div style="margin-top: 8px; font-size: 13px; color: #333; background: #ffffff; padding: 8px 12px; border-radius: 4px; border-left: 4px solid #007bff;">
+            ${comment}
+        </div>
+    `;
 }
 
 function openChartModal(ticker, name) {
@@ -641,7 +729,21 @@ window.onkeydown = function(event) {
 🌐 비트코인(BTC) 시장 상황: <span style="color:#007bff;">{{BTC_STATUS}}</span> (약세장 감점 적용 여부 판별)
 </div>
 
-<div class="search-box"><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색..."></div>
+<!-- 💡 검색 바 및 우측 AI 진입가 진단 폼 -->
+<div class="toolbar-container">
+    <div class="search-box">
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색...">
+    </div>
+    <div class="ai-diagnosis-box">
+        <span style="font-weight: bold; font-size: 13px; color: #007bff;">🤖 AI 진입가 진단:</span>
+        <input type="text" id="aiCoinInput" placeholder="종목명/티커" style="width: 100px;">
+        <input type="number" id="aiPriceInput" placeholder="진입가 (KRW)" style="width: 110px;">
+        <button class="ai-diagnosis-btn" onclick="runAiDiagnosis()">분석하기</button>
+    </div>
+</div>
+
+<!-- AI 진단 결과 카드 -->
+<div id="aiResultCard" class="ai-result-card"></div>
 
 <div class="table-container">
 <table id="coinTable">
@@ -686,6 +788,7 @@ window.onkeydown = function(event) {
         .replace("{{TOTAL_TRADES}}", str(total_trades))
         .replace("{{WINS}}", str(wins))
         .replace("{{LOSSES}}", str(losses))
+        .replace("{{DASHBOARD_JSON_DATA}}", dashboard_json_data)
         .replace("{{ROWS}}", rows_html)
     )
 
@@ -796,7 +899,7 @@ def main():
         backtest_stats,
         HTML_OUTPUT,
     )
-    print("🎨 [대시보드] 거래량절벽 지표 적용 및 대시보드 생성 완료!")
+    print("🎨 [대시보드] AI 진입가 진단 기능 추가 및 대시보드 생성 완료!")
 
 
 if __name__ == "__main__":
