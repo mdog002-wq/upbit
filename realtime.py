@@ -294,13 +294,11 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
         1 for h in market_history if h["timestamp"] >= three_hours_ago and h["rank"] <= 10
     )
 
+    # RSI는 수치만 계산 (점수 패널티 차감은 제거)
     rsi = calculate_rsi(df["trade_price"])
-    overheat_penalty = 0.0
-    if rsi >= 80:
-        overheat_penalty += 15.0
-    elif rsi >= 70:
-        overheat_penalty += 8.0
 
+    # 당일 급등(+25% 이상)에 대한 과열 패널티만 유지가 필요하다면 남겨두고, 완전히 제외하려면 0.0으로 처리
+    overheat_penalty = 0.0
     if change_rate >= 25.0:
         overheat_penalty += 15.0
 
@@ -331,7 +329,6 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
         "down_5pct_count": down_5pct_count,
         "liquidity_index": liquidity_index,
     }
-
 
 def generate_upbit_r_dashboard(
     analysis_results, current_time_str, btc_status, backtest_stats, html_path="docs/index.html"
