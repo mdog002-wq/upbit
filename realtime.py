@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import requests
 
-
 # 경로 및 상수 설정
 DATA_DIR = "data"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
@@ -20,7 +19,7 @@ KST = timezone(timedelta(hours=9))
 
 
 def fetch_ai_recommendations():
-    """GitHub 저장소의 ai_recommend_tracker.json 파싱 함수"""
+    """GitHub 저장소의 ai_recommend_tracker.json 파싱"""
     url = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json"
     refined_set = set()
     try:
@@ -70,7 +69,7 @@ def fetch_krw_markets():
 
 
 def fetch_ticker_data(markets):
-    """업비트 전체 마켓의 전일대비 등락률(signed_change_rate)을 한 번에 수집"""
+    """업비트 원화 마켓 전일 대비 등락률 일괄 수집"""
     markets_str = ",".join(markets)
     url = f"https://api.upbit.com/v1/ticker?markets={markets_str}"
     ticker_dict = {}
@@ -114,7 +113,7 @@ def fetch_candles(market, count=672):
 
 
 def calculate_rsi(series, period=14):
-    """RSI(상대강도지수) 계산 함수"""
+    """RSI(상대강도지수) 계산"""
     delta = series.diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
     loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
@@ -124,7 +123,7 @@ def calculate_rsi(series, period=14):
 
 
 def check_btc_market_status():
-    """비트코인(KRW-BTC) 캔들 분석을 통한 시장 추세 판단"""
+    """비트코인(KRW-BTC) 분석을 통한 시장 추세 판단"""
     try:
         btc_candles = fetch_candles("KRW-BTC", count=24)
         if len(btc_candles) < 24:
@@ -145,7 +144,7 @@ def check_btc_market_status():
 
 
 def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2.0):
-    """과거 히스토리 데이터(TOP 10 포착 종목)를 기반으로 익절(+5%), 손절(-2%) 승률을 산출하는 함수"""
+    """과거 히스토리(TOP 10) 기반 익절/손절 승률 산출"""
     total_trades = 0
     wins = 0
     losses = 0
@@ -211,39 +210,28 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
     ticker = market.replace("KRW-", "")
 
     candles = fetch_candles(market, count=672)
-    if len(candles) < 24:
+    if len(candles) < 60:
         return None
 
-    df = pd.DataFrame(candles)
-    df = df.sort_values("timestamp").reset_index(drop=True)
-
+    df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
     df_6h = df.iloc[-24:].copy().reset_index(drop=True)
     current_price = df_6h.iloc[-1]["trade_price"]
-
     change_rate = daily_change_rate
 
-    positive_count = sum(
-        1 for _, row in df_6h.iterrows() if row["trade_price"] > row["opening_price"]
-    )
+    positive_count = sum(1 for _, row in df_6h.iterrows() if row["trade_price"] > row["opening_price"])
 
     prices = df_6h["trade_price"].values
     price_min, price_max = prices.min(), prices.max()
     norm_prices = (prices - price_min) / (price_max - price_min + 1e-8)
     distance = np.linalg.norm(norm_prices - ideal_pattern)
-    pattern_similarity = (
-        max(0.0, float(1.0 - (distance / np.sqrt(len(norm_prices))))) * 100
-    )
+    pattern_similarity = max(0.0, float(1.0 - (distance / np.sqrt(len(norm_prices))))) * 100
 
     volume_std = df_6h["candle_acc_trade_volume"].std()
     volume_mean = df_6h["candle_acc_trade_volume"].mean()
-    ai_volatility_score = float(
-        min(100.0, (volume_std / (volume_mean + 1e-8)) * 50)
-    )
+    ai_volatility_score = float(min(100.0, (volume_std / (volume_mean + 1e-8)) * 50))
 
     accumulation_score = 0
-    df_6h["vol_ma"] = (
-        df_6h["candle_acc_trade_volume"].rolling(window=5).mean().fillna(0)
-    )
+    df_6h["vol_ma"] = df_6h["candle_acc_trade_volume"].rolling(window=5).mean().fillna(0)
 
     for i in range(1, len(df_6h)):
         row = df_6h.iloc[i]
@@ -253,24 +241,40 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
 
         if row["candle_acc_trade_volume"] > prev_vol_ma * 2:
             body = abs(row["trade_price"] - row["opening_price"])
-            upper_wick = row["high_price"] - max(
-                row["trade_price"], row["opening_price"]
-            )
-            lower_wick = (
-                min(row["trade_price"], row["opening_price"]) - row["low_price"]
-            )
+            upper_wick = row["high_price"] - max(row["trade_price"], row["opening_price"])
+            lower_wick = min(row["trade_price"], row["opening_price"]) - row["low_price"]
 
             if lower_wick > (body * 1.5):
                 accumulation_score += 30
-            if (
-                row["trade_price"] > row["opening_price"]
-                and upper_wick > (body * 2)
-            ):
+            if row["trade_price"] > row["opening_price"] and upper_wick > (body * 2):
                 accumulation_score += 20
 
     accumulation_score = min(100.0, accumulation_score)
 
-    # 최근 7일 간 15분 캔들 내 5% 이상 상승/하락 변동 카운트
+    # 지표 산출 (돌파율, 거래량 급증, 이평선 정배열)
+    df_24h = df.iloc[-96:] if len(df) >= 96 else df
+    high_24h = df_24h["high_price"].max()
+    price_to_high_ratio = current_price / (high_24h + 1e-8)
+    breakout_score = 100.0 if price_to_high_ratio >= 0.98 else float(price_to_high_ratio * 100)
+
+    df["vol_ma20"] = df["candle_acc_trade_volume"].rolling(20).mean()
+    latest_vol = df.iloc[-1]["candle_acc_trade_volume"]
+    prev_avg_vol = df.iloc[-2]["vol_ma20"] if len(df) >= 2 else 0.0
+    vol_surge_ratio = latest_vol / (prev_avg_vol + 1e-8)
+    volume_surge_score = float(min(100.0, vol_surge_ratio * 20.0))
+
+    df["ma5"] = df["trade_price"].rolling(5).mean()
+    df["ma20"] = df["trade_price"].rolling(20).mean()
+    df["ma60"] = df["trade_price"].rolling(60).mean()
+    last_row = df.iloc[-1]
+
+    if last_row["ma5"] > last_row["ma20"] > last_row["ma60"]:
+        ma_momentum_score = 100.0
+    elif last_row["ma5"] > last_row["ma20"]:
+        ma_momentum_score = 60.0
+    else:
+        ma_momentum_score = 20.0
+
     up_5pct_count = sum(
         1 for _, row in df.iterrows()
         if ((row["high_price"] - row["low_price"]) / (row["low_price"] + 1e-8)) * 100 >= 5.0
@@ -283,7 +287,6 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
         and row["trade_price"] < row["opening_price"]
     )
 
-    df_24h = df.iloc[-96:] if len(df) >= 96 else df
     acc_24h_krw = df_24h["candle_acc_trade_price"].sum()
     liquidity_index = round(min(100.0, max(0.0, (np.log10(acc_24h_krw + 1e-8) - 7) * 20)), 1) if acc_24h_krw > 0 else 0.0
 
@@ -296,22 +299,21 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
 
     rsi = calculate_rsi(df["trade_price"])
 
-    # 당일 급등(+25% 이상) 시에만 과열 패널티 적용 (RSI 패널티는 제외)
-    overheat_penalty = 0.0
-    if change_rate >= 25.0:
-        overheat_penalty += 15.0
+    overheat_penalty = 15.0 if change_rate >= 25.0 else 0.0
 
     base_score = (
-        pattern_similarity * weights["w_pattern"]
-        + (positive_count / 24.0 * 100) * weights["w_buy_sell"]
-        + min(100.0, recent_top10_count * 20) * weights["w_recent_rank"]
-        + ai_volatility_score * weights["w_ai_volatility"]
-        + accumulation_score * weights["w_accumulation"]
+        pattern_similarity * weights.get("w_pattern", 0.15)
+        + (positive_count / 24.0 * 100) * weights.get("w_buy_sell", 0.10)
+        + min(100.0, recent_top10_count * 20) * weights.get("w_recent_rank", 0.10)
+        + ai_volatility_score * weights.get("w_ai_volatility", 0.05)
+        + accumulation_score * weights.get("w_accumulation", 0.15)
+        + breakout_score * weights.get("w_breakout", 0.20)
+        + volume_surge_score * weights.get("w_vol_surge", 0.15)
+        + ma_momentum_score * weights.get("w_ma_alignment", 0.10)
     )
 
     final_score = max(0.0, (base_score - overheat_penalty) * btc_multiplier)
 
-    # 💡 AI 추천 종목 가산점 부여 (1.1배 프리미엄)
     if is_ai_recommended:
         final_score *= 1.1
 
@@ -339,7 +341,6 @@ def generate_upbit_r_dashboard(
     analysis_results, current_time_str, btc_status, backtest_stats, html_path="docs/index.html"
 ):
     os.makedirs(os.path.dirname(html_path), exist_ok=True)
-
     win_rate, total_trades, wins, losses = backtest_stats
 
     rows_list = []
@@ -630,13 +631,11 @@ def main():
 
     ai_recommend_set = fetch_ai_recommendations()
 
-    # 비트코인 시장 상태 확인
     btc_status, btc_multiplier = check_btc_market_status()
     print(f"📊 [시장 상태 진단] 비트코인 상태: {btc_status} (가중치 배율: {btc_multiplier})")
 
     history_db = load_json(HISTORY_FILE, {})
 
-    # 익절 +5%, 손절 -2% 기준 실시간 승률 계산
     backtest_stats = calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2.0)
     win_rate, total_trades, wins, losses = backtest_stats
     print(f"📈 [백테스팅 결과] 승률: {win_rate}% (총 {total_trades}건 / {wins}승 {losses}패)")
@@ -644,11 +643,14 @@ def main():
     weights = load_json(
         WEIGHTS_FILE,
         {
-            "w_pattern": 0.25,
-            "w_buy_sell": 0.25,
-            "w_recent_rank": 0.15,
-            "w_ai_volatility": 0.15,
-            "w_accumulation": 0.20,
+            "w_pattern": 0.15,
+            "w_buy_sell": 0.10,
+            "w_recent_rank": 0.10,
+            "w_ai_volatility": 0.05,
+            "w_accumulation": 0.15,
+            "w_breakout": 0.20,
+            "w_vol_surge": 0.15,
+            "w_ma_alignment": 0.10,
         },
     )
 
@@ -660,16 +662,12 @@ def main():
     )
 
     krw_markets, market_names = fetch_krw_markets()
-    
-    # 전체 마켓의 전일 대비 등락률을 한 번에 사전 수집
     ticker_data = fetch_ticker_data(krw_markets)
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     analysis_results = []
 
-    print(
-        f"[{current_time_str}] 멀티스레딩 데이터 수집 및 분석 시작 (총 {len(krw_markets)}개 종목)..."
-    )
+    print(f"[{current_time_str}] 멀티스레딩 분석 시작 (총 {len(krw_markets)}개 종목)...")
 
     with ThreadPoolExecutor(max_workers=10) as executor:
         futures = {
@@ -694,7 +692,6 @@ def main():
 
     analysis_results.sort(key=lambda x: x["score"], reverse=True)
 
-    # 히스토리 데이터 업데이트 (최근 24시간 기록 유지)
     for idx, item in enumerate(analysis_results):
         rank = idx + 1
         item["rank"] = rank
@@ -714,9 +711,8 @@ def main():
     save_json(HISTORY_FILE, history_db)
     save_json(WEIGHTS_FILE, weights)
 
-    # HTML 대시보드 출력
     generate_upbit_r_dashboard(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("대시보드 HTML 생성 및 업데이트 완료.")
+    print("대시보드 HTML 생성 완료.")
 
 
 if __name__ == "__main__":
