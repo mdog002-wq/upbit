@@ -22,7 +22,8 @@ from pydantic import BaseModel, Field
 # ==============================================================================
 # [설정 및 환경변수]
 # ==============================================================================
-DATA_DIR = "data"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 DOCS_DIR = "docs"
 SCAN_RESULT_JSON = os.path.join(DATA_DIR, "market_scan_result.json")
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
