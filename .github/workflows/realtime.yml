@@ -3,7 +3,7 @@ name: Upbit Realtime Analyzer
 on:
   workflow_dispatch:
   repository_dispatch:
-    types: [backend_complete]
+    types: [run_backend]  # 👈 upbit-a에서 보내는 event_type과 동일하게 수정
 
 permissions:
   contents: write
@@ -41,9 +41,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install pyupbit pandas numpy requests openpyxl tqdm google-genai websockets; fi
 
       - name: Run Realtime Analyzer
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python realtime.py
 
