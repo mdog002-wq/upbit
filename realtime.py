@@ -69,6 +69,23 @@ def fetch_krw_markets():
     return krw_markets, market_names
 
 
+def fetch_ticker_data(markets):
+    """업비트 전체 마켓의 전일대비 등락률(signed_change_rate)을 한 번에 수집"""
+    markets_str = ",".join(markets)
+    url = f"https://api.upbit.com/v1/ticker?markets={markets_str}"
+    ticker_dict = {}
+    try:
+        res = requests.get(url, timeout=5)
+        if res.status_code == 200:
+            data = res.json()
+            for item in data:
+                # signed_change_rate (예: 0.0395)를 % 단위로 변환 (+3.95%)
+                ticker_dict[item["market"]] = item["signed_change_rate"] * 100
+    except Exception as e:
+        print(f"⚠️ [Ticker 연동 실패] 전일대비 데이터 수집 오류: {e}")
+    return ticker_dict
+
+
 def fetch_candles(market, count=672):
     all_candles = []
     to_param = ""
@@ -141,7 +158,6 @@ def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2
 
         for i in range(len(records) - 1):
             entry = records[i]
-            # 상위 10위권 내 진입한 신호만 백테스팅 대상에 포함
             if entry.get("rank", 99) > 10:
                 continue
 
@@ -151,7 +167,6 @@ def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2
             if not entry_price or entry_price <= 0:
                 continue
 
-            # 진입 시점 이후 최고가/최저가 추적
             subsequent_prices = [
                 r["price"] for r in records[i + 1:]
                 if r["timestamp"] > entry_ts
@@ -166,7 +181,6 @@ def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2
             max_return = ((max_price - entry_price) / entry_price) * 100
             min_return = ((min_price - entry_price) / entry_price) * 100
 
-            # 먼저 달성된 기준에 따라 승/패 판정
             if max_return >= target_tp_pct:
                 wins += 1
                 total_trades += 1
@@ -194,7 +208,7 @@ def save_json(filepath, data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_multiplier=1.0):
+def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_multiplier=1.0, daily_change_rate=0.0):
     ticker = market.replace("KRW-", "")
 
     candles = fetch_candles(market, count=672)
@@ -205,10 +219,10 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
     df = df.sort_values("timestamp").reset_index(drop=True)
 
     df_6h = df.iloc[-24:].copy().reset_index(drop=True)
-
     current_price = df_6h.iloc[-1]["trade_price"]
-    prev_close = df_6h.iloc[0]["opening_price"]
-    change_rate = ((current_price - prev_close) / prev_close) * 100
+
+    # 업비트 API 공식 전일대비 등락률 매핑
+    change_rate = daily_change_rate
 
     positive_count = sum(
         1 for _, row in df_6h.iterrows() if row["trade_price"] > row["opening_price"]
@@ -281,7 +295,6 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
         1 for h in market_history if h["timestamp"] >= three_hours_ago and h["rank"] <= 10
     )
 
-    # RSI 및 고점 급등 피로도 감점
     rsi = calculate_rsi(df["trade_price"])
     overheat_penalty = 0.0
     if rsi >= 80:
@@ -292,7 +305,6 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
     if change_rate >= 25.0:
         overheat_penalty += 15.0
 
-    # 기본 점수 계산
     base_score = (
         pattern_similarity * weights["w_pattern"]
         + (positive_count / 24.0 * 100) * weights["w_buy_sell"]
@@ -301,10 +313,8 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
         + accumulation_score * weights["w_accumulation"]
     )
 
-    # 최종 점수 반영
     final_score = max(0.0, (base_score - overheat_penalty) * btc_multiplier)
 
-    # 타겟 가이드라인 (익절 +5%, 손절 -2%)
     tp_price = round(current_price * 1.05, 2)
     sl_price = round(current_price * 0.98, 2)
 
@@ -578,7 +588,7 @@ window.onkeydown = function(event) {
 <th onclick="sortTable(0)">순위</th>
 <th onclick="sortTable(1)">한글코인명</th>
 <th onclick="sortTable(2)">현재가격 (KRW)</th>
-<th onclick="sortTable(3)">등락율(6h)</th>
+<th onclick="sortTable(3)">전일대비 등락률</th>
 <th onclick="sortTable(4)">RSI(14)</th>
 <th onclick="sortTable(5)">패턴유사율</th>
 <th onclick="sortTable(6)">세력매집</th>
@@ -655,6 +665,10 @@ def main():
     )
 
     krw_markets, market_names = fetch_krw_markets()
+    
+    # 전체 마켓의 전일 대비 등락률을 한 번에 사전 수집
+    ticker_data = fetch_ticker_data(krw_markets)
+
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     analysis_results = []
 
@@ -672,6 +686,7 @@ def main():
                 history_db,
                 weights,
                 btc_multiplier,
+                ticker_data.get(market, 0.0) # 수집된 등락률 파라미터 전달
             ): market
             for market in krw_markets
         }
