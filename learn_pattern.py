@@ -1,6 +1,7 @@
 import json
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 import pandas as pd
 import requests
@@ -24,7 +25,7 @@ def get_markets():
 
 
 def fetch_5m_candles_deep(market, target_count=2000):
-    """5분 봉 데이터 대량 수집 (페이징 적용 - 약 7일 치)"""
+    """5분 봉 데이터 대량 수집 (페이징 적용)"""
     all_candles = []
     to_param = ""
     while len(all_candles) < target_count:
@@ -34,9 +35,12 @@ def fetch_5m_candles_deep(market, target_count=2000):
             url += f"&to={to_param}"
 
         try:
-            res = requests.get(url, timeout=5)
+            res = requests.get(url, timeout=3)
+            if res.status_code == 429:  # API Rate Limit 걸렸을 때만 대기
+                time.sleep(0.3)
+                continue
             if res.status_code != 200:
-                time.sleep(0.1)
+                time.sleep(0.05)
                 continue
             data = res.json()
             if not data:
@@ -45,12 +49,52 @@ def fetch_5m_candles_deep(market, target_count=2000):
             if len(data) < req_count:
                 break
             to_param = data[-1]["candle_date_time_utc"]
-            time.sleep(0.05)
+            time.sleep(0.02)  # 기존 0.05s -> 0.02s 단축
         except Exception:
-            time.sleep(0.1)
+            time.sleep(0.05)
             continue
 
     return all_candles
+
+
+def process_market(market):
+    """단일 코인 패턴 추출 전담 함수 (병렬 처리용)"""
+    candles = fetch_5m_candles_deep(market, target_count=2000)
+    if len(candles) < 100:
+        return [], []
+
+    df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
+
+    price_patterns = []
+    volume_patterns = []
+
+    for i in range(24, len(df) - 6):
+        base_price = df.iloc[i]["trade_price"]
+        future_max_price = df.iloc[i + 1 : i + 7]["trade_price"].max()
+
+        if base_price > 0:
+            surge_rate = (future_max_price - base_price) / base_price
+
+            # 30분 내 8% 이상 상승 폭등 전조 구간 추출
+            if surge_rate >= 0.08:
+                pre_prices = df.iloc[i - 24 : i]["trade_price"].values
+                pre_volumes = df.iloc[i - 24 : i][
+                    "candle_acc_trade_volume"
+                ].values
+
+                p_min, p_max = pre_prices.min(), pre_prices.max()
+                v_min, v_max = pre_volumes.min(), pre_volumes.max()
+
+                if p_max > p_min and v_max > v_min:
+                    norm_prices = (pre_prices - p_min) / (p_max - p_min + 1e-8)
+                    norm_volumes = (pre_volumes - v_min) / (
+                        v_max - v_min + 1e-8
+                    )
+
+                    price_patterns.append(norm_prices)
+                    volume_patterns.append(norm_volumes)
+
+    return price_patterns, volume_patterns
 
 
 def main():
@@ -60,49 +104,27 @@ def main():
     all_price_patterns = []
     all_volume_patterns = []
     print(
-        f"🔍 총 {len(markets)}개 종목 대상 5분 봉 대량 학습(가격 + 거래량 패턴) 시작..."
+        f"🔍 총 {len(markets)}개 종목 대상 5분 봉 병렬 학습(가격 + 거래량 패턴) 시작..."
     )
 
-    for idx, market in enumerate(markets):
-        candles = fetch_5m_candles_deep(market, target_count=2000)
-        if len(candles) < 100:
-            continue
+    # 멀티쓰레딩 병렬 수집 (Max Workers 5~8 권장: Upbit API 제한 회피)
+    completed_count = 0
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        future_to_market = {
+            executor.submit(process_market, market): market
+            for market in markets
+        }
 
-        df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
+        for future in as_completed(future_to_market):
+            completed_count += 1
+            p_patterns, v_patterns = future.result()
+            all_price_patterns.extend(p_patterns)
+            all_volume_patterns.extend(v_patterns)
 
-        for i in range(24, len(df) - 6):
-            base_price = df.iloc[i]["trade_price"]
-            future_max_price = df.iloc[i + 1 : i + 7]["trade_price"].max()
-
-            if base_price > 0:
-                surge_rate = (future_max_price - base_price) / base_price
-
-                # 30분 내 8% 이상 상승 폭등 전조 구간 추출
-                if surge_rate >= 0.08:
-                    pre_prices = df.iloc[i - 24 : i]["trade_price"].values
-                    pre_volumes = df.iloc[i - 24 : i][
-                        "candle_acc_trade_volume"
-                    ].values
-
-                    p_min, p_max = pre_prices.min(), pre_prices.max()
-                    v_min, v_max = pre_volumes.min(), pre_volumes.max()
-
-                    if p_max > p_min and v_max > v_min:
-                        # 가격 및 거래량 정규화 (0~1)
-                        norm_prices = (pre_prices - p_min) / (
-                            p_max - p_min + 1e-8
-                        )
-                        norm_volumes = (pre_volumes - v_min) / (
-                            v_max - v_min + 1e-8
-                        )
-
-                        all_price_patterns.append(norm_prices)
-                        all_volume_patterns.append(norm_volumes)
-
-        if (idx + 1) % 10 == 0 or (idx + 1) == len(markets):
-            print(
-                f"⌛ 진행률: {idx + 1}/{len(markets)} 코인 완료... (누적 급등 샘플 수: {len(all_price_patterns)}개)"
-            )
+            if completed_count % 20 == 0 or completed_count == len(markets):
+                print(
+                    f"⌛ 진행률: {completed_count}/{len(markets)} 코인 완료... (누적 급등 샘플: {len(all_price_patterns)}개)"
+                )
 
     if all_price_patterns:
         golden_price_pattern = np.mean(all_price_patterns, axis=0).tolist()
@@ -110,7 +132,7 @@ def main():
 
         pattern_data = {
             "golden_pattern": golden_price_pattern,
-            "golden_volume_pattern": golden_volume_pattern,  # [2순위 반영] 거래량 패턴 추가
+            "golden_volume_pattern": golden_volume_pattern,
             "sample_count": len(all_price_patterns),
             "updated_at": time.strftime("%Y-%m-%d %H:%M:%S"),
         }
