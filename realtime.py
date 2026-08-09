@@ -80,19 +80,19 @@ class UpbitWebSocketManager:
 # [3순위 반영] DTW 기반 패턴 유사도 산출 함수
 # ==========================================
 def calculate_dtw_similarity(seq1, seq2):
-    """DTW(Dynamic Time Warping) 기반 패턴 유사도 산출 (1차원 평탄화 보장)"""
+    """DTW(Dynamic Time Warping) 기반 패턴 유사도 산출 (안전 처리 반영)"""
     try:
-        # 입력 데이터가 리스트나 2차원 형태일 경우 1차원으로 강제 변환
-        s1 = np.asarray(seq1, dtype=np.float64).ravel()
-        s2 = np.asarray(seq2, dtype=np.float64).ravel()
+        # 데이터 타입과 차원을 1차원 numpy array로 완벽히 변환
+        s1 = np.squeeze(np.asarray(seq1, dtype=np.float64)).flatten()
+        s2 = np.squeeze(np.asarray(seq2, dtype=np.float64)).flatten()
 
-        if len(s1) == 0 or len(s2) == 0:
+        # 데이터가 비어있거나 차원이 맞지 않는 예외 방지
+        if s1.size == 0 or s2.size == 0:
             return 0.0
 
         distance, _ = fastdtw(s1, s2, dist=euclidean)
-        # 24개 데이터 정규화 규격 상 최대 거리는 약 5.0 근방
         similarity = max(0.0, (1.0 - (distance / 5.0))) * 100
-        return round(similarity, 1)
+        return round(float(similarity), 1)
     except Exception as e:
         print(f"⚠️ DTW 계산 중 오류: {e}")
         return 0.0
@@ -236,15 +236,13 @@ def analyze_single_coin(
     prices = df_2h["trade_price"].values
     volumes = df_2h["candle_acc_trade_volume"].values
 
-    norm_prices = (prices - prices.min()) / (
-        prices.max() - prices.min() + 1e-8
-    )
-    norm_volumes = (volumes - volumes.min()) / (
-        volumes.max() - volumes.min() + 1e-8
-    )
+    # analyze_single_coin 함수 내부의 정규화 부분
+    norm_prices = np.squeeze((prices - prices.min()) / (prices.max() - prices.min() + 1e-8)).flatten()
+    norm_volumes = np.squeeze((volumes - volumes.min()) / (volumes.max() - volumes.min() + 1e-8)).flatten()
 
     price_sim = calculate_dtw_similarity(norm_prices, ideal_price_pattern)
     vol_sim = calculate_dtw_similarity(norm_volumes, ideal_vol_pattern)
+
 
     combined_pattern_sim = round(price_sim * 0.7 + vol_sim * 0.3, 1)
 
@@ -384,18 +382,14 @@ def main():
         },
     )
 
-     # 기존 pattern_data 로드 부분을 아래와 같이 1차원 평탄화(flatten)되도록 수정
+     # golden_pattern.json 로드 및 1차원 변환
     pattern_data = load_json(PATTERN_FILE, {})
 
-    ideal_price_pattern = np.array(
-        pattern_data.get("golden_pattern", np.linspace(0.2, 1.0, 24)),
-        dtype=np.float64,
-    ).ravel()
+    raw_price = pattern_data.get("golden_pattern", np.linspace(0.2, 1.0, 24).tolist())
+    raw_vol = pattern_data.get("golden_volume_pattern", np.linspace(0.1, 1.0, 24).tolist())
 
-    ideal_vol_pattern = np.array(
-        pattern_data.get("golden_volume_pattern", np.linspace(0.1, 1.0, 24)),
-        dtype=np.float64,
-    ).ravel()
+    ideal_price_pattern = np.squeeze(np.asarray(raw_price, dtype=np.float64)).flatten()
+    ideal_vol_pattern = np.squeeze(np.asarray(raw_vol, dtype=np.float64)).flatten()
 
     results = []
     print("🔍 1, 2, 3순위 고도화 로직 기반 종목 분석 시작...")
