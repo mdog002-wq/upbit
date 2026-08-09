@@ -381,7 +381,7 @@ def generate_upbit_r_dashboard(
 <head>
   <meta charset="UTF-8">
   <title>업비트 실시간 급등주 포착 대시보드</title>
-  <meta http-equiv="refresh" content="310">
+  <meta http-equiv="refresh" content="300">
 <style>
 body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
 .header-container { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; }
