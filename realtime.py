@@ -207,7 +207,7 @@ def save_json(filepath, data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_multiplier=1.0, daily_change_rate=0.0):
+def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_multiplier=1.0, daily_change_rate=0.0, is_ai_recommended=False):
     ticker = market.replace("KRW-", "")
 
     candles = fetch_candles(market, count=672)
@@ -294,10 +294,9 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
         1 for h in market_history if h["timestamp"] >= three_hours_ago and h["rank"] <= 10
     )
 
-    # RSI는 수치만 계산 (점수 패널티 차감은 제거)
     rsi = calculate_rsi(df["trade_price"])
 
-    # 당일 급등(+25% 이상)에 대한 과열 패널티만 유지가 필요하다면 남겨두고, 완전히 제외하려면 0.0으로 처리
+    # 당일 급등(+25% 이상) 시에만 과열 패널티 적용 (RSI 패널티는 제외)
     overheat_penalty = 0.0
     if change_rate >= 25.0:
         overheat_penalty += 15.0
@@ -311,6 +310,10 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
     )
 
     final_score = max(0.0, (base_score - overheat_penalty) * btc_multiplier)
+
+    # 💡 AI 추천 종목 가산점 부여 (1.1배 프리미엄)
+    if is_ai_recommended:
+        final_score *= 1.1
 
     return {
         "market": market,
@@ -328,7 +331,9 @@ def analyze_single_coin(market, k_name, ideal_pattern, history_db, weights, btc_
         "up_5pct_count": up_5pct_count,
         "down_5pct_count": down_5pct_count,
         "liquidity_index": liquidity_index,
+        "is_ai_recommended": is_ai_recommended,
     }
+
 
 def generate_upbit_r_dashboard(
     analysis_results, current_time_str, btc_status, backtest_stats, html_path="docs/index.html"
@@ -381,7 +386,7 @@ def generate_upbit_r_dashboard(
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Upbit Realtime Analyzer</title>
+  <title>업비트 실시간 급등주 포착 대시보드</title>
   <meta http-equiv="refresh" content="300">
 <style>
 body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
@@ -676,7 +681,8 @@ def main():
                 history_db,
                 weights,
                 btc_multiplier,
-                ticker_data.get(market, 0.0)
+                ticker_data.get(market, 0.0),
+                (market.replace("KRW-", "") in ai_recommend_set or market in ai_recommend_set)
             ): market
             for market in krw_markets
         }
@@ -684,14 +690,6 @@ def main():
         for future in as_completed(futures):
             result = future.result()
             if result:
-                ticker = result["ticker"]
-                market = result["market"]
-
-                if ticker in ai_recommend_set or market in ai_recommend_set:
-                    result["is_ai_recommended"] = True
-                else:
-                    result["is_ai_recommended"] = False
-
                 analysis_results.append(result)
 
     analysis_results.sort(key=lambda x: x["score"], reverse=True)
