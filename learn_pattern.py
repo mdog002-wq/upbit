@@ -1,70 +1,119 @@
-import os
 import json
+import os
 import time
-import requests
 import numpy as np
 import pandas as pd
+import requests
 
 DATA_DIR = "data"
 PATTERN_FILE = os.path.join(DATA_DIR, "golden_pattern.json")
 
+
 def get_markets():
     url = "https://api.upbit.com/v1/market/all"
-    res = requests.get(url)
-    if res.status_code != 200:
-        return []
-    markets = res.json()
-    return [m['market'] for m in markets if m['market'].startswith("KRW-")]
+    try:
+        res = requests.get(url, timeout=5)
+        if res.status_code == 200:
+            markets = res.json()
+            return [
+                m["market"] for m in markets if m["market"].startswith("KRW-")
+            ]
+    except Exception as e:
+        print(f"⚠️ 마켓 목록 조회 실패: {e}")
+    return []
 
-def fetch_daily_candles(market, count=180):
-    url = f"https://api.upbit.com/v1/candles/days?market={market}&count={count}"
-    res = requests.get(url)
-    return res.json() if res.status_code == 200 else []
 
-def fetch_15m_candles_before(market, to_date):
-    url = f"https://api.upbit.com/v1/candles/minutes/15?market={market}&to={to_date}&count=24"
-    res = requests.get(url)
-    return res.json() if res.status_code == 200 else []
+def fetch_5m_candles_deep(market, target_count=2000):
+    """5분 봉 데이터 대량 수집 (페이징 적용 - 약 7일 치)"""
+    all_candles = []
+    to_param = ""
+    while len(all_candles) < target_count:
+        req_count = min(200, target_count - len(all_candles))
+        url = f"https://api.upbit.com/v1/candles/minutes/5?market={market}&count={req_count}"
+        if to_param:
+            url += f"&to={to_param}"
+
+        try:
+            res = requests.get(url, timeout=5)
+            if res.status_code != 200:
+                time.sleep(0.1)
+                continue
+            data = res.json()
+            if not data:
+                break
+            all_candles.extend(data)
+            if len(data) < req_count:
+                break
+            to_param = data[-1]["candle_date_time_utc"]
+            time.sleep(0.05) # API Rate Limit 준수
+        except Exception:
+            time.sleep(0.1)
+            continue
+
+    return all_candles
+
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     markets = get_markets()
-    
-    all_surge_patterns = []
-    print(f"🔍 총 {len(markets)}개 종목에 대해 과거 6개월간 20% 이상 급등 패턴 탐색 시작...")
 
-    for market in markets:
-        daily_candles = fetch_daily_candles(market, count=180)
-        time.sleep(0.05)
-        
-        for candle in daily_candles:
-            open_p = candle.get('opening_price', 0)
-            high_p = candle.get('high_price', 0)
-            
-            if open_p > 0 and ((high_p - open_p) / open_p) >= 0.20:
-                target_date = candle['candle_date_time_utc'] + "Z"
-                m15_candles = fetch_15m_candles_before(market, target_date)
-                time.sleep(0.05)
-                
-                if len(m15_candles) == 24:
-                    df = pd.DataFrame(m15_candles).sort_values('timestamp')
-                    prices = df['trade_price'].values
-                    
-                    price_min = prices.min()
-                    price_max = prices.max()
-                    if price_max != price_min:
-                        norm_prices = (prices - price_min) / (price_max - price_min)
+    all_surge_patterns = []
+    print(
+        f"🔍 총 {len(markets)}개 종목 대상 5분 봉 대량 학습(약 2,000개 캔들) 시작..."
+    )
+
+    for idx, market in enumerate(markets):
+        candles = fetch_5m_candles_deep(market, target_count=2000)
+        if len(candles) < 100:
+            continue
+
+        # 과거 순으로 정렬 (Timestamp 오름차순)
+        df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
+
+        # 5분 봉 24개(2시간) 전조 패턴 -> 향후 6개 봉(30분) 내 +8% 이상 급등 지점 탐색
+        for i in range(24, len(df) - 6):
+            base_price = df.iloc[i]["trade_price"]
+            future_max_price = df.iloc[i + 1 : i + 7]["trade_price"].max()
+
+            if base_price > 0:
+                surge_rate = (future_max_price - base_price) / base_price
+
+                # 30분 내 8% 이상 상승한 단타 폭등 전조 추출
+                if surge_rate >= 0.08:
+                    pre_prices = df.iloc[i - 24 : i]["trade_price"].values
+                    p_min, p_max = pre_prices.min(), pre_prices.max()
+
+                    if p_max > p_min:
+                        # 0 ~ 1 정규화 (24개 데이터)
+                        norm_prices = (pre_prices - p_min) / (p_max - p_min + 1e-8)
                         all_surge_patterns.append(norm_prices)
 
+        if (idx + 1) % 10 == 0 or (idx + 1) == len(markets):
+            print(
+                f"⌛ 진행률: {idx + 1}/{len(markets)} 코인 수집 및 패턴 학습 완료... (누적 패턴 수: {len(all_surge_patterns)}개)"
+            )
+
     if all_surge_patterns:
+        # 추출된 폭등 전조 패턴들의 평균 계산
         golden_pattern = np.mean(all_surge_patterns, axis=0).tolist()
-        
-        with open(PATTERN_FILE, 'w', encoding='utf-8') as f:
-            json.dump({"golden_pattern": golden_pattern, "sample_count": len(all_surge_patterns)}, f, ensure_ascii=False, indent=4)
-        
-        print(f"✅ 총 {len(all_surge_patterns)}개의 급등 전조 패턴 분석 완료! 'golden_pattern.json' 저장 완료.")
+
+        pattern_data = {
+            "golden_pattern": golden_pattern,
+            "sample_count": len(all_surge_patterns),
+            "updated_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+
+        with open(PATTERN_FILE, "w", encoding="utf-8") as f:
+            json.dump(pattern_data, f, ensure_ascii=False, indent=4)
+
+        print(
+            f"\n✅ 총 {len(all_surge_patterns)}개의 폭등 전조 샘플 학습 완료! 'golden_pattern.json' 최신화 완료."
+        )
     else:
-        print("⚠️ 조건에 부합하는 급등 패턴을 찾지 못해 기존 데이터를 유지합니다.")
+        print(
+            "⚠️ 조건에 부합하는 급등 패턴을 찾지 못해 기존 패턴 파일을 유지합니다."
+        )
+
 
 if __name__ == "__main__":
     main()
