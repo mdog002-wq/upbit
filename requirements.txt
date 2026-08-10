@@ -11,3 +11,5 @@ websockets>=11.0
 fastdtw
 scipy
 google-genai
+pydantic
+scikit-learn
