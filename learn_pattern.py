@@ -62,7 +62,7 @@ def main():
 
     all_price_patterns = []
     all_volume_patterns = []
-    print(f"🔍 총 {len(markets)}개 종목 대상 5분 봉 대량 학습 (유효 추세 및 K-Means 클러스터링) 시작...")
+    print(f"🔄 [자율 진화 1단계] 최신 {len(markets)}개 종목 대상 5분 봉 대량 학습 및 패턴 재생성...")
 
     for idx, market in enumerate(markets):
         candles = fetch_5m_candles_deep(market, target_count=2000)
@@ -72,8 +72,7 @@ def main():
 
         for i in range(24, len(df) - 18):
             base_price = df.iloc[i]["trade_price"]
-            
-            # 5분 봉당 최소 거래대금 5,000만 원 이상 필터
+           
             if df.iloc[i]["candle_acc_trade_price"] < 50_000_000:
                 continue
 
@@ -84,7 +83,6 @@ def main():
                 surge_rate = (future_max_price - base_price) / base_price
                 post_drop_rate = (future_min_price - base_price) / base_price
 
-                # 30분 내 8% 이상 상승 및 이후 1시간 동안 -2% 미만 급락 없는 양질의 상승만 선택
                 if surge_rate >= 0.08 and post_drop_rate >= -0.02:
                     pre_prices = df.iloc[i - 24 : i]["trade_price"].values
                     pre_volumes = df.iloc[i - 24 : i]["candle_acc_trade_volume"].values
@@ -102,7 +100,7 @@ def main():
                         all_volume_patterns.append(norm_volumes)
 
         if (idx + 1) % 10 == 0 or (idx + 1) == len(markets):
-            print(f"⌛ 진행률: {idx + 1}/{len(markets)} 완료... (양질 샘플 수: {len(all_price_patterns)}개)")
+            print(f"⌛ 패턴 진행률: {idx + 1}/{len(markets)} 완료... (수집 패턴: {len(all_price_patterns)}개)")
 
     if len(all_price_patterns) >= 3:
         kmeans_p = KMeans(n_clusters=3, random_state=42, n_init=10).fit(all_price_patterns)
@@ -118,9 +116,7 @@ def main():
         with open(PATTERN_FILE, "w", encoding="utf-8") as f:
             json.dump(pattern_data, f, ensure_ascii=False, indent=4)
 
-        print(f"\n✅ K-Means 클러스터링 학습 완료! '{PATTERN_FILE}' 저장 완료.")
-    else:
-        print("⚠️ 학습 조건(진짜 추세)에 부합하는 샘플이 부족합니다.")
+        print(f"✅ 패턴 자동 갱신 완료! ('{PATTERN_FILE}')")
 
 if __name__ == "__main__":
     main()
