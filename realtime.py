@@ -393,7 +393,7 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .winrate-card { border-left: 6px solid #2b8a3e; }
 .winrate-val { font-size: 18px; color: #e03131; }
 
-.ai-badge { background-color: #e03131 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; padding: 2px 6px !important; border-radius: 4px !important; margin-left: 6px !important; display: inline-block !important; vertical-align: middle !important; }
+.ai-badge { background-color: #0d6efd !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; padding: 2px 6px !important; border-radius: 4px !important; margin-left: 6px !important; display: inline-block !important; vertical-align: middle !important; }
 .warning-badge { background-color: #ff4d4f !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; padding: 2px 6px !important; border-radius: 4px !important; margin-left: 4px !important; display: inline-block !important; vertical-align: middle !important; animation: pulse 1.5s infinite; }
 
 @keyframes pulse {
