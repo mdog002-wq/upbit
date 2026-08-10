@@ -565,7 +565,7 @@ window.onkeydown = function(event) {
 <body>
 
 <div class="header-container">
-<div class="header-left"><a href="https://http://mdog002-wq.github.io/upbit-a" target="_self" class="ai-btn">AI리포트이동</a></div>
+<div class="header-left"><a href="https://mdog002-wq.github.io/upbit-a" target="_self" class="ai-btn">AI리포트이동</a></div>
 <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 실시간 DTW + 웹소켓 고도화 대시보드</h2></div>
 <div class="header-right">마지막 업데이트: <b>{{CURRENT_TIME}}</b></div>
 </div>
