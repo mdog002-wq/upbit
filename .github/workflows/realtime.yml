@@ -5,8 +5,8 @@ on:
   repository_dispatch:
     types: [backend_complete]
   schedule:
-    # 하루에 한번 00:00 UTC (KST 09:00) 실시간 분석 자동 실행
-    - cron: '0 0 * * *'
+    # 30분마다 자동 실행하여 실시간 대시보드 데이터 갱신
+    - cron: '*/30 * * * *'
 
 permissions:
   contents: write
@@ -14,6 +14,7 @@ permissions:
 jobs:
   run-analyzer:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
    
     steps:
       - name: Check Blocked Time Window (02:00 ~ 02:14 KST)
@@ -43,9 +44,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install pyupbit pandas numpy requests openpyxl tqdm google-genai websockets fastdtw; fi
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install pyupbit pandas numpy requests openpyxl tqdm google-genai websockets fastdtw pydantic; fi
 
-      # 1단계: 실시간 대시보드 스크립트 실행
+      # 1단계: 실시간 대시보드 스크립트 실행 (timeout 명령어로 60초간 실시간 트래킹 후 정상 종료)
       - name: Run Realtime Analyzer
         env:
           PYTHONUNBUFFERED: "1"
@@ -53,19 +54,22 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          python realtime.py
+          # timeout 60s를 주어 1분 동안 웹소켓 데이터를 수집하여 JSON을 갱신한 후 다음 스텝으로 자동 이동
+          timeout 60s python realtime.py || true
 
-      # 2단계: 대시보드 결과물 커밋/푸시
+      # 2단계: 대시보드 JSON 데이터 커밋/푸시
       - name: Commit and push generated dashboard
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
          
           git pull origin main --rebase --autostash || echo "No rebase needed"
-          git add docs/index.html 2>/dev/null || git add .
+          
+          # 🎯 핵심: docs/ 폴더 내 생성된 JSON 및 HTML 데이터 강제 커밋
+          git add -f docs/ data/ 2>/dev/null || git add .
          
           if ! git diff --staged --quiet; then
-            git commit -m "🤖 Auto: Update realtime dashboard [skip ci]"
+            git commit -m "🤖 Auto: Update realtime dashboard data [skip ci]"
             git push origin main
           else
             echo "No changes to commit"
