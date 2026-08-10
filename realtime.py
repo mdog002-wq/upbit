@@ -1206,14 +1206,18 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
     df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
     current_price = df.iloc[-1]["trade_price"]
     
-    # 💡 prev_closing_price KeyError 방지 처리
-    if "prev_closing_price" in df.columns:
-        prev_close = df.iloc[-1]["prev_closing_price"]
-    elif "opening_price" in df.columns:
-        # 5분 봉 캔들의 시가(opening_price) 또는 이전 캔들 종가 사용
-        prev_close = df.iloc[-2]["trade_price"] if len(df) > 1 else df.iloc[-1]["opening_price"]
-    else:
-        prev_close = current_price
+# 💡 [수정 전]
+# prev_close = df.iloc[-1]['prev_closing_price']
+
+# 💡 [수정 후] 안전한 컬럼 참조 및 대체 로직
+if 'prev_closing_price' in df.columns:
+    prev_close = df.iloc[-1]['prev_closing_price']
+elif 'trade_price' in df.columns and len(df) > 1:
+    # 전일/직전 캔들의 종가(trade_price) 사용
+    prev_close = df.iloc[-2]['trade_price']
+else:
+    prev_close = df.iloc[-1].get('opening_price', df.iloc[-1]['trade_price'])
+
 
     change_rate = ((current_price - prev_close) / (prev_close + 1e-8)) * 100.0 if prev_close > 0 else 0.0
 
