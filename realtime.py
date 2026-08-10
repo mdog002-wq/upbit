@@ -405,13 +405,21 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .coin-link { color: #333333; text-decoration: none; cursor: pointer; }
 .coin-link:hover { color: #007bff; text-decoration: underline; }
 
-.toolbar-container { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
-.search-box { flex: 1; }
-.search-box input { width: 100%; padding: 10px 15px; font-size: 15px; border: 1px solid #ced4da; border-radius: 6px; outline: none; background: #ffffff; box-sizing: border-box; }
+/* 레이아웃 개편: 1번, 2번 축소 및 3, 4번 우측 전체 병합 */
+.toolbar-container { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
 
-.ai-diagnosis-box { display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 12px; border-radius: 6px; border: 1px solid #ced4da; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.ai-diagnosis-box input { padding: 8px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; outline: none; }
-.ai-diagnosis-btn { background-color: #2b8a3e; color: white; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+/* 1번 영역 (비트코인 시장 상황) */
+.btc-status-box { flex: 0 0 220px; background: #ffffff; padding: 10px 14px; border-radius: 6px; border: 1px solid #ced4da; font-size: 13px; font-weight: bold; color: #495057; white-space: nowrap; box-sizing: border-box; }
+
+/* 2번 영역 (코인명 검색창) */
+.search-box { flex: 0 0 200px; }
+.search-box input { width: 100%; padding: 9px 12px; font-size: 14px; border: 1px solid #ced4da; border-radius: 6px; outline: none; background: #ffffff; box-sizing: border-box; }
+
+/* 우측 3번 + 4번 병합 영역 (AI 스마트 진단) */
+.ai-diagnosis-box { flex: 1; display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 12px; border-radius: 6px; border: 1px solid #ced4da; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.ai-diagnosis-box input[type="text"] { flex: 1; min-width: 90px; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 13px; outline: none; }
+.ai-diagnosis-box input[type="number"] { flex: 1; min-width: 100px; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 13px; outline: none; }
+.ai-diagnosis-btn { background-color: #2b8a3e; color: white; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; white-space: nowrap; transition: background 0.2s; }
 .ai-diagnosis-btn:hover { background-color: #216a2f; }
 
 .ai-result-card { display: none; background: #eef3fc; border: 1px solid #b3d4ff; padding: 12px 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -576,18 +584,18 @@ window.onkeydown = function(event) {
 <span style="font-size: 13px; color: #666; font-weight: normal;">(최근 포착 TOP10 종목 총 {{TOTAL_TRADES}}건 검증 — {{WINS}}승 {{LOSSES}}패)</span>
 </div>
 
-<div class="status-card">
-🌐 비트코인(BTC) 시장 상황: <span style="color:#007bff;">{{BTC_STATUS}}</span>
-</div>
-
+<!-- 상단 툴바 레이아웃 (1번, 2번, 3+4번 통합) -->
 <div class="toolbar-container">
+    <div class="btc-status-box">
+        🌐 비트코인: <span style="color:#007bff;">{{BTC_STATUS}}</span>
+    </div>
     <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색...">
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명/티커 검색...">
     </div>
     <div class="ai-diagnosis-box">
-        <span style="font-weight: bold; font-size: 13px; color: #007bff;">🤖 AI 스마트 진단:</span>
-        <input type="text" id="aiCoinInput" placeholder="종목명/티커" style="width: 100px;">
-        <input type="number" id="aiPriceInput" placeholder="진입가 (KRW)" style="width: 110px;">
+        <span style="font-weight: bold; font-size: 13px; color: #007bff; white-space: nowrap;">🤖 AI 스마트 진단:</span>
+        <input type="text" id="aiCoinInput" placeholder="종목명/티커">
+        <input type="number" id="aiPriceInput" placeholder="진입가 (KRW)">
         <button class="ai-diagnosis-btn" onclick="runAiDiagnosis()">분석하기</button>
     </div>
 </div>
@@ -710,7 +718,7 @@ def main():
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("🎨 [레포2 대시보드] 실시간 HTML (위험 딱지 기능 추가) 생성 완료!")
+    print("🎨 [레포2 대시보드] 실시간 HTML (레이아웃 개선 완료) 생성 완료!")
 
 if __name__ == "__main__":
     main()
