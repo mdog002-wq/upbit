@@ -58,6 +58,29 @@ def fetch_ai_recommendations():
         
     return refined_set
 
+def fetch_warning_coins():
+    """레포1 (mdog002-wq/upbit-a)의 위험 종목(warning_coins.json) 원격 가져오기"""
+    warning_set = set()
+    url = f"https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/warning_coins.json?t={int(time.time())}"
+    try:
+        res = requests.get(url, timeout=5, headers={"Cache-Control": "no-cache"})
+        if res.status_code == 200:
+            data = res.json()
+            if isinstance(data, list):
+                for item in data:
+                    if isinstance(item, dict) and "symbol" in item:
+                        symbol = item["symbol"].strip().upper().replace("KRW-", "")
+                        warning_set.add(symbol)
+                        warning_set.add(f"KRW-{symbol}")
+                    elif isinstance(item, str):
+                        symbol = item.strip().upper().replace("KRW-", "")
+                        warning_set.add(symbol)
+                        warning_set.add(f"KRW-{symbol}")
+    except Exception as e:
+        print(f"⚠️ 위험 종목 데이터 불러오기 실패: {e}")
+        
+    return warning_set
+
 def calculate_dtw_similarity(seq1, seq2):
     try:
         s1 = np.asarray(seq1, dtype=np.float64).reshape(-1)
@@ -219,7 +242,7 @@ def save_json(filepath, data):
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, history_db, weights, btc_multiplier, ws_data, is_ai_recommended):
+def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, history_db, weights, btc_multiplier, ws_data, is_ai_recommended, is_warning):
     ticker = market.replace("KRW-", "")
     candles = fetch_5m_candles(market, count=120)
     if len(candles) < 60: return None
@@ -309,6 +332,7 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         "rsi": round(rsi, 1), "ai_volatility_score": round(ai_volatility_score, 1),
         "up_5pct_count": up_5pct_count, "down_5pct_count": down_5pct_count,
         "liquidity_index": liquidity_index, "is_ai_recommended": is_ai_recommended,
+        "is_warning": is_warning,
         "tp1": round(calculated_tp1, 4), "tp2": round(calculated_tp2, 4),
         "max_tp": round(calculated_max_tp, 4), "sl": round(calculated_sl, 4),
         "tp1_pct": round(((calculated_tp1 - current_price) / current_price) * 100, 2),
@@ -328,6 +352,7 @@ def generate_full_dashboard_html(analysis_results, current_time_str, btc_status,
         change_class = "plus" if item["change_rate"] > 0 else ("minus" if item["change_rate"] < 0 else "")
         change_sign = "+" if item["change_rate"] > 0 else ""
         ai_badge_html = '<span class="ai-badge">AI추천</span>' if item.get("is_ai_recommended") else ""
+        warning_badge_html = '<span class="warning-badge">⚠️ 위험</span>' if item.get("is_warning") else ""
         rsi_display = f"{item['rsi']}" if item["rsi"] < 70 else f"<span class='overheat'>{item['rsi']} (과열)</span>"
 
         row = f"""
@@ -336,7 +361,7 @@ def generate_full_dashboard_html(analysis_results, current_time_str, btc_status,
 <td>
     <a href="#" onclick="openChartModal('{item['ticker']}', '{item['name']}'); return false;" class="coin-link">
         <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
-    </a>{ai_badge_html}
+    </a>{ai_badge_html}{warning_badge_html}
 </td>
 <td>{item['current_price']:,}</td>
 <td class="{change_class}">{change_sign}{item['change_rate']}%</td>
@@ -369,6 +394,14 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .winrate-val { font-size: 18px; color: #e03131; }
 
 .ai-badge { background-color: #e03131 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; padding: 2px 6px !important; border-radius: 4px !important; margin-left: 6px !important; display: inline-block !important; vertical-align: middle !important; }
+.warning-badge { background-color: #ff4d4f !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; padding: 2px 6px !important; border-radius: 4px !important; margin-left: 4px !important; display: inline-block !important; vertical-align: middle !important; animation: pulse 1.5s infinite; }
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
 .coin-link { color: #333333; text-decoration: none; cursor: pointer; }
 .coin-link:hover { color: #007bff; text-decoration: underline; }
 
@@ -470,6 +503,9 @@ function runAiDiagnosis() {
     const sl = coin.sl * ratio;
 
     let comment = `📊 예측 점수 <strong>${coin.score}점</strong>, DTW 유사도 <strong>${coin.pattern_similarity}%</strong>차트입니다.<br>`;
+    if (coin.is_warning) {
+        comment += `🚨 <strong>위험 코인 경고:</strong> 이 코인은 위험 코인 목록(warning_coins.json)에 지정되어 있으므로 변동성에 각별히 주의하세요!<br>`;
+    }
     if (coin.corpse_ratio >= 35.0) {
         comment += `⚠️ <strong>상방 저항:</strong> 물린 매물대(시체 비중 ${coin.corpse_ratio}%)로 인해 1차 저항선(${coin.res_1.toLocaleString()} KRW) 돌파가 중요합니다.`;
     } else {
@@ -616,6 +652,7 @@ def main():
     time.sleep(2)
 
     ai_recommend_set = fetch_ai_recommendations()
+    warning_coin_set = fetch_warning_coins()
     btc_status, btc_multiplier = check_btc_status()
 
     history_db = load_json(HISTORY_FILE, {})
@@ -647,7 +684,8 @@ def main():
                 weights,
                 btc_multiplier,
                 ws_manager.ticker_data.get(market, {}),
-                (market in ai_recommend_set or market.replace("KRW-", "") in ai_recommend_set)
+                (market in ai_recommend_set or market.replace("KRW-", "") in ai_recommend_set),
+                (market in warning_coin_set or market.replace("KRW-", "") in warning_coin_set)
             ): market for market in krw_markets
         }
         for future in as_completed(futures):
@@ -672,7 +710,7 @@ def main():
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("🎨 [레포2 대시보드] 실시간 HTML 생성 완료!")
+    print("🎨 [레포2 대시보드] 실시간 HTML (위험 딱지 기능 추가) 생성 완료!")
 
 if __name__ == "__main__":
     main()
