@@ -1,4 +1,4 @@
-Name: Upbit Realtime Analyzer & Pattern Trainer
+name: Upbit Realtime Analyzer & Pattern Trainer
 
 on:
   workflow_dispatch:
