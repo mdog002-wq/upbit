@@ -6,12 +6,10 @@ import numpy as np
 import requests
 import time
 import os
-from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from fastdtw import fastdtw
 
 DATA_DIR = "data"
-DOCS_DIR = "./docs"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
 WEIGHTS_FILE = os.path.join(DATA_DIR, "weights.json")
 PATTERN_FILE = os.path.join(DATA_DIR, "golden_pattern.json")
@@ -110,7 +108,7 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
     last = df.iloc[-1]
     ma_score = 100.0 if last["ma5"] > last["ma20"] > last["ma60"] else (60.0 if last["ma5"] > last["ma20"] else 20.0)
 
-    # 눌림목 수급 중심의 수정된 가중치 반영
+    # 🧬 자율 진화된 동적 가중치 적용
     base_score = (
         combined_pattern_sim * weights.get("w_pattern", 0.20) +
         vol_cliff_score * weights.get("w_vol_cliff", 0.25) +
@@ -119,7 +117,6 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
         (current_price / df["high_price"].max() * 100) * weights.get("w_breakout", 0.05)
     )
 
-    # 1차 분석(Repo1)의 추천 종목 가산점 (+15점)
     if ticker in recommended_symbols:
         base_score += 15.0
 
@@ -144,26 +141,25 @@ async def connect_upbit_websocket(markets):
                 await ws.send(json.dumps(subscribe_data))
                 print("📡 Upbit 실시간 웹소켓 연결 성공!")
                 while True:
-                    data = await ws.recv()
-                    ticker_info = json.loads(data.decode('utf-8'))
-                    # 필요 시 실시간 가격 업데이트 및 알림 이벤트 로직 수행
+                    await ws.recv()
         except Exception as e:
             print(f"⚠️ 웹소켓 재연결 시도 중... ({e})")
             await asyncio.sleep(3)
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
+    # repo1.py에서 스스로 학습하여 갱신한 weights.json을 동적 로딩
     weights = load_json(WEIGHTS_FILE, {
         "w_pattern": 0.20, "w_vol_cliff": 0.25, "w_ma_alignment": 0.25,
         "w_vol_surge": 0.15, "w_daily_momentum": 0.10, "w_breakout": 0.05
     })
+    print(f"📊 현재 적용된 자율 학습 가중치: {weights}")
 
     pattern_data = load_json(PATTERN_FILE, {})
     golden_price_patterns = pattern_data.get("golden_patterns", [])
     golden_vol_patterns = pattern_data.get("golden_volume_patterns", [])
 
     recommended_symbols = fetch_remote_recommendations()
-    print(f"🔗 Repo1 원격 추천 종목 수급 완료: {recommended_symbols}")
 
     res = requests.get("https://api.upbit.com/v1/market/all")
     all_krw = [m for m in res.json() if m["market"].startswith("KRW-")]
@@ -181,10 +177,9 @@ def main():
             if r: analyzed_results.append(r)
 
     analyzed_results.sort(key=lambda x: x["score"], reverse=True)
-    save_json(HISTORY_FILE, analyzed_results[:20]) # 실시간 상위 20개 저장
-    print(f"✅ 2차 실시간 정밀 스코어링 완료 (최상위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
+    save_json(HISTORY_FILE, analyzed_results[:20])
+    print(f"✅ 2차 진화형 실시간 스코어링 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
 
-    # 실시간 웹소켓 구동 (비동기)
     top_markets = [x["market"] for x in analyzed_results[:10]]
     asyncio.run(connect_upbit_websocket(top_markets))
 
