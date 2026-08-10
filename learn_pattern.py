@@ -1,122 +1,180 @@
-import os
+import asyncio
 import json
-import time
-import requests
-import numpy as np
+import websockets
 import pandas as pd
-from sklearn.cluster import KMeans
+import numpy as np
+import requests
+import time
+import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from fastdtw import fastdtw
 
 DATA_DIR = "data"
+HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
+WEIGHTS_FILE = os.path.join(DATA_DIR, "weights.json")
 PATTERN_FILE = os.path.join(DATA_DIR, "golden_pattern.json")
+REMOTE_TRACKER_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit/main/docs/ai_recommend_tracker.json"
 
-def get_krw_markets():
-    url = "https://api.upbit.com/v1/market/all"
+def load_json(filepath, default):
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, "r", encoding="utf-8") as f: return json.load(f)
+        except Exception: pass
+    return default
+
+def save_json(filepath, data):
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+def calculate_dtw_similarity(seq1, seq2):
+    try:
+        s1 = np.asarray(seq1, dtype=np.float64).reshape(-1)
+        s2 = np.asarray(seq2, dtype=np.float64).reshape(-1)
+        min_len = min(len(s1), len(s2))
+        if min_len == 0: return 0.0
+        s1, s2 = s1[-min_len:], s2[-min_len:]
+        distance, _ = fastdtw(s1, s2, dist=lambda x, y: abs(x - y))
+        avg_dist = distance / min_len
+        return round(float(np.exp(-1.5 * avg_dist) * 100.0), 1)
+    except Exception:
+        return 0.0
+
+def calculate_max_dtw(seq1, golden_patterns):
+    if not golden_patterns: return 0.0
+    max_sim = 0.0
+    for pattern in golden_patterns:
+        sim = calculate_dtw_similarity(seq1, pattern)
+        if sim > max_sim: max_sim = sim
+    return max_sim
+
+def fetch_5m_candles(market, count=120):
+    url = f"https://api.upbit.com/v1/candles/minutes/5?market={market}&count={count}"
     try:
         res = requests.get(url, timeout=5)
-        if res.status_code == 200:
-            return [m["market"] for m in res.json() if m["market"].startswith("KRW-")]
-    except Exception as e:
-        print(f"⚠️ 마켓 목록 조회 실패: {e}")
+        if res.status_code == 200: return res.json()
+    except Exception: pass
     return []
 
-def fetch_5m_candles_deep(market, target_count=2000):
-    all_candles = []
-    to_param = ""
-    retry_count = 0
+def calculate_atr(df, period=14):
+    try:
+        high, low, close = df['high_price'], df['low_price'], df['trade_price'].shift(1)
+        tr = pd.concat([high - low, (high - close).abs(), (low - close).abs()], axis=1).max(axis=1)
+        atr = tr.rolling(window=period).mean().iloc[-1]
+        return atr if not np.isnan(atr) else (df['trade_price'].iloc[-1] * 0.015)
+    except Exception:
+        return df['trade_price'].iloc[-1] * 0.015
 
-    while len(all_candles) < target_count:
-        req_count = min(200, target_count - len(all_candles))
-        url = f"https://api.upbit.com/v1/candles/minutes/5?market={market}&count={req_count}"
-        if to_param:
-            url += f"&to={to_param}"
-
-        try:
-            res = requests.get(url, timeout=5)
-            if res.status_code == 429:
-                time.sleep(0.5)
-                continue
-            elif res.status_code != 200:
-                retry_count += 1
-                if retry_count > 3: break
-                time.sleep(0.2)
-                continue
-
+def fetch_remote_recommendations():
+    try:
+        res = requests.get(f"{REMOTE_TRACKER_URL}?t={int(time.time())}", timeout=5)
+        if res.status_code == 200:
             data = res.json()
-            if not data: break
+            if data and isinstance(data, list):
+                latest = data[-1]
+                return [c.get("symbol") for c in latest.get("recommended_coins", []) if c.get("symbol")]
+    except Exception: pass
+    return []
 
-            all_candles.extend(data)
-            if len(data) < req_count: break
+def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patterns, weights, recommended_symbols):
+    ticker = market.replace("KRW-", "")
+    candles = fetch_5m_candles(market, count=120)
+    if len(candles) < 60: return None
 
-            to_param = data[-1]["candle_date_time_utc"]
-            retry_count = 0
-            time.sleep(0.08)
-        except Exception:
-            time.sleep(0.2)
-            continue
+    df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
+    current_price = df.iloc[-1]["trade_price"]
+    
+    if 'prev_closing_price' in df.columns:
+        prev_close = df.iloc[-1]['prev_closing_price']
+    elif 'trade_price' in df.columns and len(df) > 1:
+        prev_close = df.iloc[-2]['trade_price']
+    else:
+        prev_close = df.iloc[-1].get('opening_price', df.iloc[-1]['trade_price'])
 
-    return all_candles
+    change_rate = ((current_price - prev_close) / (prev_close + 1e-8)) * 100.0 if prev_close > 0 else 0.0
+
+    df_2h = df.iloc[-24:].copy().reset_index(drop=True)
+    prices, volumes = df_2h["trade_price"].values, df_2h["candle_acc_trade_volume"].values
+    
+    p_range = (prices.max() - prices.min()) or 1.0
+    v_range = (volumes.max() - volumes.min()) or 1.0
+
+    norm_prices = (prices - prices.min()) / p_range
+    norm_volumes = (volumes - volumes.min()) / v_range
+
+    price_sim = calculate_max_dtw(norm_prices, golden_price_patterns)
+    vol_sim = calculate_max_dtw(norm_volumes, golden_vol_patterns)
+    combined_pattern_sim = round(price_sim * 0.7 + vol_sim * 0.3, 1)
+
+    recent_vol = df.iloc[-1]["candle_acc_trade_volume"]
+    avg_prev_vol = df.iloc[-21:-1]["candle_acc_trade_volume"].mean()
+    vol_cliff_score = min(100.0, max(0.0, (1.0 - (recent_vol / (avg_prev_vol + 1e-8))) * 100.0)) if avg_prev_vol > 0 else 0.0
+
+    df["ma5"] = df["trade_price"].rolling(5).mean()
+    df["ma20"] = df["trade_price"].rolling(20).mean()
+    df["ma60"] = df["trade_price"].rolling(60).mean()
+    last = df.iloc[-1]
+    ma_score = 100.0 if last["ma5"] > last["ma20"] > last["ma60"] else (60.0 if last["ma5"] > last["ma20"] else 20.0)
+
+    base_score = (
+        combined_pattern_sim * weights.get("w_pattern", 0.20) +
+        vol_cliff_score * weights.get("w_vol_cliff", 0.25) +
+        ma_score * weights.get("w_ma_alignment", 0.25) +
+        min(100.0, max(0.0, change_rate * 3.33)) * weights.get("w_daily_momentum", 0.10) +
+        (current_price / df["high_price"].max() * 100) * weights.get("w_breakout", 0.05)
+    )
+
+    if ticker in recommended_symbols:
+        base_score += 15.0
+
+    atr = calculate_atr(df)
+    tp1 = current_price + (atr * 2.0)
+    sl = current_price - (atr * 1.5)
+
+    return {
+        "market": market, "ticker": ticker, "name": k_name,
+        "current_price": current_price, "change_rate": round(change_rate, 2),
+        "score": round(min(100.0, base_score), 2), "pattern_similarity": combined_pattern_sim,
+        "tp1": round(tp1, 2), "sl": round(sl, 2), "is_repo1_recommended": ticker in recommended_symbols
+    }
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
-    markets = get_krw_markets()
+    weights = load_json(WEIGHTS_FILE, {
+        "w_pattern": 0.20, "w_vol_cliff": 0.25, "w_ma_alignment": 0.25,
+        "w_vol_surge": 0.15, "w_daily_momentum": 0.10, "w_breakout": 0.05
+    })
 
-    all_price_patterns = []
-    all_volume_patterns = []
-    print(f"🔄 [자율 진화 1단계] 최신 {len(markets)}개 종목 대상 5분 봉 대량 학습 및 패턴 재생성...")
+    pattern_data = load_json(PATTERN_FILE, {})
+    golden_price_patterns = pattern_data.get("golden_patterns", [])
+    golden_vol_patterns = pattern_data.get("golden_volume_patterns", [])
 
-    for idx, market in enumerate(markets):
-        candles = fetch_5m_candles_deep(market, target_count=2000)
-        if len(candles) < 100: continue
+    recommended_symbols = fetch_remote_recommendations()
 
-        df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
+    # 업비트 전체 KRW 마켓 코인 조회
+    res = requests.get("https://api.upbit.com/v1/market/all")
+    all_krw = [m for m in res.json() if m["market"].startswith("KRW-")]
 
-        for i in range(24, len(df) - 18):
-            base_price = df.iloc[i]["trade_price"]
-           
-            if df.iloc[i]["candle_acc_trade_price"] < 50_000_000:
-                continue
+    analyzed_results = []
+    # 병렬 처리로 전체 코인 분석 (max_workers=8로 최적화)
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = [
+            executor.submit(
+                analyze_single_coin, item["market"], item["korean_name"],
+                golden_price_patterns, golden_vol_patterns, weights, recommended_symbols
+            ) for item in all_krw
+        ]
+        for f in as_completed(futures):
+            r = f.result()
+            if r: 
+                analyzed_results.append(r)
 
-            if base_price > 0:
-                future_max_price = df.iloc[i + 1 : i + 7]["trade_price"].max()
-                future_min_price = df.iloc[i + 1 : i + 19]["trade_price"].min()
-
-                surge_rate = (future_max_price - base_price) / base_price
-                post_drop_rate = (future_min_price - base_price) / base_price
-
-                if surge_rate >= 0.08 and post_drop_rate >= -0.02:
-                    pre_prices = df.iloc[i - 24 : i]["trade_price"].values
-                    pre_volumes = df.iloc[i - 24 : i]["candle_acc_trade_volume"].values
-
-                    log_volumes = np.log1p(pre_volumes)
-
-                    p_min, p_max = pre_prices.min(), pre_prices.max()
-                    v_min, v_max = log_volumes.min(), log_volumes.max()
-
-                    if p_max > p_min and v_max > v_min:
-                        norm_prices = (pre_prices - p_min) / (p_max - p_min + 1e-8)
-                        norm_volumes = (log_volumes - v_min) / (v_max - v_min + 1e-8)
-
-                        all_price_patterns.append(norm_prices)
-                        all_volume_patterns.append(norm_volumes)
-
-        if (idx + 1) % 10 == 0 or (idx + 1) == len(markets):
-            print(f"⌛ 패턴 진행률: {idx + 1}/{len(markets)} 완료... (수집 패턴: {len(all_price_patterns)}개)")
-
-    if len(all_price_patterns) >= 3:
-        kmeans_p = KMeans(n_clusters=3, random_state=42, n_init=10).fit(all_price_patterns)
-        kmeans_v = KMeans(n_clusters=3, random_state=42, n_init=10).fit(all_volume_patterns)
-
-        pattern_data = {
-            "golden_patterns": kmeans_p.cluster_centers_.tolist(),
-            "golden_volume_patterns": kmeans_v.cluster_centers_.tolist(),
-            "sample_count": len(all_price_patterns),
-            "updated_at": time.strftime("%Y-%m-%d %H:%M:%S")
-        }
-
-        with open(PATTERN_FILE, "w", encoding="utf-8") as f:
-            json.dump(pattern_data, f, ensure_ascii=False, indent=4)
-
-        print(f"✅ 패턴 자동 갱신 완료! ('{PATTERN_FILE}')")
+    if analyzed_results:
+        analyzed_results.sort(key=lambda x: x["score"], reverse=True)
+        save_json(HISTORY_FILE, analyzed_results[:20])
+        print(f"✅ 전체 코인 스코어링 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
+    else:
+        print("⚠️ 분석된 결과가 없습니다.")
 
 if __name__ == "__main__":
     main()
