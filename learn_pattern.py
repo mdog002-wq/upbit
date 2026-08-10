@@ -1,30 +1,25 @@
-import json
 import os
+import json
 import time
+import requests
 import numpy as np
 import pandas as pd
-import requests
+from sklearn.cluster import KMeans
 
 DATA_DIR = "data"
 PATTERN_FILE = os.path.join(DATA_DIR, "golden_pattern.json")
 
-
-def get_markets():
+def get_krw_markets():
     url = "https://api.upbit.com/v1/market/all"
     try:
         res = requests.get(url, timeout=5)
         if res.status_code == 200:
-            markets = res.json()
-            return [
-                m["market"] for m in markets if m["market"].startswith("KRW-")
-            ]
+            return [m["market"] for m in res.json() if m["market"].startswith("KRW-")]
     except Exception as e:
         print(f"⚠️ 마켓 목록 조회 실패: {e}")
     return []
 
-
 def fetch_5m_candles_deep(market, target_count=2000):
-    """5분 봉 데이터 대량 수집 (Upbit API 429 요청 제한 안전 대응 적용)"""
     all_candles = []
     to_param = ""
     retry_count = 0
@@ -37,111 +32,95 @@ def fetch_5m_candles_deep(market, target_count=2000):
 
         try:
             res = requests.get(url, timeout=5)
-
-            # [개선 1] API 요청 제한(429) 발생 시 대기 후 재시도
             if res.status_code == 429:
                 time.sleep(0.5)
                 continue
             elif res.status_code != 200:
                 retry_count += 1
-                if retry_count > 3:
-                    break
+                if retry_count > 3: break
                 time.sleep(0.2)
                 continue
 
             data = res.json()
-            if not data:
-                break
+            if not data: break
 
             all_candles.extend(data)
-            if len(data) < req_count:
-                break
+            if len(data) < req_count: break
 
             to_param = data[-1]["candle_date_time_utc"]
             retry_count = 0
-            time.sleep(0.08)  # 초당 요청 수 안전 유지를 위한 백오프 딜레이
+            time.sleep(0.08)
         except Exception:
             time.sleep(0.2)
             continue
 
     return all_candles
 
-
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
-    markets = get_markets()
+    markets = get_krw_markets()
 
     all_price_patterns = []
     all_volume_patterns = []
-    print(
-        f"🔍 총 {len(markets)}개 종목 대상 5분 봉 대량 학습(가격 + 거래량 패턴) 시작..."
-    )
+    print(f"🔍 총 {len(markets)}개 종목 대상 5분 봉 대량 학습 (유효 추세 및 K-Means 클러스터링) 시작...")
 
     for idx, market in enumerate(markets):
         candles = fetch_5m_candles_deep(market, target_count=2000)
-        if len(candles) < 100:
-            continue
+        if len(candles) < 100: continue
 
         df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
 
-        for i in range(24, len(df) - 6):
+        for i in range(24, len(df) - 18):
             base_price = df.iloc[i]["trade_price"]
-            future_max_price = df.iloc[i + 1 : i + 7]["trade_price"].max()
+            
+            # 5분 봉당 최소 거래대금 5,000만 원 이상 필터
+            if df.iloc[i]["candle_acc_trade_price"] < 50_000_000:
+                continue
 
             if base_price > 0:
+                future_max_price = df.iloc[i + 1 : i + 7]["trade_price"].max()
+                future_min_price = df.iloc[i + 1 : i + 19]["trade_price"].min()
+
                 surge_rate = (future_max_price - base_price) / base_price
+                post_drop_rate = (future_min_price - base_price) / base_price
 
-                # 30분 내 8% 이상 상승 폭등 전조 구간 추출 (2시간 / 24개 봉)
-                if surge_rate >= 0.08:
+                # 30분 내 8% 이상 상승 및 이후 1시간 동안 -2% 미만 급락 없는 양질의 상승만 선택
+                if surge_rate >= 0.08 and post_drop_rate >= -0.02:
                     pre_prices = df.iloc[i - 24 : i]["trade_price"].values
-                    pre_volumes = df.iloc[i - 24 : i][
-                        "candle_acc_trade_volume"
-                    ].values
+                    pre_volumes = df.iloc[i - 24 : i]["candle_acc_trade_volume"].values
 
-                    # [개선 2] 거래량 스파이크(극단값) 왜곡 방지를 위한 로그 변환
                     log_volumes = np.log1p(pre_volumes)
 
                     p_min, p_max = pre_prices.min(), pre_prices.max()
                     v_min, v_max = log_volumes.min(), log_volumes.max()
 
                     if p_max > p_min and v_max > v_min:
-                        # 가격 및 로그 거래량 정규화 (0~1)
-                        norm_prices = (pre_prices - p_min) / (
-                            p_max - p_min + 1e-8
-                        )
-                        norm_volumes = (log_volumes - v_min) / (
-                            v_max - v_min + 1e-8
-                        )
+                        norm_prices = (pre_prices - p_min) / (p_max - p_min + 1e-8)
+                        norm_volumes = (log_volumes - v_min) / (v_max - v_min + 1e-8)
 
                         all_price_patterns.append(norm_prices)
                         all_volume_patterns.append(norm_volumes)
 
         if (idx + 1) % 10 == 0 or (idx + 1) == len(markets):
-            print(
-                f"⌛ 진행률: {idx + 1}/{len(markets)} 코인 완료... (누적 급등 샘플 수: {len(all_price_patterns)}개)"
-            )
+            print(f"⌛ 진행률: {idx + 1}/{len(markets)} 완료... (양질 샘플 수: {len(all_price_patterns)}개)")
 
-    if all_price_patterns:
-        # [개선 3] np.mean 대신 np.median(중앙값)을 사용하여 아웃라이어(이상치) 왜곡 차단
-        golden_price_pattern = np.median(all_price_patterns, axis=0).tolist()
-        golden_volume_pattern = np.median(all_volume_patterns, axis=0).tolist()
+    if len(all_price_patterns) >= 3:
+        kmeans_p = KMeans(n_clusters=3, random_state=42, n_init=10).fit(all_price_patterns)
+        kmeans_v = KMeans(n_clusters=3, random_state=42, n_init=10).fit(all_volume_patterns)
 
         pattern_data = {
-            "golden_pattern": golden_price_pattern,
-            "golden_volume_pattern": golden_volume_pattern,
+            "golden_patterns": kmeans_p.cluster_centers_.tolist(),
+            "golden_volume_patterns": kmeans_v.cluster_centers_.tolist(),
             "sample_count": len(all_price_patterns),
-            "updated_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "updated_at": time.strftime("%Y-%m-%d %H:%M:%S")
         }
 
         with open(PATTERN_FILE, "w", encoding="utf-8") as f:
             json.dump(pattern_data, f, ensure_ascii=False, indent=4)
 
-        print(
-            f"\n✅ 총 {len(all_price_patterns)}개의 폭등 전조 샘플 학습 완료! 'golden_pattern.json' 저장 완료."
-        )
+        print(f"\n✅ K-Means 클러스터링 학습 완료! '{PATTERN_FILE}' 저장 완료.")
     else:
-        print("⚠️ 급등 패턴을 찾지 못했습니다.")
-
+        print("⚠️ 학습 조건(진짜 추세)에 부합하는 샘플이 부족합니다.")
 
 if __name__ == "__main__":
     main()
