@@ -1,9 +1,12 @@
-name: Upbit Realtime Analyzer
+Name: Upbit Realtime Analyzer & Pattern Trainer
 
 on:
   workflow_dispatch:
   repository_dispatch:
     types: [backend_complete]
+  schedule:
+    # 하루에 한번 00:00 UTC (KST 09:00) 실시간 분석 자동 실행
+    - cron: '0 0 * * *'
 
 permissions:
   contents: write
@@ -11,40 +14,26 @@ permissions:
 jobs:
   run-analyzer:
     runs-on: ubuntu-latest
-    
+   
     steps:
       - name: Check Blocked Time Window (02:00 ~ 02:14 KST)
         run: |
-          # 한국 시간(KST) 기준 현재 '시'와 '분' 구하기
           HOUR=$(TZ="Asia/Seoul" date +%k | tr -d ' ')
           MINUTE=$(TZ="Asia/Seoul" date +%M | sed 's/^0//')
           MINUTE=${MINUTE:-0}
-          
+         
           echo "Current KST Time: ${HOUR}:${MINUTE}"
-          
-          # 새벽 2시(02시)이고, 분이 00분 ~ 14분 사이인 경우 차단
+         
           if [ "$HOUR" -eq 2 ] && [ "$MINUTE" -ge 0 ] && [ "$MINUTE" -le 14 ]; then
-            echo "Notice: Current time is within the restricted window (02:00 ~ 02:14 KST). Skipping workflow execution."
+            echo "Notice: Current time is within restricted window (02:00 ~ 02:14 KST). Skipping."
             exit 0
           fi
 
-      # 1. 최신 커밋 상태의 레포지토리를 확실하게 체크아웃
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: main  # 최신 main 브랜치의 커밋(전 단계에서 푸시된 json 포함)을 강제로 끌어옴
-
-      # 2. 전 단계에서 넘어온 JSON 파일 최신화 및 존재 여부 확인
-      - name: Verify scan result file
-        run: |
-          git pull origin main
-          if [ -f "data/market_scan_result.json" ]; then
-            echo "✅ market_scan_result.json 파일 확인 완료!"
-          else
-            echo "⚠️ data/market_scan_result.json 파일이 존재하지 않습니다. 디렉터리 확인:"
-            ls -la data/ || true
-          fi
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -54,29 +43,29 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install pyupbit pandas numpy requests openpyxl tqdm google-genai websockets; fi
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install pyupbit pandas numpy requests openpyxl tqdm google-genai websockets fastdtw; fi
 
-      # 3. 실시간 대시보드 스크립트 실행
+      # 1단계: 실시간 대시보드 스크립트 실행
       - name: Run Realtime Analyzer
         env:
-          PYTHONUNBUFFERED: "1"  # 실시간 로그 출력
+          PYTHONUNBUFFERED: "1"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python realtime.py
 
-      # 4. 결과물 커밋 및 푸시
-      - name: Commit and push generated dashboard & db
+      # 2단계: 대시보드 결과물 커밋/푸시
+      - name: Commit and push generated dashboard
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          
+         
           git pull origin main --rebase --autostash || echo "No rebase needed"
-          git add docs/index.html data/ 2>/dev/null || git add .
-          
+          git add docs/index.html 2>/dev/null || git add .
+         
           if ! git diff --staged --quiet; then
-            git commit -m "🤖 Auto: Update realtime dashboard & evolution data [skip ci]"
+            git commit -m "🤖 Auto: Update realtime dashboard [skip ci]"
             git push origin main
           else
             echo "No changes to commit"
