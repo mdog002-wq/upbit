@@ -437,6 +437,62 @@ tbody tr:hover { background-color: #e9ecef !important; }
 .modal-close { font-size: 24px; cursor: pointer; color: #cccccc; line-height: 1; }
 .modal-close:hover { color: #ffffff; }
 .modal-body { flex: 1; width: 100%; height: 100%; background: #131722; }
+
+/* === 1번 방식: 제미나이 플로팅 버튼 & 팝업 대화창 스타일 === */
+.gemini-fab {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #1a73e8, #8ab4f8);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 999;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.gemini-fab:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+
+.gemini-chat-container {
+  display: none;
+  position: fixed;
+  bottom: 85px;
+  right: 25px;
+  width: 380px;
+  height: 520px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  z-index: 1000;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+.gemini-chat-header {
+  background: #1a73e8;
+  color: #ffffff;
+  padding: 12px 16px;
+  font-weight: bold;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.gemini-chat-header span { cursor: pointer; font-size: 18px; }
+.gemini-chat-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
 </style>
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script>
@@ -557,6 +613,16 @@ function closeChartModal() {
     document.getElementById('tvChartContainer').innerHTML = '';
 }
 
+/* === 제미나이 챗봇 토글 함수 === */
+function toggleGeminiChat() {
+    const chatBox = document.getElementById('geminiChatContainer');
+    if (chatBox.style.display === 'none' || chatBox.style.display === '') {
+        chatBox.style.display = 'flex';
+    } else {
+        chatBox.style.display = 'none';
+    }
+}
+
 window.onkeydown = function(event) {
     if (event.keyCode === 27) closeChartModal();
 };
@@ -624,6 +690,20 @@ window.onkeydown = function(event) {
         </div>
         <div class="modal-body" id="tvChartContainer"></div>
     </div>
+</div>
+
+<!-- === 1번 방식: 제미나이 플로팅 버튼 및 대화창 임베드 === -->
+<div class="gemini-fab" onclick="toggleGeminiChat()">
+    🤖 Gemini AI
+</div>
+
+<div id="geminiChatContainer" class="gemini-chat-container">
+    <div class="gemini-chat-header">
+        <span>✨ Gemini AI Assistant</span>
+        <span onclick="toggleGeminiChat()">&times;</span>
+    </div>
+    <!-- 아래 src에 임베드할 제미나이 웹앱/챗봇 URL을 넣으세요 -->
+    <iframe class="gemini-chat-iframe" src="https://gemini.google.com/"></iframe>
 </div>
 
 </body>
