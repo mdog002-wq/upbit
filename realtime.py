@@ -6,12 +6,17 @@ import numpy as np
 import requests
 import time
 import os
+import re
+import datetime
+from datetime import timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from fastdtw import fastdtw
 
 # ============================================================
-# 경로 설정 (docs/ 폴더 경로 지정으로 웹 대시보드 완벽 연동)
+# 타임존 및 경로 설정 (docs/ 폴더 경로 지정으로 웹 대시보드 완벽 연동)
 # ============================================================
+KST = timezone(timedelta(hours=9))
+
 DATA_DIR = "data"
 DOCS_DIR = "docs"
 
@@ -183,14 +188,47 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
     }
 
 
+def update_index_html_timestamp(now_str):
+    """docs/index.html 파일 내 상단 시각 텍스트 강제 치환"""
+    index_path = os.path.join(DOCS_DIR, "index.html")
+    if os.path.exists(index_path):
+        try:
+            with open(index_path, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            new_content = re.sub(
+                r"\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}",
+                now_str,
+                content
+            )
+
+            with open(index_path, "w", encoding="utf-8") as f:
+                f.write(new_content)
+            print(f"🕒 docs/index.html 작성시각 갱신 완료: {now_str}")
+        except Exception as e:
+            print(f"⚠️ docs/index.html 갱신 실패: {e}")
+
+
 def update_and_save_dashboard_data():
-    """웹 대시보드용 JSON 파일(docs/history_db.json 및 dashboard_data.json) 동시 업데이트"""
+    """웹 대시보드용 JSON 파일(history_db.json 및 dashboard_data.json) 및 index.html 타임스탬프 동시 업데이트"""
+    now_str = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
+
     data_list = list(REALTIME_CACHE.values())
     data_list.sort(key=lambda x: x["score"], reverse=True)
 
-    # 웹 연동 파일 양쪽에 동시 저장
+    # 웹 UI가 시간 및 리스트를 모두 읽을 수 있도록 최신 포맷 지정
+    output_payload = {
+        "last_updated": now_str,
+        "timestamp": now_str,
+        "data": data_list
+    }
+
+    # 배열 직렬화 호환을 위해 객체 형태와 리스트 형태 모두 보장
     save_json(HISTORY_FILE, data_list)
-    save_json(DASHBOARD_FILE, data_list)
+    save_json(DASHBOARD_FILE, output_payload)
+
+    # index.html 파일 내 시간 문구 변경
+    update_index_html_timestamp(now_str)
 
 
 async def connect_upbit_websocket(markets):
@@ -207,14 +245,12 @@ async def connect_upbit_websocket(markets):
 
                 while True:
                     data = await ws.recv()
-                    # 바이너리 바이트 데이터를 텍스트로 변환
                     if isinstance(data, bytes):
                         data = data.decode('utf-8')
 
                     raw = json.loads(data)
                     code = raw.get("code")
 
-                    # 실시간 현재가 및 변동률 메모리 캐시 반영
                     if code in REALTIME_CACHE:
                         c_price = raw.get("trade_price", REALTIME_CACHE[code]["current_price"])
                         signed_change_rate = raw.get("signed_change_rate", 0) * 100
@@ -223,9 +259,9 @@ async def connect_upbit_websocket(markets):
                         REALTIME_CACHE[code]["현재가(KRW)"] = c_price
                         REALTIME_CACHE[code]["change_rate"] = round(signed_change_rate, 2)
 
-                        # 3초마다 대시보드 파일로 실시간 반영하여 저장
+                        # 5초마다 파일 갱신
                         now = time.time()
-                        if now - last_save_time >= 3.0:
+                        if now - last_save_time >= 5.0:
                             update_and_save_dashboard_data()
                             last_save_time = now
 
@@ -268,11 +304,9 @@ def main():
 
     analyzed_results.sort(key=lambda x: x["score"], reverse=True)
 
-    # 분석 완료 데이터 메모리 캐시에 등록
     for item in analyzed_results:
         REALTIME_CACHE[item["market"]] = item
 
-    # 초기 대시보드 JSON 파일 바로 업데이트
     update_and_save_dashboard_data()
     print(f"✅ 2차 진화형 실시간 스코어링 및 docs/ 파일 저장 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
 
