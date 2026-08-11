@@ -111,7 +111,14 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
 
     df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
     current_price = df.iloc[-1]["trade_price"]
-    change_rate = ((current_price - df.iloc[-1]["prev_closing_price"]) / df.iloc[-1]["prev_closing_price"]) * 100
+    
+    # 🌟 안전한 전일 종가(또는 직전 캔들 종가) 가져오기 로직 추가
+    prev_close = df.iloc[-1].get("prev_closing_price")
+    if prev_close is None or pd.isna(prev_close):
+        # 만약 필드가 없다면 바로 전 캔들의 가격을 기준가로 대체
+        prev_close = df.iloc[-2]["trade_price"] if len(df) > 1 else current_price
+
+    change_rate = ((current_price - prev_close) / prev_close) * 100
 
     df_2h = df.iloc[-24:].copy().reset_index(drop=True)
     prices, volumes = df_2h["trade_price"].values, df_2h["candle_acc_trade_volume"].values
