@@ -121,8 +121,9 @@ class UpbitWebSocketManager:
                 await asyncio.sleep(2)
 
     def start(self):
-        self.is_running = True
+        self.is_running = False
         import threading
+        self.is_running = True
         t = threading.Thread(target=lambda: asyncio.run(self._connect_websocket()), daemon=True)
         t.start()
 
@@ -283,7 +284,6 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     df["ma60"] = df["trade_price"].rolling(60).mean()
     last_row = df.iloc[-1]
 
-    # [개선 1] 연속성 점수 산정 (이동평균 교차 시 급격한 점수 요동 방지)
     dev_5_20 = ((last_row["ma5"] - last_row["ma20"]) / (last_row["ma20"] + 1e-8)) * 100
     ma_momentum_score = min(100.0, max(0.0, 50.0 + (dev_5_20 * 20.0)))
 
@@ -311,18 +311,23 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     if change_rate >= 12.0: raw_score *= 0.50
     if liquidity_index < 15.0: raw_score *= 0.50
 
-    # [개선 2] EMA 점수 평탄화 (직전 5분 점수 60% + 신규 점수 40%) 적용으로 5분 주기 순위 급등락 차단
+    # -------------------------------------------------------------
+    # 최근 3시간 (5분 간격 = 최근 36회 실행) 동안 TOP 10 진입 횟수 계산
+    # -------------------------------------------------------------
     prev_history = history_db.get(market, [])
     prev_score = prev_history[-1]["score"] if prev_history else None
+
+    recent_36_records = prev_history[-36:] if prev_history else []
+    top10_count_3h = sum(1 for r in recent_36_records if r.get("rank", 99) <= 10)
 
     if prev_score is not None:
         smoothed_score = (raw_score * 0.4) + (prev_score * 0.6)
     else:
         smoothed_score = raw_score
 
-    # [개선 3] 직전 회차 TOP 10 종목 보유 가산점(+3.0점)
-    if prev_history and prev_history[-1].get("rank", 99) <= 10:
-        smoothed_score += 3.0
+    # 최근 3시간 중 TOP 10에 머문 비율에 따라 최대 +5.0점 가산점 부여
+    count_bonus = min(5.0, (top10_count_3h / 36.0) * 5.0)
+    smoothed_score += count_bonus
 
     final_score = max(0.0, smoothed_score * btc_multiplier)
     if is_ai_recommended:
@@ -333,9 +338,8 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     if corpse_ratio >= 40.0: final_score *= 0.90
 
     final_score = round(final_score, 2)
-    calculated_tp1 = min(res_1 * 0.998, max(current_price * 1.02, current_price + (atr * 1.2)))
-    if calculated_tp1 <= current_price: calculated_tp1 = current_price * 1.025
-    calculated_tp2 = max(calculated_tp1 * 1.025, min(res_2 * 0.998, current_price + (atr * 3.0)))
+    
+    calculated_tp2 = max(current_price * 1.03, min(res_2 * 0.998, current_price + (atr * 3.0)))
     calculated_max_tp = max(calculated_tp2 * 1.03, max(df["high_price"].max(), current_price + (atr * 5.0)))
     calculated_sl = min(current_price * 0.975, min(current_price - (atr * 1.2), df_frame["low_price"].min() * 0.995))
 
@@ -347,10 +351,9 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         "rsi": round(rsi, 1), "ai_volatility_score": round(ai_volatility_score, 1),
         "up_5pct_count": up_5pct_count, "down_5pct_count": down_5pct_count,
         "liquidity_index": liquidity_index, "is_ai_recommended": is_ai_recommended,
-        "is_warning": is_warning,
-        "tp1": round(calculated_tp1, 4), "tp2": round(calculated_tp2, 4),
-        "max_tp": round(calculated_max_tp, 4), "sl": round(calculated_sl, 4),
-        "tp1_pct": round(((calculated_tp1 - current_price) / current_price) * 100, 2),
+        "is_warning": is_warning, "top10_count": top10_count_3h,
+        "tp2": round(calculated_tp2, 4), "max_tp": round(calculated_max_tp, 4),
+        "sl": round(calculated_sl, 4),
         "tp2_pct": round(((calculated_tp2 - current_price) / current_price) * 100, 2),
         "max_tp_pct": round(((calculated_max_tp - current_price) / current_price) * 100, 2),
         "sl_pct": round(((calculated_sl - current_price) / current_price) * 100, 2),
@@ -383,6 +386,7 @@ def generate_full_dashboard_html(analysis_results, current_time_str, btc_status,
 <td>{rsi_display}</td>
 <td><b>{item['pattern_similarity']}%</b></td>
 <td class="vol-cliff">{item['vol_cliff_score']}점</td>
+<td class="top10-count"><b>{item['top10_count']}회</b> <span style="font-size:11px; color:#888;">/3시간</span></td>
 <td class="liquidity">{item['liquidity_index']}점</td>
 <td><b>{item['score']}점</b></td>
 <td><span class="plus">▲ {item['up_5pct_count']}회</span> / <span class="minus">▼ {item['down_5pct_count']}회</span></td>
@@ -444,6 +448,7 @@ tbody tr:hover { background-color: #e9ecef !important; }
 .ticker-symbol { font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }
 .vol-cliff { color: #d9480f; font-weight: bold; }
 .liquidity { color: #2b8a3e; font-weight: bold; }
+.top10-count { color: #0d6efd; font-weight: bold; }
 
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; justify-content: center; align-items: center; }
 .modal-content { background: #ffffff; width: 90%; max-width: 1000px; height: 650px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; flex-direction: column; overflow: hidden; }
@@ -512,12 +517,11 @@ function runAiDiagnosis() {
     }
 
     const ratio = entryPrice / coin.current_price;
-    const tp1 = coin.tp1 * ratio;
     const tp2 = coin.tp2 * ratio;
     const maxTp = coin.max_tp * ratio;
     const sl = coin.sl * ratio;
 
-    let comment = `📊 예측 점수 <strong>${coin.score}점</strong>, DTW 유사도 <strong>${coin.pattern_similarity}%</strong>차트입니다.<br>`;
+    let comment = `📊 예측 점수 <strong>${coin.score}점</strong>, DTW 유사도 <strong>${coin.pattern_similarity}%</strong>차트입니다. (최근 3시간 내 TOP10 진입: <strong>${coin.top10_count}회</strong>)<br>`;
     if (coin.is_warning) {
         comment += `🚨 <strong>위험 코인 경고:</strong> 이 코인은 위험 코인 목록(warning_coins.json)에 지정되어 있으므로 변동성에 각별히 주의하세요!<br>`;
     }
@@ -535,9 +539,8 @@ function runAiDiagnosis() {
                 <span style="font-size: 13px; color: #555; margin-left: 8px;">(현재가: ${coin.current_price.toLocaleString()} KRW)</span>
             </div>
             <div style="font-size: 13px; display: flex; gap: 10px; flex-wrap: wrap;">
-                <span style="color: #2b8a3e; font-weight: bold;">🎯 1차: ${tp1.toLocaleString(undefined, {maximumFractionDigits: 2})} (+${coin.tp1_pct}%)</span>
-                <span style="color: #2b8a3e; font-weight: bold;">🎯 2차: ${tp2.toLocaleString(undefined, {maximumFractionDigits: 2})} (+${coin.tp2_pct}%)</span>
-                <span style="color: #007bff; font-weight: bold;">🚀 최대 목표가(Max TP): ${maxTp.toLocaleString(undefined, {maximumFractionDigits: 2})} (+${coin.max_tp_pct}%)</span>
+                <span style="color: #2b8a3e; font-weight: bold;">🎯 목표가: ${tp2.toLocaleString(undefined, {maximumFractionDigits: 2})} (+${coin.tp2_pct}%)</span>
+                <span style="color: #007bff; font-weight: bold;">🚀 Max TP: ${maxTp.toLocaleString(undefined, {maximumFractionDigits: 2})} (+${coin.max_tp_pct}%)</span>
                 <span style="color: #e03131; font-weight: bold;">🛑 손절가: ${sl.toLocaleString(undefined, {maximumFractionDigits: 2})} (${coin.sl_pct}%)</span>
             </div>
         </div>
@@ -620,9 +623,10 @@ window.onkeydown = function(event) {
 <th onclick="sortTable(4)">RSI(14)</th>
 <th onclick="sortTable(5)">DTW패턴유사도</th>
 <th onclick="sortTable(6)">거래량절벽</th>
-<th onclick="sortTable(7)">유동성</th>
-<th onclick="sortTable(8)">최종예측점수</th>
-<th onclick="sortTable(9)">5% 변동 (상승/하락)</th>
+<th onclick="sortTable(7)">10위내 횟수</th>
+<th onclick="sortTable(8)">유동성</th>
+<th onclick="sortTable(9)">최종예측점수</th>
+<th onclick="sortTable(10)">5% 변동 (상승/하락)</th>
 </tr>
 </thead>
 <tbody>
@@ -723,14 +727,15 @@ def main():
         history_db[m_code].append({
             "timestamp": time.time(), "score": item["score"], "rank": rank, "price": item["current_price"]
         })
-        history_db[m_code] = [h for h in history_db[m_code] if h["timestamp"] >= time.time() - 86400][-50:]
+        # 24시간 분량(약 288회)의 히스토리를 보관하여 3시간 분량(-36) 계산에 부족함이 없도록 유지
+        history_db[m_code] = [h for h in history_db[m_code] if h["timestamp"] >= time.time() - 86400][-300:]
 
     save_json(HISTORY_FILE, history_db)
     save_json(WEIGHTS_FILE, weights)
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("🎨 [대시보드 업데이트 완료] 순위 평탄화(Smoothed Score) 로직 적용으로 5분 주기 등락 안정화 완료!")
+    print("🎨 [대시보드 업데이트 완료] 기준 시간 3시간으로 변경 완료!")
 
 if __name__ == "__main__":
     main()
