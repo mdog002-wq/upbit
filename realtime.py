@@ -411,26 +411,13 @@ def generate_full_dashboard_html(analysis_results, current_time_str, btc_status,
   <meta http-equiv="refresh" content="240">
 <style>
 body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
-.header-container { display: grid; grid-template-columns: 1fr auto 1.2fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; }
+.header-container { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; }
 .header-left { text-align: left; } 
 .header-center { text-align: center; } 
-.header-right { text-align: right; font-size: 13px; color: #495057; font-weight: 500; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.header-right { text-align: right; font-size: 13px; color: #495057; font-weight: 500; }
 
 .ai-btn { background-color: #007bff; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; display: inline-block; transition: background 0.2s; }
 .ai-btn:hover { background-color: #0056b3; }
-
-/* 관심종목 위젯 스타일 */
-.watchlist-widget-container { position: relative; display: inline-block; }
-.watchlist-badge-btn { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
-.watchlist-badge-btn:hover { background-color: #ffe8a1; }
-.watchlist-dropdown { display: none; position: absolute; right: 0; top: 35px; width: 320px; max-height: 380px; overflow-y: auto; background: #ffffff; border: 1px solid #ced4da; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; text-align: left; padding: 10px; }
-.watchlist-dropdown.show { display: block; }
-.watchlist-header { font-size: 13px; font-weight: bold; border-bottom: 2px solid #007bff; padding-bottom: 6px; margin-bottom: 8px; color: #1e222d; display: flex; justify-content: space-between; align-items: center; }
-.watchlist-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 6px; border-bottom: 1px solid #f1f3f5; font-size: 12px; }
-.watchlist-item:last-child { border-bottom: none; }
-.watchlist-item .rank { font-weight: bold; color: #007bff; width: 35px; }
-.watchlist-item .name-box { flex: 1; font-weight: bold; color: #333; }
-.watchlist-item .price-box { text-align: right; font-weight: bold; }
 
 .status-card { background: #ffffff; padding: 12px 20px; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 14px; font-weight: bold; color: #495057; }
 .winrate-card { border-left: 6px solid #2b8a3e; }
@@ -451,14 +438,26 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .star-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: #ccc; margin-right: 4px; padding: 0; }
 .star-btn.active { color: #ffb703; }
 
-.toolbar-container { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
-.search-box { flex: 1; }
-.search-box input { width: 100%; padding: 10px 15px; font-size: 15px; border: 1px solid #ced4da; border-radius: 6px; outline: none; background: #ffffff; box-sizing: border-box; }
+/* 툴바 및 상시 오픈 관심종목 칸 배치 (길이 줄이고 우측 생성) */
+.toolbar-container { display: flex; align-items: stretch; gap: 12px; margin-bottom: 15px; }
+.toolbar-left-group { display: flex; flex-direction: column; gap: 8px; flex: 1; max-width: 580px; }
 
-.ai-diagnosis-box { display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 12px; border-radius: 6px; border: 1px solid #ced4da; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.ai-diagnosis-box input { padding: 8px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; outline: none; }
-.ai-diagnosis-btn { background-color: #2b8a3e; color: white; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+.search-box { width: 100%; }
+.search-box input { width: 100%; padding: 8px 12px; font-size: 14px; border: 1px solid #ced4da; border-radius: 6px; outline: none; background: #ffffff; box-sizing: border-box; }
+
+.ai-diagnosis-box { display: flex; align-items: center; gap: 6px; background: #ffffff; padding: 6px 12px; border-radius: 6px; border: 1px solid #ced4da; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.ai-diagnosis-box input { padding: 6px 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 13px; outline: none; }
+.ai-diagnosis-btn { background-color: #2b8a3e; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s; white-space: nowrap; }
 .ai-diagnosis-btn:hover { background-color: #216a2f; }
+
+/* 우측 관심종목 상시 노출 전용 박스 */
+.watchlist-live-panel { flex: 1; background: #ffffff; border: 1px solid #ced4da; border-radius: 6px; padding: 8px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; min-height: 80px; justify-content: center; }
+.watchlist-panel-header { font-size: 12px; font-weight: bold; color: #495057; border-bottom: 1px solid #e9ecef; padding-bottom: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+.watchlist-items-wrapper { display: flex; flex-wrap: wrap; gap: 8px; max-height: 52px; overflow-y: auto; }
+.watchlist-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px 8px; font-size: 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.watchlist-card .rank { font-weight: bold; color: #007bff; }
+.watchlist-card .name { font-weight: bold; color: #333; }
+.watchlist-card .price { font-weight: bold; }
 
 .ai-result-card { display: none; background: #eef3fc; border: 1px solid #b3d4ff; padding: 12px 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
@@ -472,7 +471,7 @@ tbody tr:hover { background-color: #e9ecef !important; }
 .plus { color: #e03131; font-weight: bold; }
 .minus { color: #1971c2; font-weight: bold; }
 .overheat { color: #d9480f; font-weight: bold; }
-.ticker-symbol { font-size: 12px; color: #868e96; font-weight: normal; margin-left: 4px; }
+.ticker-symbol { font-size: 12px; color: #868e96; font-weight: normal; margin-left: 2px; }
 .vol-cliff { color: #d9480f; font-weight: bold; }
 .liquidity { color: #2b8a3e; font-weight: bold; }
 .top10-count { color: #0d6efd; font-weight: bold; }
@@ -507,49 +506,42 @@ function toggleWatchlist(ticker, event) {
     }
     setWatchlist(list);
     renderWatchlistStars();
-    updateWatchlistWidget();
+    updateLiveWatchlistPanel();
 }
 
-function toggleWatchlistDropdown() {
-    const dropdown = document.getElementById('watchlistDropdown');
-    dropdown.classList.toggle('show');
-}
-
-function updateWatchlistWidget() {
+function updateLiveWatchlistPanel() {
     const list = getWatchlist();
-    const countBtn = document.getElementById('watchlistCount');
-    const listContainer = document.getElementById('watchlistMiniList');
+    const container = document.getElementById('watchlistLiveItems');
+    const countSpan = document.getElementById('watchlistLiveCount');
     
-    countBtn.innerText = list.length;
-    
+    countSpan.innerText = list.length;
+
     if (list.length === 0) {
-        listContainer.innerHTML = '<div style="text-align:center; color:#999; padding: 15px 0;">등록된 관심종목이 없습니다.<br>코인 옆 ⭐ 버튼을 눌러보세요!</div>';
+        container.innerHTML = '<span style="color:#999; font-size:12px;">지정된 관심종목이 없습니다. 테이블의 ⭐ 버튼을 누르면 이 자리에 바로 나타납니다.</span>';
         return;
     }
 
     const trackedCoins = dashboardData.filter(item => list.includes(item.ticker));
-    
+
     let html = '';
     trackedCoins.forEach(coin => {
         const changeClass = coin.change_rate > 0 ? 'plus' : (coin.change_rate < 0 ? 'minus' : '');
         const changeSign = coin.change_rate > 0 ? '+' : '';
         html += `
-            <div class="watchlist-item">
+            <div class="watchlist-card">
                 <span class="rank">${coin.rank}위</span>
-                <span class="name-box">
+                <span class="name">
                     <a href="#" onclick="openChartModal('${coin.ticker}', '${coin.name}'); return false;" class="coin-link">
-                        ${coin.name} <span class="ticker-symbol">(${coin.ticker})</span>
+                        ${coin.name}
                     </a>
                 </span>
-                <span class="price-box">
-                    ${coin.current_price.toLocaleString()} KRW<br>
-                    <small class="${changeClass}">${changeSign}${coin.change_rate}%</small>
-                </span>
+                <span class="price">${coin.current_price.toLocaleString()}</span>
+                <span class="${changeClass}">${changeSign}${coin.change_rate}%</span>
             </div>
         `;
     });
 
-    listContainer.innerHTML = html;
+    container.innerHTML = html;
 }
 
 function renderWatchlistStars() {
@@ -688,15 +680,8 @@ function closeChartModal() {
 
 window.onload = function() {
     renderWatchlistStars();
-    updateWatchlistWidget();
+    updateLiveWatchlistPanel();
 };
-
-document.addEventListener('click', function(e) {
-    const container = document.querySelector('.watchlist-widget-container');
-    if (container && !container.contains(e.target)) {
-        document.getElementById('watchlistDropdown').classList.remove('show');
-    }
-});
 
 window.onkeydown = function(event) {
     if (event.keyCode === 27) closeChartModal();
@@ -708,21 +693,7 @@ window.onkeydown = function(event) {
 <div class="header-container">
 <div class="header-left"><a href="https://mdog002-wq.github.io/upbit-a/" target="_self" class="ai-btn">AI리포트이동</a></div>
 <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 실시간 DTW + 웹소켓 고도화 대시보드</h2></div>
-<div class="header-right">
-    <div class="watchlist-widget-container">
-        <button class="watchlist-badge-btn" onclick="toggleWatchlistDropdown()">
-            ⭐ 관심종목 <span id="watchlistCount" style="color:#d9480f;">0</span>개
-        </button>
-        <div id="watchlistDropdown" class="watchlist-dropdown">
-            <div class="watchlist-header">
-                <span>⭐ My 관심종목 요약</span>
-                <small style="font-weight:normal; color:#666;">실시간 갱신</small>
-            </div>
-            <div id="watchlistMiniList"></div>
-        </div>
-    </div>
-    <span>업데이트: <b>{{CURRENT_TIME}}</b></span>
-</div>
+<div class="header-right">업데이트: <b>{{CURRENT_TIME}}</b></div>
 </div>
 
 <div class="status-card winrate-card">
@@ -736,14 +707,24 @@ window.onkeydown = function(event) {
 </div>
 
 <div class="toolbar-container">
-    <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색...">
+    <div class="toolbar-left-group">
+        <div class="search-box">
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색...">
+        </div>
+        <div class="ai-diagnosis-box">
+            <span style="font-weight: bold; font-size: 13px; color: #007bff; white-space: nowrap;">🤖 AI 스마트 진단:</span>
+            <input type="text" id="aiCoinInput" placeholder="종목명/티커" style="width: 90px;">
+            <input type="number" id="aiPriceInput" placeholder="진입가 (KRW)" style="width: 100px;">
+            <button class="ai-diagnosis-btn" onclick="runAiDiagnosis()">분석하기</button>
+        </div>
     </div>
-    <div class="ai-diagnosis-box">
-        <span style="font-weight: bold; font-size: 13px; color: #007bff;">🤖 AI 스마트 진단:</span>
-        <input type="text" id="aiCoinInput" placeholder="종목명/티커" style="width: 100px;">
-        <input type="number" id="aiPriceInput" placeholder="진입가 (KRW)" style="width: 110px;">
-        <button class="ai-diagnosis-btn" onclick="runAiDiagnosis()">분석하기</button>
+    
+    <div class="watchlist-live-panel">
+        <div class="watchlist-panel-header">
+            <span>⭐ My 관심종목 실시간 현황</span>
+            <span style="color:#d9480f;"><strong id="watchlistLiveCount">0</strong>개 지정됨</span>
+        </div>
+        <div id="watchlistLiveItems" class="watchlist-items-wrapper"></div>
     </div>
 </div>
 
@@ -873,7 +854,7 @@ def main():
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("🎨 [대시보드 업데이트 완료] 우측 상단 관심종목 미니 요약 리스트 추가 완료!")
+    print("🎨 [대시보드 업데이트 완료] 우측 상시 오픈 관심종목 칸 배치 완료!")
 
 if __name__ == "__main__":
     main()
