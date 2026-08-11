@@ -467,6 +467,9 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
             </div>
             <div class="flex items-center gap-3">
                 <span class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg text-sm font-semibold border border-blue-200">🌐 비트코인 시장: {btc_status}</span>
+                <a href="https://mdog002-wq.github.io/upbit-a/" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-lg text-sm transition-colors shadow-sm flex items-center gap-1">
+                    📊 AI리포트
+                </a>
             </div>
         </header>
 
