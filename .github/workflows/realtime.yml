@@ -46,7 +46,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install pyupbit pandas numpy requests openpyxl tqdm google-genai websockets fastdtw pydantic; fi
 
-      # 1단계: 실시간 대시보드 스크립트 실행 (timeout 명령어로 60초간 실시간 트래킹 후 정상 종료)
+      # 1단계: 실시간 대시보드 스크립트 정상 실행 (1회 배치 실행)
       - name: Run Realtime Analyzer
         env:
           PYTHONUNBUFFERED: "1"
@@ -54,8 +54,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          # timeout 60s를 주어 1분 동안 웹소켓 데이터를 수집하여 JSON을 갱신한 후 다음 스텝으로 자동 이동
-          timeout 60s python realtime.py || true
+          python realtime.py
 
       # 2단계: 대시보드 JSON 데이터 커밋/푸시
       - name: Commit and push generated dashboard
@@ -65,8 +64,8 @@ jobs:
          
           git pull origin main --rebase --autostash || echo "No rebase needed"
           
-          # 🎯 핵심: docs/ 폴더 내 생성된 JSON 및 HTML 데이터 강제 커밋
-          git add -f docs/ data/ 2>/dev/null || git add .
+          # docs/ 및 data/ 폴더 내 변경된 파일 스테이징
+          git add docs/ data/ 2>/dev/null || git add .
          
           if ! git diff --staged --quiet; then
             git commit -m "🤖 Auto: Update realtime dashboard data [skip ci]"
