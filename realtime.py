@@ -32,7 +32,11 @@ def load_json(filepath, default):
     if os.path.exists(filepath):
         try:
             with open(filepath, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                # history_db.json 파일이 리스트 형태인 경우 에러 방지를 위해 default 반환
+                if filepath == HISTORY_FILE and not isinstance(data, dict):
+                    return default
+                return data
         except Exception:
             pass
     return default
@@ -184,18 +188,20 @@ def check_btc_status():
 
 
 def calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2.0):
+    if not isinstance(history_db, dict):
+        return 0.0, 0, 0, 0
     total_trades, wins, losses = 0, 0, 0
     for market, records in history_db.items():
-        if len(records) < 2: 
+        if not isinstance(records, list) or len(records) < 2: 
             continue
         for i in range(len(records) - 1):
             entry = records[i]
-            if entry.get("rank", 99) > 10: 
+            if not isinstance(entry, dict) or entry.get("rank", 99) > 10: 
                 continue
             entry_price, entry_ts = entry.get("price"), entry.get("timestamp")
             if not entry_price or entry_price <= 0: 
                 continue
-            subsequent_prices = [r["price"] for r in records[i+1:] if r["timestamp"] > entry_ts]
+            subsequent_prices = [r["price"] for r in records[i+1:] if isinstance(r, dict) and "price" in r and r.get("timestamp", 0) > entry_ts]
             if not subsequent_prices: 
                 continue
             
@@ -280,7 +286,7 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
 
     final_score = max(0.0, base_score * btc_multiplier)
     if is_warn:
-        final_score *= 0.85  # 위험 종목 페널티
+        final_score *= 0.85
 
     atr = calculate_atr(df)
     tp1 = current_price + (atr * 2.0)
@@ -458,7 +464,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
             const chatBox = document.getElementById('geminiChatContainer');
             chatBox.style.display = (chatBox.style.display === 'none' || chatBox.style.display === '') ? 'flex' : 'none';
         }}
-    </style>
+    </script>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal p-4">
     <div class="container mx-auto max-w-7xl">
@@ -555,7 +561,6 @@ def main():
         "w_pattern": 0.20, "w_vol_cliff": 0.25, "w_ma_alignment": 0.25,
         "w_vol_surge": 0.15, "w_daily_momentum": 0.10, "w_breakout": 0.05
     })
-    print(f"📊 현재 적용된 자율 학습 가중치: {weights}")
 
     pattern_data = load_json(PATTERN_FILE, {})
     golden_price_patterns = pattern_data.get("golden_patterns", [])
@@ -566,6 +571,9 @@ def main():
     btc_status, btc_multiplier = check_btc_status()
 
     history_db = load_json(HISTORY_FILE, {})
+    if not isinstance(history_db, dict):
+        history_db = {}
+        
     backtest_stats = calculate_historical_win_rate(history_db, target_tp_pct=5.0, target_sl_pct=2.0)
 
     res = requests.get("https://api.upbit.com/v1/market/all")
@@ -574,7 +582,7 @@ def main():
 
     ws_manager = UpbitWebSocketManager(all_krw)
     ws_manager.start()
-    time.sleep(2)  # 웹소켓 연결 대기
+    time.sleep(2)
 
     analyzed_results = []
     with ThreadPoolExecutor(max_workers=5) as executor:
@@ -609,7 +617,7 @@ def main():
         history_db[m_code].append({
             "timestamp": time.time(), "score": item["score"], "rank": rank, "price": item["current_price"]
         })
-        history_db[m_code] = [h for h in history_db[m_code] if h["timestamp"] >= time.time() - 86400][-50:]
+        history_db[m_code] = [h for h in history_db[m_code] if isinstance(h, dict) and h.get("timestamp", 0) >= time.time() - 86400][-50:]
 
     save_json(HISTORY_FILE, history_db)
     save_json(WEIGHTS_FILE, weights)
