@@ -370,7 +370,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
    
     <script>
         const dashboardData = {dashboard_json_data};
-
+"""
  <style>
     .modal-overlay { 
         display: none; 
@@ -385,7 +385,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
         align-items: center; 
     }
 </style>
-
+"""
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
             let tr = document.getElementById('coinTable').getElementsByTagName('tr');
