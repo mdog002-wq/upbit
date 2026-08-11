@@ -1,0 +1,1682 @@
+{
+    "KRW-SAFE": [
+        {
+            "timestamp": 1786436927.6501625,
+            "score": 55.03,
+            "rank": 1,
+            "price": 131.0
+        }
+    ],
+    "KRW-ALGO": [
+        {
+            "timestamp": 1786436927.650169,
+            "score": 54.74,
+            "rank": 2,
+            "price": 117.0
+        }
+    ],
+    "KRW-USDE": [
+        {
+            "timestamp": 1786436927.6501718,
+            "score": 54.32,
+            "rank": 3,
+            "price": 1410.0
+        }
+    ],
+    "KRW-GEOD": [
+        {
+            "timestamp": 1786436927.6501734,
+            "score": 53.95,
+            "rank": 4,
+            "price": 328.0
+        }
+    ],
+    "KRW-ESP": [
+        {
+            "timestamp": 1786436927.650175,
+            "score": 53.88,
+            "rank": 5,
+            "price": 100.0
+        }
+    ],
+    "KRW-ETC": [
+        {
+            "timestamp": 1786436927.6501765,
+            "score": 53.63,
+            "rank": 6,
+            "price": 9025.0
+        }
+    ],
+    "KRW-POL": [
+        {
+            "timestamp": 1786436927.650178,
+            "score": 53.52,
+            "rank": 7,
+            "price": 107.0
+        }
+    ],
+    "KRW-LINK": [
+        {
+            "timestamp": 1786436927.6501794,
+            "score": 52.45,
+            "rank": 8,
+            "price": 11930.0
+        }
+    ],
+    "KRW-INJ": [
+        {
+            "timestamp": 1786436927.6501808,
+            "score": 51.83,
+            "rank": 9,
+            "price": 6310.0
+        }
+    ],
+    "KRW-DOT": [
+        {
+            "timestamp": 1786436927.6501825,
+            "score": 50.2,
+            "rank": 10,
+            "price": 1138.0
+        }
+    ],
+    "KRW-SKR": [
+        {
+            "timestamp": 1786436927.650184,
+            "score": 48.54,
+            "rank": 11,
+            "price": 10.8
+        }
+    ],
+    "KRW-USDC": [
+        {
+            "timestamp": 1786436927.6501849,
+            "score": 48.46,
+            "rank": 12,
+            "price": 1410.0
+        }
+    ],
+    "KRW-VET": [
+        {
+            "timestamp": 1786436927.6501865,
+            "score": 47.86,
+            "rank": 13,
+            "price": 6.6
+        }
+    ],
+    "KRW-MVL": [
+        {
+            "timestamp": 1786436927.6501875,
+            "score": 44.89,
+            "rank": 14,
+            "price": 1.07
+        }
+    ],
+    "KRW-AAVE": [
+        {
+            "timestamp": 1786436927.6501887,
+            "score": 44.86,
+            "rank": 15,
+            "price": 124900.0
+        }
+    ],
+    "KRW-CC": [
+        {
+            "timestamp": 1786436927.6501904,
+            "score": 44.7,
+            "rank": 16,
+            "price": 135.0
+        }
+    ],
+    "KRW-VIRTUAL": [
+        {
+            "timestamp": 1786436927.6501915,
+            "score": 44.62,
+            "rank": 17,
+            "price": 779.0
+        }
+    ],
+    "KRW-ATOM": [
+        {
+            "timestamp": 1786436927.6501935,
+            "score": 44.61,
+            "rank": 18,
+            "price": 1976.0
+        }
+    ],
+    "KRW-NEAR": [
+        {
+            "timestamp": 1786436927.6501946,
+            "score": 44.55,
+            "rank": 19,
+            "price": 2263.0
+        }
+    ],
+    "KRW-MOCA": [
+        {
+            "timestamp": 1786436927.6501966,
+            "score": 44.21,
+            "rank": 20,
+            "price": 10.6
+        }
+    ],
+    "KRW-ELF": [
+        {
+            "timestamp": 1786436927.6501977,
+            "score": 44.12,
+            "rank": 21,
+            "price": 82.9
+        }
+    ],
+    "KRW-AHT": [
+        {
+            "timestamp": 1786436927.6501997,
+            "score": 43.94,
+            "rank": 22,
+            "price": 1.27
+        }
+    ],
+    "KRW-BORA": [
+        {
+            "timestamp": 1786436927.6502008,
+            "score": 43.38,
+            "rank": 23,
+            "price": 27.2
+        }
+    ],
+    "KRW-ERA": [
+        {
+            "timestamp": 1786436927.6502023,
+            "score": 43.35,
+            "rank": 24,
+            "price": 94.9
+        }
+    ],
+    "KRW-AVAX": [
+        {
+            "timestamp": 1786436927.650204,
+            "score": 43.34,
+            "rank": 25,
+            "price": 9135.0
+        }
+    ],
+    "KRW-VVV": [
+        {
+            "timestamp": 1786436927.6502051,
+            "score": 43.16,
+            "rank": 26,
+            "price": 16620.0
+        }
+    ],
+    "KRW-ZIL": [
+        {
+            "timestamp": 1786436927.6502068,
+            "score": 42.94,
+            "rank": 27,
+            "price": 3.09
+        }
+    ],
+    "KRW-USDT": [
+        {
+            "timestamp": 1786436927.6502085,
+            "score": 42.9,
+            "rank": 28,
+            "price": 1409.0
+        }
+    ],
+    "KRW-HBAR": [
+        {
+            "timestamp": 1786436927.65021,
+            "score": 42.78,
+            "rank": 29,
+            "price": 95.0
+        }
+    ],
+    "KRW-OPG": [
+        {
+            "timestamp": 1786436927.650211,
+            "score": 42.77,
+            "rank": 30,
+            "price": 134.0
+        }
+    ],
+    "KRW-HOME": [
+        {
+            "timestamp": 1786436927.6502125,
+            "score": 42.62,
+            "rank": 31,
+            "price": 12.8
+        }
+    ],
+    "KRW-KMNO": [
+        {
+            "timestamp": 1786436927.650214,
+            "score": 42.6,
+            "rank": 32,
+            "price": 25.4
+        }
+    ],
+    "KRW-WLFI": [
+        {
+            "timestamp": 1786436927.6502151,
+            "score": 42.52,
+            "rank": 33,
+            "price": 77.6
+        }
+    ],
+    "KRW-WAXP": [
+        {
+            "timestamp": 1786436927.6502163,
+            "score": 42.39,
+            "rank": 34,
+            "price": 5.56
+        }
+    ],
+    "KRW-USDG": [
+        {
+            "timestamp": 1786436927.650218,
+            "score": 42.17,
+            "rank": 35,
+            "price": 1402.0
+        }
+    ],
+    "KRW-MMT": [
+        {
+            "timestamp": 1786436927.6502192,
+            "score": 41.88,
+            "rank": 36,
+            "price": 316.0
+        }
+    ],
+    "KRW-SHIB": [
+        {
+            "timestamp": 1786436927.650221,
+            "score": 41.14,
+            "rank": 37,
+            "price": 0.00634
+        }
+    ],
+    "KRW-MLK": [
+        {
+            "timestamp": 1786436927.6502223,
+            "score": 40.37,
+            "rank": 38,
+            "price": 44.6
+        }
+    ],
+    "KRW-BTC": [
+        {
+            "timestamp": 1786436927.650224,
+            "score": 40.18,
+            "rank": 39,
+            "price": 90246000.0
+        }
+    ],
+    "KRW-EUL": [
+        {
+            "timestamp": 1786436927.6502252,
+            "score": 39.86,
+            "rank": 40,
+            "price": 1732.0
+        }
+    ],
+    "KRW-ARX": [
+        {
+            "timestamp": 1786436927.6502264,
+            "score": 39.42,
+            "rank": 41,
+            "price": 175.0
+        }
+    ],
+    "KRW-COW": [
+        {
+            "timestamp": 1786436927.650228,
+            "score": 38.77,
+            "rank": 42,
+            "price": 148.0
+        }
+    ],
+    "KRW-IRYS": [
+        {
+            "timestamp": 1786436927.65023,
+            "score": 38.75,
+            "rank": 43,
+            "price": 21.9
+        }
+    ],
+    "KRW-ETH": [
+        {
+            "timestamp": 1786436927.6502316,
+            "score": 38.32,
+            "rank": 44,
+            "price": 2646000.0
+        }
+    ],
+    "KRW-CAP": [
+        {
+            "timestamp": 1786436927.6502328,
+            "score": 38.23,
+            "rank": 45,
+            "price": 66.7
+        }
+    ],
+    "KRW-BCH": [
+        {
+            "timestamp": 1786436927.6502345,
+            "score": 38.17,
+            "rank": 46,
+            "price": 302400.0
+        }
+    ],
+    "KRW-SENT": [
+        {
+            "timestamp": 1786436927.650236,
+            "score": 37.18,
+            "rank": 47,
+            "price": 19.3
+        }
+    ],
+    "KRW-ENS": [
+        {
+            "timestamp": 1786436927.6502373,
+            "score": 36.7,
+            "rank": 48,
+            "price": 5920.0
+        }
+    ],
+    "KRW-EDGE": [
+        {
+            "timestamp": 1786436927.650239,
+            "score": 36.56,
+            "rank": 49,
+            "price": 93.2
+        }
+    ],
+    "KRW-PENDLE": [
+        {
+            "timestamp": 1786436927.6502404,
+            "score": 35.02,
+            "rank": 50,
+            "price": 1895.0
+        }
+    ],
+    "KRW-ENA": [
+        {
+            "timestamp": 1786436927.650242,
+            "score": 34.93,
+            "rank": 51,
+            "price": 127.0
+        }
+    ],
+    "KRW-CHIP": [
+        {
+            "timestamp": 1786436927.6502438,
+            "score": 34.84,
+            "rank": 52,
+            "price": 31.8
+        }
+    ],
+    "KRW-ADA": [
+        {
+            "timestamp": 1786436927.6502454,
+            "score": 34.83,
+            "rank": 53,
+            "price": 265.0
+        }
+    ],
+    "KRW-CFX": [
+        {
+            "timestamp": 1786436927.6502473,
+            "score": 34.81,
+            "rank": 54,
+            "price": 59.4
+        }
+    ],
+    "KRW-FLOCK": [
+        {
+            "timestamp": 1786436927.6502488,
+            "score": 34.81,
+            "rank": 55,
+            "price": 41.8
+        }
+    ],
+    "KRW-PROVE": [
+        {
+            "timestamp": 1786436927.6502502,
+            "score": 34.78,
+            "rank": 56,
+            "price": 217.0
+        }
+    ],
+    "KRW-BIGTIME": [
+        {
+            "timestamp": 1786436927.6502516,
+            "score": 34.77,
+            "rank": 57,
+            "price": 7.52
+        }
+    ],
+    "KRW-A": [
+        {
+            "timestamp": 1786436927.6502528,
+            "score": 34.76,
+            "rank": 58,
+            "price": 90.5
+        }
+    ],
+    "KRW-SOON": [
+        {
+            "timestamp": 1786436927.650254,
+            "score": 34.76,
+            "rank": 59,
+            "price": 307.0
+        }
+    ],
+    "KRW-FIL": [
+        {
+            "timestamp": 1786436927.650256,
+            "score": 34.75,
+            "rank": 60,
+            "price": 988.0
+        }
+    ],
+    "KRW-ARK": [
+        {
+            "timestamp": 1786436927.6502573,
+            "score": 34.71,
+            "rank": 61,
+            "price": 130.0
+        }
+    ],
+    "KRW-QKC": [
+        {
+            "timestamp": 1786436927.6502593,
+            "score": 34.71,
+            "rank": 62,
+            "price": 2.73
+        }
+    ],
+    "KRW-TFUEL": [
+        {
+            "timestamp": 1786436927.6502604,
+            "score": 34.7,
+            "rank": 63,
+            "price": 10.4
+        }
+    ],
+    "KRW-MINA": [
+        {
+            "timestamp": 1786436927.650262,
+            "score": 34.67,
+            "rank": 64,
+            "price": 56.1
+        }
+    ],
+    "KRW-AKT": [
+        {
+            "timestamp": 1786436927.6502635,
+            "score": 34.65,
+            "rank": 65,
+            "price": 692.0
+        }
+    ],
+    "KRW-SPK": [
+        {
+            "timestamp": 1786436927.6502647,
+            "score": 34.64,
+            "rank": 66,
+            "price": 20.0
+        }
+    ],
+    "KRW-SIGN": [
+        {
+            "timestamp": 1786436927.6502664,
+            "score": 34.63,
+            "rank": 67,
+            "price": 9.53
+        }
+    ],
+    "KRW-SUN": [
+        {
+            "timestamp": 1786436927.6502678,
+            "score": 34.59,
+            "rank": 68,
+            "price": 25.6
+        }
+    ],
+    "KRW-ZRO": [
+        {
+            "timestamp": 1786436927.6502695,
+            "score": 34.54,
+            "rank": 69,
+            "price": 1195.0
+        }
+    ],
+    "KRW-HIVE": [
+        {
+            "timestamp": 1786436927.6502707,
+            "score": 34.53,
+            "rank": 70,
+            "price": 57.4
+        }
+    ],
+    "KRW-ARKM": [
+        {
+            "timestamp": 1786436927.6502724,
+            "score": 34.52,
+            "rank": 71,
+            "price": 135.0
+        }
+    ],
+    "KRW-COMP": [
+        {
+            "timestamp": 1786436927.6502736,
+            "score": 34.51,
+            "rank": 72,
+            "price": 23000.0
+        }
+    ],
+    "KRW-ELSA": [
+        {
+            "timestamp": 1786436927.6502752,
+            "score": 34.48,
+            "rank": 73,
+            "price": 82.7
+        }
+    ],
+    "KRW-EGLD": [
+        {
+            "timestamp": 1786436927.650277,
+            "score": 34.47,
+            "rank": 74,
+            "price": 3875.0
+        }
+    ],
+    "KRW-GRT": [
+        {
+            "timestamp": 1786436927.650278,
+            "score": 34.43,
+            "rank": 75,
+            "price": 19.8
+        }
+    ],
+    "KRW-CKB": [
+        {
+            "timestamp": 1786436927.6502798,
+            "score": 34.4,
+            "rank": 76,
+            "price": 1.2
+        }
+    ],
+    "KRW-YGG": [
+        {
+            "timestamp": 1786436927.6502812,
+            "score": 34.37,
+            "rank": 77,
+            "price": 27.7
+        }
+    ],
+    "KRW-BLEND": [
+        {
+            "timestamp": 1786436927.6502829,
+            "score": 34.3,
+            "rank": 78,
+            "price": 91.9
+        }
+    ],
+    "KRW-SAND": [
+        {
+            "timestamp": 1786436927.650284,
+            "score": 34.12,
+            "rank": 79,
+            "price": 57.2
+        }
+    ],
+    "KRW-PYTH": [
+        {
+            "timestamp": 1786436927.6502855,
+            "score": 34.1,
+            "rank": 80,
+            "price": 59.7
+        }
+    ],
+    "KRW-SYRUP": [
+        {
+            "timestamp": 1786436927.6502872,
+            "score": 34.06,
+            "rank": 81,
+            "price": 212.0
+        }
+    ],
+    "KRW-SEI": [
+        {
+            "timestamp": 1786436927.6502886,
+            "score": 34.04,
+            "rank": 82,
+            "price": 57.4
+        }
+    ],
+    "KRW-ASTR": [
+        {
+            "timestamp": 1786436927.65029,
+            "score": 34.03,
+            "rank": 83,
+            "price": 6.76
+        }
+    ],
+    "KRW-PIEVERSE": [
+        {
+            "timestamp": 1786436927.6502914,
+            "score": 33.93,
+            "rank": 84,
+            "price": 1097.0
+        }
+    ],
+    "KRW-PROS": [
+        {
+            "timestamp": 1786436927.6502929,
+            "score": 33.88,
+            "rank": 85,
+            "price": 556.0
+        }
+    ],
+    "KRW-BIRB": [
+        {
+            "timestamp": 1786436927.6502953,
+            "score": 33.88,
+            "rank": 86,
+            "price": 76.0
+        }
+    ],
+    "KRW-SAHARA": [
+        {
+            "timestamp": 1786436927.6502972,
+            "score": 33.87,
+            "rank": 87,
+            "price": 11.3
+        }
+    ],
+    "KRW-WAL": [
+        {
+            "timestamp": 1786436927.6502986,
+            "score": 33.85,
+            "rank": 88,
+            "price": 34.5
+        }
+    ],
+    "KRW-BONK": [
+        {
+            "timestamp": 1786436927.6502998,
+            "score": 33.83,
+            "rank": 89,
+            "price": 0.00333
+        }
+    ],
+    "KRW-MET2": [
+        {
+            "timestamp": 1786436927.6503012,
+            "score": 33.81,
+            "rank": 90,
+            "price": 219.0
+        }
+    ],
+    "KRW-NEWT": [
+        {
+            "timestamp": 1786436927.6503026,
+            "score": 33.72,
+            "rank": 91,
+            "price": 54.9
+        }
+    ],
+    "KRW-POLYX": [
+        {
+            "timestamp": 1786436927.650304,
+            "score": 33.71,
+            "rank": 92,
+            "price": 44.2
+        }
+    ],
+    "KRW-2Z": [
+        {
+            "timestamp": 1786436927.6503053,
+            "score": 33.66,
+            "rank": 93,
+            "price": 75.6
+        }
+    ],
+    "KRW-G": [
+        {
+            "timestamp": 1786436927.6503067,
+            "score": 33.57,
+            "rank": 94,
+            "price": 5.02
+        }
+    ],
+    "KRW-UNI": [
+        {
+            "timestamp": 1786436927.6503084,
+            "score": 33.49,
+            "rank": 95,
+            "price": 5550.0
+        }
+    ],
+    "KRW-IQ": [
+        {
+            "timestamp": 1786436927.6503098,
+            "score": 33.36,
+            "rank": 96,
+            "price": 0.912
+        }
+    ],
+    "KRW-GLM": [
+        {
+            "timestamp": 1786436927.6503115,
+            "score": 33.33,
+            "rank": 97,
+            "price": 129.0
+        }
+    ],
+    "KRW-ORCA": [
+        {
+            "timestamp": 1786436927.6503127,
+            "score": 33.11,
+            "rank": 98,
+            "price": 1485.0
+        }
+    ],
+    "KRW-MON": [
+        {
+            "timestamp": 1786436927.6503143,
+            "score": 33.1,
+            "rank": 99,
+            "price": 31.2
+        }
+    ],
+    "KRW-MEW": [
+        {
+            "timestamp": 1786436927.6503155,
+            "score": 32.9,
+            "rank": 100,
+            "price": 0.468
+        }
+    ],
+    "KRW-AI": [
+        {
+            "timestamp": 1786436927.6503224,
+            "score": 32.85,
+            "rank": 101,
+            "price": 30.1
+        }
+    ],
+    "KRW-ONT": [
+        {
+            "timestamp": 1786436927.6503253,
+            "score": 32.75,
+            "rank": 102,
+            "price": 52.7
+        }
+    ],
+    "KRW-BLUR": [
+        {
+            "timestamp": 1786436927.6503274,
+            "score": 32.71,
+            "rank": 103,
+            "price": 19.0
+        }
+    ],
+    "KRW-DOGE": [
+        {
+            "timestamp": 1786436927.6503298,
+            "score": 32.68,
+            "rank": 104,
+            "price": 98.8
+        }
+    ],
+    "KRW-ANKR": [
+        {
+            "timestamp": 1786436927.6503358,
+            "score": 32.62,
+            "rank": 105,
+            "price": 4.92
+        }
+    ],
+    "KRW-GMT": [
+        {
+            "timestamp": 1786436927.6503394,
+            "score": 32.57,
+            "rank": 106,
+            "price": 9.55
+        }
+    ],
+    "KRW-USDS": [
+        {
+            "timestamp": 1786436927.6503422,
+            "score": 32.43,
+            "rank": 107,
+            "price": 1406.0
+        }
+    ],
+    "KRW-TRX": [
+        {
+            "timestamp": 1786436927.6503446,
+            "score": 32.25,
+            "rank": 108,
+            "price": 467.0
+        }
+    ],
+    "KRW-HUNT": [
+        {
+            "timestamp": 1786436927.6503475,
+            "score": 32.24,
+            "rank": 109,
+            "price": 111.0
+        }
+    ],
+    "KRW-CVC": [
+        {
+            "timestamp": 1786436927.6503499,
+            "score": 32.23,
+            "rank": 110,
+            "price": 25.5
+        }
+    ],
+    "KRW-ONDO": [
+        {
+            "timestamp": 1786436927.6503522,
+            "score": 32.12,
+            "rank": 111,
+            "price": 477.0
+        }
+    ],
+    "KRW-LSK": [
+        {
+            "timestamp": 1786436927.6503549,
+            "score": 32.1,
+            "rank": 112,
+            "price": 107.0
+        }
+    ],
+    "KRW-RVN": [
+        {
+            "timestamp": 1786436927.65036,
+            "score": 31.86,
+            "rank": 113,
+            "price": 3.96
+        }
+    ],
+    "KRW-MASK": [
+        {
+            "timestamp": 1786436927.650363,
+            "score": 31.86,
+            "rank": 114,
+            "price": 507.0
+        }
+    ],
+    "KRW-DATA": [
+        {
+            "timestamp": 1786436927.6503654,
+            "score": 31.84,
+            "rank": 115,
+            "price": 294.0
+        }
+    ],
+    "KRW-SONIC": [
+        {
+            "timestamp": 1786436927.650368,
+            "score": 31.62,
+            "rank": 116,
+            "price": 26.3
+        }
+    ],
+    "KRW-MOC": [
+        {
+            "timestamp": 1786436927.6503701,
+            "score": 31.43,
+            "rank": 117,
+            "price": 23.9
+        }
+    ],
+    "KRW-MBL": [
+        {
+            "timestamp": 1786436927.6503723,
+            "score": 31.34,
+            "rank": 118,
+            "price": 0.875
+        }
+    ],
+    "KRW-CRO": [
+        {
+            "timestamp": 1786436927.6503747,
+            "score": 31.21,
+            "rank": 119,
+            "price": 66.4
+        }
+    ],
+    "KRW-API3": [
+        {
+            "timestamp": 1786436927.6503773,
+            "score": 31.05,
+            "rank": 120,
+            "price": 280.0
+        }
+    ],
+    "KRW-ZKP": [
+        {
+            "timestamp": 1786436927.6503794,
+            "score": 30.92,
+            "rank": 121,
+            "price": 62.5
+        }
+    ],
+    "KRW-BABY": [
+        {
+            "timestamp": 1786436927.650385,
+            "score": 30.67,
+            "rank": 122,
+            "price": 18.7
+        }
+    ],
+    "KRW-TOKAMAK": [
+        {
+            "timestamp": 1786436927.6503875,
+            "score": 30.51,
+            "rank": 123,
+            "price": 413.0
+        }
+    ],
+    "KRW-CARV": [
+        {
+            "timestamp": 1786436927.6503897,
+            "score": 29.47,
+            "rank": 124,
+            "price": 42.4
+        }
+    ],
+    "KRW-USD1": [
+        {
+            "timestamp": 1786436927.6503923,
+            "score": 29.24,
+            "rank": 125,
+            "price": 1410.0
+        }
+    ],
+    "KRW-MOVE": [
+        {
+            "timestamp": 1786436927.6503947,
+            "score": 29.06,
+            "rank": 126,
+            "price": 9.18
+        }
+    ],
+    "KRW-FCT2": [
+        {
+            "timestamp": 1786436927.6503975,
+            "score": 28.92,
+            "rank": 127,
+            "price": 9.38
+        }
+    ],
+    "KRW-GAME2": [
+        {
+            "timestamp": 1786436927.6503997,
+            "score": 28.66,
+            "rank": 128,
+            "price": 1.06
+        }
+    ],
+    "KRW-TIA": [
+        {
+            "timestamp": 1786436927.650402,
+            "score": 28.65,
+            "rank": 129,
+            "price": 448.0
+        }
+    ],
+    "KRW-KERNEL": [
+        {
+            "timestamp": 1786436927.6504045,
+            "score": 28.42,
+            "rank": 130,
+            "price": 51.2
+        }
+    ],
+    "KRW-BSB": [
+        {
+            "timestamp": 1786436927.6504068,
+            "score": 28.37,
+            "rank": 131,
+            "price": 194.0
+        }
+    ],
+    "KRW-MEGA": [
+        {
+            "timestamp": 1786436927.6504092,
+            "score": 28.22,
+            "rank": 132,
+            "price": 50.9
+        }
+    ],
+    "KRW-AZTEC": [
+        {
+            "timestamp": 1786436927.6504118,
+            "score": 28.2,
+            "rank": 133,
+            "price": 18.5
+        }
+    ],
+    "KRW-HYPER": [
+        {
+            "timestamp": 1786436927.6504147,
+            "score": 27.96,
+            "rank": 134,
+            "price": 90.5
+        }
+    ],
+    "KRW-MANA": [
+        {
+            "timestamp": 1786436927.6504173,
+            "score": 27.81,
+            "rank": 135,
+            "price": 93.0
+        }
+    ],
+    "KRW-JST": [
+        {
+            "timestamp": 1786436927.6504223,
+            "score": 27.68,
+            "rank": 136,
+            "price": 137.0
+        }
+    ],
+    "KRW-SOL": [
+        {
+            "timestamp": 1786436927.6504252,
+            "score": 27.27,
+            "rank": 137,
+            "price": 106700.0
+        }
+    ],
+    "KRW-ZORA": [
+        {
+            "timestamp": 1786436927.6504273,
+            "score": 27.14,
+            "rank": 138,
+            "price": 7.18
+        }
+    ],
+    "KRW-WIF": [
+        {
+            "timestamp": 1786436927.6504297,
+            "score": 26.81,
+            "rank": 139,
+            "price": 198.0
+        }
+    ],
+    "KRW-HP": [
+        {
+            "timestamp": 1786436927.6504335,
+            "score": 26.81,
+            "rank": 140,
+            "price": 9.42
+        }
+    ],
+    "KRW-POWR": [
+        {
+            "timestamp": 1786436927.6504385,
+            "score": 26.7,
+            "rank": 141,
+            "price": 53.2
+        }
+    ],
+    "KRW-SC": [
+        {
+            "timestamp": 1786436927.6504421,
+            "score": 26.41,
+            "rank": 142,
+            "price": 0.705
+        }
+    ],
+    "KRW-CELO": [
+        {
+            "timestamp": 1786436927.650445,
+            "score": 26.33,
+            "rank": 143,
+            "price": 88.2
+        }
+    ],
+    "KRW-XPL": [
+        {
+            "timestamp": 1786436927.6504476,
+            "score": 25.79,
+            "rank": 144,
+            "price": 111.0
+        }
+    ],
+    "KRW-XRP": [
+        {
+            "timestamp": 1786436927.6504502,
+            "score": 25.53,
+            "rank": 145,
+            "price": 1415.0
+        }
+    ],
+    "KRW-ZBT": [
+        {
+            "timestamp": 1786436927.6504529,
+            "score": 25.43,
+            "rank": 146,
+            "price": 139.0
+        }
+    ],
+    "KRW-O": [
+        {
+            "timestamp": 1786436927.6504552,
+            "score": 25.36,
+            "rank": 147,
+            "price": 635.0
+        }
+    ],
+    "KRW-MTL": [
+        {
+            "timestamp": 1786436927.6504579,
+            "score": 24.99,
+            "rank": 148,
+            "price": 288.0
+        }
+    ],
+    "KRW-ZETA": [
+        {
+            "timestamp": 1786436927.6504602,
+            "score": 24.69,
+            "rank": 149,
+            "price": 40.4
+        }
+    ],
+    "KRW-KAT": [
+        {
+            "timestamp": 1786436927.6504626,
+            "score": 24.6,
+            "rank": 150,
+            "price": 6.37
+        }
+    ],
+    "KRW-PRL": [
+        {
+            "timestamp": 1786436927.6504648,
+            "score": 24.37,
+            "rank": 151,
+            "price": 448.0
+        }
+    ],
+    "KRW-TT": [
+        {
+            "timestamp": 1786436927.6504672,
+            "score": 23.91,
+            "rank": 152,
+            "price": 0.477
+        }
+    ],
+    "KRW-LINEA": [
+        {
+            "timestamp": 1786436927.6504693,
+            "score": 23.56,
+            "rank": 153,
+            "price": 3.11
+        }
+    ],
+    "KRW-TREE": [
+        {
+            "timestamp": 1786436927.650472,
+            "score": 23.51,
+            "rank": 154,
+            "price": 50.4
+        }
+    ],
+    "KRW-BAT": [
+        {
+            "timestamp": 1786436927.6504743,
+            "score": 22.53,
+            "rank": 155,
+            "price": 91.4
+        }
+    ],
+    "KRW-WET": [
+        {
+            "timestamp": 1786436927.6504772,
+            "score": 22.35,
+            "rank": 156,
+            "price": 95.2
+        }
+    ],
+    "KRW-RLUSD": [
+        {
+            "timestamp": 1786436927.6504793,
+            "score": 21.92,
+            "rank": 157,
+            "price": 1406.0
+        }
+    ],
+    "KRW-IMX": [
+        {
+            "timestamp": 1786436927.650485,
+            "score": 21.92,
+            "rank": 158,
+            "price": 158.0
+        }
+    ],
+    "KRW-BLAST": [
+        {
+            "timestamp": 1786436927.650488,
+            "score": 20.94,
+            "rank": 159,
+            "price": 0.349
+        }
+    ],
+    "KRW-STORJ": [
+        {
+            "timestamp": 1786436927.6504903,
+            "score": 20.15,
+            "rank": 160,
+            "price": 60.8
+        }
+    ],
+    "KRW-MORPHO": [
+        {
+            "timestamp": 1786436927.650493,
+            "score": 20.14,
+            "rank": 161,
+            "price": 2747.0
+        }
+    ],
+    "KRW-W": [
+        {
+            "timestamp": 1786436927.6504955,
+            "score": 20.12,
+            "rank": 162,
+            "price": 11.8
+        }
+    ],
+    "KRW-NXPC": [
+        {
+            "timestamp": 1786436927.6505003,
+            "score": 19.92,
+            "rank": 163,
+            "price": 318.0
+        }
+    ],
+    "KRW-AWE": [
+        {
+            "timestamp": 1786436927.6505032,
+            "score": 19.92,
+            "rank": 164,
+            "price": 82.7
+        }
+    ],
+    "KRW-TAO": [
+        {
+            "timestamp": 1786436927.6505058,
+            "score": 19.91,
+            "rank": 165,
+            "price": 280100.0
+        }
+    ],
+    "KRW-APT": [
+        {
+            "timestamp": 1786436927.6505084,
+            "score": 19.89,
+            "rank": 166,
+            "price": 824.0
+        }
+    ],
+    "KRW-BIO": [
+        {
+            "timestamp": 1786436927.6505108,
+            "score": 19.78,
+            "rank": 167,
+            "price": 36.3
+        }
+    ],
+    "KRW-AVNT": [
+        {
+            "timestamp": 1786436927.6505134,
+            "score": 19.78,
+            "rank": 168,
+            "price": 131.0
+        }
+    ],
+    "KRW-CFG": [
+        {
+            "timestamp": 1786436927.650516,
+            "score": 19.77,
+            "rank": 169,
+            "price": 225.0
+        }
+    ],
+    "KRW-ARDR": [
+        {
+            "timestamp": 1786436927.650519,
+            "score": 19.6,
+            "rank": 170,
+            "price": 24.9
+        }
+    ],
+    "KRW-MNT": [
+        {
+            "timestamp": 1786436927.6505241,
+            "score": 18.88,
+            "rank": 171,
+            "price": 631.0
+        }
+    ],
+    "KRW-ID": [
+        {
+            "timestamp": 1786436927.650527,
+            "score": 16.69,
+            "rank": 172,
+            "price": 39.6
+        }
+    ],
+    "KRW-XAUT": [
+        {
+            "timestamp": 1786436927.6505296,
+            "score": 15.38,
+            "rank": 173,
+            "price": 6124000.0
+        }
+    ],
+    "KRW-ZKC": [
+        {
+            "timestamp": 1786436927.6505318,
+            "score": 14.81,
+            "rank": 174,
+            "price": 54.8
+        }
+    ],
+    "KRW-BERA": [
+        {
+            "timestamp": 1786436927.6505346,
+            "score": 13.77,
+            "rank": 175,
+            "price": 207.0
+        }
+    ],
+    "KRW-0G": [
+        {
+            "timestamp": 1786436927.6505373,
+            "score": 12.25,
+            "rank": 176,
+            "price": 231.0
+        }
+    ],
+    "KRW-STRAX": [
+        {
+            "timestamp": 1786436927.6505408,
+            "score": 12.1,
+            "rank": 177,
+            "price": 12.1
+        }
+    ],
+    "KRW-ICP": [
+        {
+            "timestamp": 1786436927.6505435,
+            "score": 10.21,
+            "rank": 178,
+            "price": 3269.0
+        }
+    ],
+    "KRW-XLM": [
+        {
+            "timestamp": 1786436927.6505454,
+            "score": 9.93,
+            "rank": 179,
+            "price": 227.0
+        }
+    ],
+    "KRW-XTZ": [
+        {
+            "timestamp": 1786436927.650547,
+            "score": 9.93,
+            "rank": 180,
+            "price": 280.0
+        }
+    ],
+    "KRW-ORBS": [
+        {
+            "timestamp": 1786436927.6505485,
+            "score": 9.92,
+            "rank": 181,
+            "price": 7.67
+        }
+    ],
+    "KRW-ENSO": [
+        {
+            "timestamp": 1786436927.6505504,
+            "score": 9.92,
+            "rank": 182,
+            "price": 1406.0
+        }
+    ],
+    "KRW-KAVA": [
+        {
+            "timestamp": 1786436927.6505516,
+            "score": 9.91,
+            "rank": 183,
+            "price": 57.6
+        }
+    ],
+    "KRW-WAVES": [
+        {
+            "timestamp": 1786436927.650553,
+            "score": 9.88,
+            "rank": 184,
+            "price": 281.0
+        }
+    ],
+    "KRW-LPT": [
+        {
+            "timestamp": 1786436927.6505544,
+            "score": 9.88,
+            "rank": 185,
+            "price": 1757.0
+        }
+    ],
+    "KRW-THETA": [
+        {
+            "timestamp": 1786436927.650556,
+            "score": 9.88,
+            "rank": 186,
+            "price": 195.0
+        }
+    ],
+    "KRW-POKT": [
+        {
+            "timestamp": 1786436927.6505578,
+            "score": 9.88,
+            "rank": 187,
+            "price": 9.69
+        }
+    ],
+    "KRW-SOPH": [
+        {
+            "timestamp": 1786436927.650559,
+            "score": 9.87,
+            "rank": 188,
+            "price": 5.52
+        }
+    ],
+    "KRW-VTHO": [
+        {
+            "timestamp": 1786436927.6505601,
+            "score": 9.87,
+            "rank": 189,
+            "price": 0.47
+        }
+    ],
+    "KRW-T": [
+        {
+            "timestamp": 1786436927.6505618,
+            "score": 9.86,
+            "rank": 190,
+            "price": 4.92
+        }
+    ],
+    "KRW-RAY": [
+        {
+            "timestamp": 1786436927.6505632,
+            "score": 9.85,
+            "rank": 191,
+            "price": 882.0
+        }
+    ],
+    "KRW-ONG": [
+        {
+            "timestamp": 1786436927.6505723,
+            "score": 9.85,
+            "rank": 192,
+            "price": 59.0
+        }
+    ],
+    "KRW-SOMI": [
+        {
+            "timestamp": 1786436927.6505735,
+            "score": 9.85,
+            "rank": 193,
+            "price": 126.0
+        }
+    ],
+    "KRW-CHZ": [
+        {
+            "timestamp": 1786436927.650575,
+            "score": 9.84,
+            "rank": 194,
+            "price": 18.2
+        }
+    ],
+    "KRW-SNT": [
+        {
+            "timestamp": 1786436927.6505766,
+            "score": 9.84,
+            "rank": 195,
+            "price": 7.44
+        }
+    ],
+    "KRW-PENGU": [
+        {
+            "timestamp": 1786436927.650578,
+            "score": 9.83,
+            "rank": 196,
+            "price": 9.01
+        }
+    ],
+    "KRW-TOSHI": [
+        {
+            "timestamp": 1786436927.6505792,
+            "score": 9.83,
+            "rank": 197,
+            "price": 0.145
+        }
+    ],
+    "KRW-PUNDIX": [
+        {
+            "timestamp": 1786436927.6505804,
+            "score": 9.82,
+            "rank": 198,
+            "price": 108.0
+        }
+    ],
+    "KRW-CYBER": [
+        {
+            "timestamp": 1786436927.650582,
+            "score": 9.82,
+            "rank": 199,
+            "price": 440.0
+        }
+    ],
+    "KRW-WCT": [
+        {
+            "timestamp": 1786436927.6505835,
+            "score": 9.82,
+            "rank": 200,
+            "price": 50.7
+        }
+    ],
+    "KRW-VANA": [
+        {
+            "timestamp": 1786436927.650585,
+            "score": 9.82,
+            "rank": 201,
+            "price": 1224.0
+        }
+    ],
+    "KRW-AXL": [
+        {
+            "timestamp": 1786436927.6505861,
+            "score": 9.81,
+            "rank": 202,
+            "price": 51.0
+        }
+    ],
+    "KRW-MED": [
+        {
+            "timestamp": 1786436927.6505876,
+            "score": 9.81,
+            "rank": 203,
+            "price": 1.78
+        }
+    ],
+    "KRW-SPX": [
+        {
+            "timestamp": 1786436927.6505892,
+            "score": 9.79,
+            "rank": 204,
+            "price": 443.0
+        }
+    ],
+    "KRW-ATH": [
+        {
+            "timestamp": 1786436927.6505904,
+            "score": 9.78,
+            "rank": 205,
+            "price": 5.56
+        }
+    ],
+    "KRW-CPOOL": [
+        {
+            "timestamp": 1786436927.650592,
+            "score": 9.77,
+            "rank": 206,
+            "price": 25.0
+        }
+    ],
+    "KRW-KNC": [
+        {
+            "timestamp": 1786436927.6505935,
+            "score": 9.77,
+            "rank": 207,
+            "price": 145.0
+        }
+    ],
+    "KRW-ICX": [
+        {
+            "timestamp": 1786436927.6505947,
+            "score": 9.73,
+            "rank": 208,
+            "price": 31.2
+        }
+    ],
+    "KRW-TRAC": [
+        {
+            "timestamp": 1786436927.6505961,
+            "score": 9.65,
+            "rank": 209,
+            "price": 382.0
+        }
+    ],
+    "KRW-QUID": [
+        {
+            "timestamp": 1786436927.6505976,
+            "score": 9.65,
+            "rank": 210,
+            "price": 131.0
+        }
+    ]
+}
