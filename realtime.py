@@ -240,10 +240,8 @@ def save_json(filepath, data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 def clean_git_markers(text):
-    """Git merge/stash 충돌 마커가 생성된 경우 이를 제거하는 함수"""
     lines = text.splitlines()
     cleaned = []
-    in_conflict = False
     for line in lines:
         if line.startswith("<<<<<<<") or line.startswith(">>>>>>>") or line.startswith("======="):
             continue
@@ -321,7 +319,6 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     if change_rate >= 12.0: raw_score *= 0.50
     if liquidity_index < 15.0: raw_score *= 0.50
 
-    # 최근 3시간 (최근 36회) 동안 TOP 10 진입 횟수 계산
     prev_history = history_db.get(market, [])
     prev_score = prev_history[-1]["score"] if prev_history else None
 
@@ -350,7 +347,6 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     calculated_max_tp = max(calculated_tp2 * 1.03, max(df["high_price"].max(), current_price + (atr * 5.0)))
     calculated_sl = min(current_price * 0.975, min(current_price - (atr * 1.2), df_frame["low_price"].min() * 0.995))
 
-    # 한글 및 티커 문자열 내 Git 마커 오염 제거
     clean_k_name = clean_git_markers(k_name).strip()
     clean_ticker = clean_git_markers(ticker).strip()
 
@@ -385,9 +381,10 @@ def generate_full_dashboard_html(analysis_results, current_time_str, btc_status,
         rsi_display = f"{item['rsi']}" if item["rsi"] < 68 else f"<span class='overheat'>{item['rsi']} (과열)</span>"
 
         row = f"""
-<tr>
+<tr data-ticker="{item['ticker']}">
 <td><b>{item['rank']}</b></td>
 <td>
+    <button class="star-btn" onclick="toggleWatchlist('{item['ticker']}', event)">☆</button>
     <a href="#" onclick="openChartModal('{item['ticker']}', '{item['name']}'); return false;" class="coin-link">
         <b>{item['name']}</b> <span class="ticker-symbol">({item['ticker']})</span>
     </a>{ai_badge_html}{warning_badge_html}
@@ -414,10 +411,26 @@ def generate_full_dashboard_html(analysis_results, current_time_str, btc_status,
   <meta http-equiv="refresh" content="240">
 <style>
 body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
-.header-container { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; }
-.header-left { text-align: left; } .header-center { text-align: center; } .header-right { text-align: right; font-size: 13px; color: #495057; font-weight: 500; }
-.ai-btn { background-color: #007bff; color: white; padding: 10px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; transition: background 0.2s; }
+.header-container { display: grid; grid-template-columns: 1fr auto 1.2fr; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; }
+.header-left { text-align: left; } 
+.header-center { text-align: center; } 
+.header-right { text-align: right; font-size: 13px; color: #495057; font-weight: 500; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+
+.ai-btn { background-color: #007bff; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; display: inline-block; transition: background 0.2s; }
 .ai-btn:hover { background-color: #0056b3; }
+
+/* 관심종목 위젯 스타일 */
+.watchlist-widget-container { position: relative; display: inline-block; }
+.watchlist-badge-btn { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+.watchlist-badge-btn:hover { background-color: #ffe8a1; }
+.watchlist-dropdown { display: none; position: absolute; right: 0; top: 35px; width: 320px; max-height: 380px; overflow-y: auto; background: #ffffff; border: 1px solid #ced4da; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; text-align: left; padding: 10px; }
+.watchlist-dropdown.show { display: block; }
+.watchlist-header { font-size: 13px; font-weight: bold; border-bottom: 2px solid #007bff; padding-bottom: 6px; margin-bottom: 8px; color: #1e222d; display: flex; justify-content: space-between; align-items: center; }
+.watchlist-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 6px; border-bottom: 1px solid #f1f3f5; font-size: 12px; }
+.watchlist-item:last-child { border-bottom: none; }
+.watchlist-item .rank { font-weight: bold; color: #007bff; width: 35px; }
+.watchlist-item .name-box { flex: 1; font-weight: bold; color: #333; }
+.watchlist-item .price-box { text-align: right; font-weight: bold; }
 
 .status-card { background: #ffffff; padding: 12px 20px; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 14px; font-weight: bold; color: #495057; }
 .winrate-card { border-left: 6px solid #2b8a3e; }
@@ -434,6 +447,9 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 
 .coin-link { color: #333333; text-decoration: none; cursor: pointer; }
 .coin-link:hover { color: #007bff; text-decoration: underline; }
+
+.star-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: #ccc; margin-right: 4px; padding: 0; }
+.star-btn.active { color: #ffb703; }
 
 .toolbar-container { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
 .search-box { flex: 1; }
@@ -473,12 +489,96 @@ tbody tr:hover { background-color: #e9ecef !important; }
 <script>
 const dashboardData = {{DASHBOARD_JSON_DATA}};
 
+function getWatchlist() {
+    return JSON.parse(localStorage.getItem('userWatchlist') || '[]');
+}
+
+function setWatchlist(list) {
+    localStorage.setItem('userWatchlist', JSON.stringify(list));
+}
+
+function toggleWatchlist(ticker, event) {
+    if(event) event.stopPropagation();
+    let list = getWatchlist();
+    if (list.includes(ticker)) {
+        list = list.filter(t => t !== ticker);
+    } else {
+        list.push(ticker);
+    }
+    setWatchlist(list);
+    renderWatchlistStars();
+    updateWatchlistWidget();
+}
+
+function toggleWatchlistDropdown() {
+    const dropdown = document.getElementById('watchlistDropdown');
+    dropdown.classList.toggle('show');
+}
+
+function updateWatchlistWidget() {
+    const list = getWatchlist();
+    const countBtn = document.getElementById('watchlistCount');
+    const listContainer = document.getElementById('watchlistMiniList');
+    
+    countBtn.innerText = list.length;
+    
+    if (list.length === 0) {
+        listContainer.innerHTML = '<div style="text-align:center; color:#999; padding: 15px 0;">등록된 관심종목이 없습니다.<br>코인 옆 ⭐ 버튼을 눌러보세요!</div>';
+        return;
+    }
+
+    const trackedCoins = dashboardData.filter(item => list.includes(item.ticker));
+    
+    let html = '';
+    trackedCoins.forEach(coin => {
+        const changeClass = coin.change_rate > 0 ? 'plus' : (coin.change_rate < 0 ? 'minus' : '');
+        const changeSign = coin.change_rate > 0 ? '+' : '';
+        html += `
+            <div class="watchlist-item">
+                <span class="rank">${coin.rank}위</span>
+                <span class="name-box">
+                    <a href="#" onclick="openChartModal('${coin.ticker}', '${coin.name}'); return false;" class="coin-link">
+                        ${coin.name} <span class="ticker-symbol">(${coin.ticker})</span>
+                    </a>
+                </span>
+                <span class="price-box">
+                    ${coin.current_price.toLocaleString()} KRW<br>
+                    <small class="${changeClass}">${changeSign}${coin.change_rate}%</small>
+                </span>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = html;
+}
+
+function renderWatchlistStars() {
+    const list = getWatchlist();
+    document.querySelectorAll('tr[data-ticker]').forEach(tr => {
+        const ticker = tr.getAttribute('data-ticker');
+        const starBtn = tr.querySelector('.star-btn');
+        if (starBtn) {
+            if (list.includes(ticker)) {
+                starBtn.innerText = '★';
+                starBtn.classList.add('active');
+            } else {
+                starBtn.innerText = '☆';
+                starBtn.classList.remove('active');
+            }
+        }
+    });
+}
+
 function filterTable() {
     let input = document.getElementById('searchInput').value.toLowerCase();
     let tr = document.getElementById('coinTable').getElementsByTagName('tr');
+
     for (let i = 1; i < tr.length; i++) {
         let td = tr[i].getElementsByTagName('td')[1];
-        tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().indexOf(input) > -1) ? "" : "none";
+        if (td) {
+            let txtValue = td.textContent || td.innerText;
+            tr[i].style.display = (txtValue.toLowerCase().indexOf(input) > -1) ? "" : "none";
+        }
     }
 }
 
@@ -534,7 +634,7 @@ function runAiDiagnosis() {
 
     let comment = `📊 예측 점수 <strong>${coin.score}점</strong>, DTW 유사도 <strong>${coin.pattern_similarity}%</strong>차트입니다. (최근 3시간 내 TOP10 진입: <strong>${coin.top10_count}회</strong>)<br>`;
     if (coin.is_warning) {
-        comment += `🚨 <strong>위험 코인 경고:</strong> 이 코인은 위험 코인 목록(warning_coins.json)에 지정되어 있으므로 변동성에 각별히 주의하세요!<br>`;
+        comment += `🚨 <strong>위험 코인 경고:</strong> 이 코인은 위험 코인 목록에 지정되어 있으므로 변동성에 각별히 주의하세요!<br>`;
     }
     if (coin.corpse_ratio >= 35.0) {
         comment += `⚠️ <strong>상방 저항:</strong> 물린 매물대(시체 비중 ${coin.corpse_ratio}%)로 인해 1차 저항선(${coin.res_1.toLocaleString()} KRW) 돌파가 중요합니다.`;
@@ -586,6 +686,18 @@ function closeChartModal() {
     document.getElementById('tvChartContainer').innerHTML = '';
 }
 
+window.onload = function() {
+    renderWatchlistStars();
+    updateWatchlistWidget();
+};
+
+document.addEventListener('click', function(e) {
+    const container = document.querySelector('.watchlist-widget-container');
+    if (container && !container.contains(e.target)) {
+        document.getElementById('watchlistDropdown').classList.remove('show');
+    }
+});
+
 window.onkeydown = function(event) {
     if (event.keyCode === 27) closeChartModal();
 };
@@ -596,7 +708,21 @@ window.onkeydown = function(event) {
 <div class="header-container">
 <div class="header-left"><a href="https://mdog002-wq.github.io/upbit-a/" target="_self" class="ai-btn">AI리포트이동</a></div>
 <div class="header-center"><h2 style="margin: 0; font-size: 20px;">🚀 실시간 DTW + 웹소켓 고도화 대시보드</h2></div>
-<div class="header-right">마지막 업데이트: <b>{{CURRENT_TIME}}</b></div>
+<div class="header-right">
+    <div class="watchlist-widget-container">
+        <button class="watchlist-badge-btn" onclick="toggleWatchlistDropdown()">
+            ⭐ 관심종목 <span id="watchlistCount" style="color:#d9480f;">0</span>개
+        </button>
+        <div id="watchlistDropdown" class="watchlist-dropdown">
+            <div class="watchlist-header">
+                <span>⭐ My 관심종목 요약</span>
+                <small style="font-weight:normal; color:#666;">실시간 갱신</small>
+            </div>
+            <div id="watchlistMiniList"></div>
+        </div>
+    </div>
+    <span>업데이트: <b>{{CURRENT_TIME}}</b></span>
+</div>
 </div>
 
 <div class="status-card winrate-card">
@@ -747,7 +873,7 @@ def main():
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("🎨 [대시보드 업데이트 완료] Git 충돌 마커 방지 로직 반영 완료!")
+    print("🎨 [대시보드 업데이트 완료] 우측 상단 관심종목 미니 요약 리스트 추가 완료!")
 
 if __name__ == "__main__":
     main()
