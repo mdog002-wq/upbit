@@ -19,9 +19,7 @@ KST = timezone(timedelta(hours=9))
 DATA_DIR = "data"
 DOCS_DIR = "docs"
 
-HISTORY_FILE = os.path.join(DOCS_DIR, "history_db.json")
-DASHBOARD_FILE = os.path.join(DOCS_DIR, "dashboard_data.json")
-
+INDEX_HTML_FILE = os.path.join(DOCS_DIR, "index.html")
 WEIGHTS_FILE = os.path.join(DATA_DIR, "weights.json")
 PATTERN_FILE = os.path.join(DATA_DIR, "golden_pattern.json")
 REMOTE_TRACKER_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit/main/docs/ai_recommend_tracker.json"
@@ -173,7 +171,6 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
     tp1_pct = round(((tp1 - current_price) / current_price) * 100, 2)
     tp2_pct = round(((tp2 - current_price) / current_price) * 100, 2)
 
-    # 🌟 현재 웹 화면의 테이블 컬럼명과 100% 일치하는 데이터 구조 매핑
     return {
         "market": market,
         "ticker": ticker,
@@ -187,7 +184,6 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
         "tp2": round(tp2, 2),
         "sl": round(sl, 2),
         "is_repo1_recommended": ticker in recommended_symbols,
-        # 웹 UI 표 컬럼 대응 필드
         "종목명": f"{k_name} ({ticker})",
         "AI 스코어": sc,
         "현재가": current_price,
@@ -203,38 +199,80 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
     }
 
 
-def update_index_html_timestamp(now_str):
-    index_path = os.path.join(DOCS_DIR, "index.html")
-    if os.path.exists(index_path):
-        try:
-            with open(index_path, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            new_content = re.sub(
-                r"\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}",
-                now_str,
-                content
-            )
-
-            with open(index_path, "w", encoding="utf-8") as f:
-                f.write(new_content)
-            print(f"🕒 docs/index.html 작성시각 갱신 완료: {now_str}")
-        except Exception as e:
-            print(f"⚠️ docs/index.html 갱신 실패: {e}")
-
-
-def update_and_save_dashboard_data(analyzed_results):
+def generate_and_save_html(analyzed_results):
     now_str = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
 
-    output_payload = {
-        "last_updated": now_str,
-        "timestamp": now_str,
-        "data": analyzed_results
-    }
+    # 테이블 행(HTML <tr>) 동적 생성
+    rows_html = ""
+    for item in analyzed_results:
+        change_class = "text-red-500 font-bold" if "+" in item["변동률"] else "text-blue-500 font-bold"
+        recommend_badge = '<span class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">AI추천</span>' if item["is_repo1_recommended"] else ''
+        
+        rows_html += f"""
+        <tr class="hover:bg-gray-50 border-b">
+            <td class="py-3 px-4">{recommend_badge}{item["종목명"]}</td>
+            <td class="py-3 px-4 font-bold text-indigo-600">{item["AI 스코어"]}점</td>
+            <td class="py-3 px-4">{format(item["현재가"], ',')}원</td>
+            <td class="py-3 px-4 {change_class}">{item["변동률"]}</td>
+            <td class="py-3 px-4">{item["거래절벽"]}</td>
+            <td class="py-3 px-4">{item["RSI"]}</td>
+            <td class="py-3 px-4">{item["유동성"]}</td>
+            <td class="py-3 px-4">{item["패턴유사도"]}</td>
+            <td class="py-3 px-4">{item["시체비율"]}</td>
+            <td class="py-3 px-4 text-green-600">{item["목표가 1"]}</td>
+            <td class="py-3 px-4 text-green-700">{item["목표가 2"]}</td>
+        </tr>
+        """
 
-    save_json(HISTORY_FILE, analyzed_results)
-    save_json(DASHBOARD_FILE, output_payload)
-    update_index_html_timestamp(now_str)
+    # 완성형 HTML 템플릿
+    html_content = f"""<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 업비트 퀀트 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800">🤖 AI 업비트 퀀트 투자 대시보드</h1>
+            <p class="text-gray-500 mt-2">최종 분석 시각: <span id="last-updated" class="font-semibold text-gray-700">{now_str}</span></p>
+        </header>
+
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 text-sm text-left">
+                    <thead class="bg-gray-800 text-white uppercase text-xs">
+                        <tr>
+                            <th class="py-3 px-4">종목명</th>
+                            <th class="py-3 px-4">AI 스코어</th>
+                            <th class="py-3 px-4">현재가</th>
+                            <th class="py-3 px-4">변동률</th>
+                            <th class="py-3 px-4">거래절벽</th>
+                            <th class="py-3 px-4">RSI</th>
+                            <th class="py-3 px-4">유동성</th>
+                            <th class="py-3 px-4">패턴유사도</th>
+                            <th class="py-3 px-4">시체비율</th>
+                            <th class="py-3 px-4">목표가 1</th>
+                            <th class="py-3 px-4">목표가 2</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        {rows_html}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+    os.makedirs(DOCS_DIR, exist_ok=True)
+    with open(INDEX_HTML_FILE, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"🕒 docs/index.html 직접 생성 및 갱신 완료: {now_str}")
 
 
 def main():
@@ -271,8 +309,9 @@ def main():
 
     analyzed_results.sort(key=lambda x: x["score"], reverse=True)
 
-    update_and_save_dashboard_data(analyzed_results)
-    print(f"✅ 분석 및 docs/ 파일 갱신 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
+    # HTML 파일을 곧바로 빌드하여 저장
+    generate_and_save_html(analyzed_results)
+    print(f"✅ 분석 및 docs/index.html 파일 갱신 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
 
 
 if __name__ == "__main__":
