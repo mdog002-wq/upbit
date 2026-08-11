@@ -367,12 +367,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
     <title>AI 업비트 퀀트 투자 대시보드</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-    <style>
-        .modal-overlay {{ display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; justify-content: center; align-items: center; }}
-        .gemini-fab {{ position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, #1a73e8, #8ab4f8); color: #ffffff; padding: 12px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); cursor: pointer; font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 8px; z-index: 999; transition: transform 0.2s, box-shadow 0.2s; }}
-        .gemini-fab:hover {{ transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }}
-        .gemini-chat-container {{ display: none; position: fixed; bottom: 85px; right: 25px; width: 380px; height: 520px; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.25); z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid #e0e0e0; }}
-    </style>
+   
     <script>
         const dashboardData = {dashboard_json_data};
 
@@ -460,10 +455,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
             document.getElementById('tvChartContainer').innerHTML = '';
         }}
 
-        function toggleGeminiChat() {{
-            const chatBox = document.getElementById('geminiChatContainer');
-            chatBox.style.display = (chatBox.style.display === 'none' || chatBox.style.display === '') ? 'flex' : 'none';
-        }}
+       
     </script>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal p-4">
@@ -533,18 +525,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
         </div>
     </div>
 
-    <div class="gemini-fab" onclick="toggleGeminiChat()">
-        🤖 Gemini AI
-    </div>
-
-    <div id="geminiChatContainer" class="gemini-chat-container">
-        <div class="bg-blue-600 text-white px-4 py-3 font-bold text-sm flex justify-between items-center">
-            <span>✨ Gemini AI Assistant</span>
-            <span class="cursor-pointer text-lg" onclick="toggleGeminiChat()">&times;</span>
-        </div>
-        <iframe class="w-full h-full border-none" src="https://gemini.google.com/"></iframe>
-    </div>
-</body>
+    </body>
 </html>
 """
 
