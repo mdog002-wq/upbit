@@ -23,8 +23,8 @@ DOCS_DIR = "docs"
 INDEX_HTML_FILE = os.path.join(DOCS_DIR, "index.html")
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
 WEIGHTS_FILE = os.path.join(DATA_DIR, "weights.json")
-PATTERN_FILE = os.path.join(DATA_DIR, "golden_pattern.json")
-REMOTE_TRACKER_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit/main/docs/ai_recommend_tracker.json"
+PATTERN_FILE = GOLDEN_PATTERN_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit-p/main/data/golden_pattern.json"
+REMOTE_TRACKER_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json"
 WARNING_COINS_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/warning_coins.json"
 
 
@@ -580,7 +580,7 @@ def main():
         "w_vol_surge": 0.15, "w_daily_momentum": 0.10, "w_breakout": 0.05
     })
 
-    pattern_data = load_json(PATTERN_FILE, {})
+    pattern_data = fetch_golden_patterns()
     golden_price_patterns = pattern_data.get("golden_patterns", [])
     golden_vol_patterns = pattern_data.get("golden_volume_patterns", [])
 
@@ -643,7 +643,6 @@ def main():
     current_time_str = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_and_save_html(analyzed_results, current_time_str, btc_status, backtest_stats)
     print(f"✅ 분석 및 docs/index.html 파일 갱신 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
-
 
 if __name__ == "__main__":
     main()
