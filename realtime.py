@@ -1,6 +1,5 @@
 import asyncio
 import json
-import websockets
 import pandas as pd
 import numpy as np
 import requests
@@ -13,23 +12,19 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from fastdtw import fastdtw
 
 # ============================================================
-# 타임존 및 경로 설정 (docs/ 폴더 경로 지정으로 웹 대시보드 완벽 연동)
+# 타임존 및 경로 설정
 # ============================================================
 KST = timezone(timedelta(hours=9))
 
 DATA_DIR = "data"
 DOCS_DIR = "docs"
 
-# 대시보드 웹사이트가 읽는 핵심 파일 경로들
 HISTORY_FILE = os.path.join(DOCS_DIR, "history_db.json")
 DASHBOARD_FILE = os.path.join(DOCS_DIR, "dashboard_data.json")
 
 WEIGHTS_FILE = os.path.join(DATA_DIR, "weights.json")
 PATTERN_FILE = os.path.join(DATA_DIR, "golden_pattern.json")
 REMOTE_TRACKER_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit/main/docs/ai_recommend_tracker.json"
-
-# 실시간 데이터를 관리할 인메모리 딕셔너리
-REALTIME_CACHE = {}
 
 
 def load_json(filepath, default):
@@ -141,13 +136,11 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
     last = df.iloc[-1]
     ma_score = 100.0 if last["ma5"] > last["ma20"] > last["ma60"] else (60.0 if last["ma5"] > last["ma20"] else 20.0)
 
-    # RSI 14 계산
     delta = df["trade_price"].diff()
     gain = (delta.where(delta > 0, 0)).rolling(14).mean()
     loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
     rsi_val = float(100 - (100 / (1 + (gain / (loss + 1e-8)).iloc[-1])))
 
-    # 🧬 동적 가중치 기반 종합점수 산출
     base_score = (
         combined_pattern_sim * weights.get("w_pattern", 0.20) +
         vol_cliff_score * weights.get("w_vol_cliff", 0.25) +
@@ -165,7 +158,6 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
 
     sc = round(min(100.0, base_score), 2)
 
-    # 🌐 웹 호환을 위한 영문/한글 필드 통합 지정
     return {
         "market": market,
         "ticker": ticker,
@@ -178,7 +170,6 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
         "tp1": round(tp1, 2),
         "sl": round(sl, 2),
         "is_repo1_recommended": ticker in recommended_symbols,
-        # 한글 키 호환용
         "코인명": k_name,
         "심볼": ticker,
         "현재가(KRW)": current_price,
@@ -189,7 +180,6 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
 
 
 def update_index_html_timestamp(now_str):
-    """docs/index.html 파일 내 상단 시각 텍스트 강제 치환"""
     index_path = os.path.join(DOCS_DIR, "index.html")
     if os.path.exists(index_path):
         try:
@@ -209,65 +199,18 @@ def update_index_html_timestamp(now_str):
             print(f"⚠️ docs/index.html 갱신 실패: {e}")
 
 
-def update_and_save_dashboard_data():
-    """웹 대시보드용 JSON 파일(history_db.json 및 dashboard_data.json) 및 index.html 타임스탬프 동시 업데이트"""
+def update_and_save_dashboard_data(analyzed_results):
     now_str = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
 
-    data_list = list(REALTIME_CACHE.values())
-    data_list.sort(key=lambda x: x["score"], reverse=True)
-
-    # 웹 UI가 시간 및 리스트를 모두 읽을 수 있도록 최신 포맷 지정
     output_payload = {
         "last_updated": now_str,
         "timestamp": now_str,
-        "data": data_list
+        "data": analyzed_results
     }
 
-    # 배열 직렬화 호환을 위해 객체 형태와 리스트 형태 모두 보장
-    save_json(HISTORY_FILE, data_list)
+    save_json(HISTORY_FILE, analyzed_results)
     save_json(DASHBOARD_FILE, output_payload)
-
-    # index.html 파일 내 시간 문구 변경
     update_index_html_timestamp(now_str)
-
-
-async def connect_upbit_websocket(markets):
-    url = "wss://api.upbit.com/websocket/v1"
-    subscribe_data = [{"ticket": "QUANT_BOT"}, {"type": "ticker", "codes": markets}]
-    
-    last_save_time = time.time()
-
-    while True:
-        try:
-            async with websockets.connect(url) as ws:
-                await ws.send(json.dumps(subscribe_data))
-                print("📡 Upbit 실시간 웹소켓 연결 성공 및 실시간 트래킹 시작!")
-
-                while True:
-                    data = await ws.recv()
-                    if isinstance(data, bytes):
-                        data = data.decode('utf-8')
-
-                    raw = json.loads(data)
-                    code = raw.get("code")
-
-                    if code in REALTIME_CACHE:
-                        c_price = raw.get("trade_price", REALTIME_CACHE[code]["current_price"])
-                        signed_change_rate = raw.get("signed_change_rate", 0) * 100
-
-                        REALTIME_CACHE[code]["current_price"] = c_price
-                        REALTIME_CACHE[code]["현재가(KRW)"] = c_price
-                        REALTIME_CACHE[code]["change_rate"] = round(signed_change_rate, 2)
-
-                        # 5초마다 파일 갱신
-                        now = time.time()
-                        if now - last_save_time >= 5.0:
-                            update_and_save_dashboard_data()
-                            last_save_time = now
-
-        except Exception as e:
-            print(f"⚠️ 웹소켓 연결 재시도 중... ({e})")
-            await asyncio.sleep(3)
 
 
 def main():
@@ -304,14 +247,8 @@ def main():
 
     analyzed_results.sort(key=lambda x: x["score"], reverse=True)
 
-    for item in analyzed_results:
-        REALTIME_CACHE[item["market"]] = item
-
-    update_and_save_dashboard_data()
-    print(f"✅ 2차 진화형 실시간 스코어링 및 docs/ 파일 저장 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
-
-    top_markets = [x["market"] for x in analyzed_results[:20]]
-    asyncio.run(connect_upbit_websocket(top_markets))
+    update_and_save_dashboard_data(analyzed_results)
+    print(f"✅ 분석 및 docs/ 파일 갱신 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
 
 
 if __name__ == "__main__":
