@@ -367,12 +367,8 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
     <title>AI 업비트 퀀트 투자 대시보드</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-   
-    <script>
-        const dashboardData = {dashboard_json_data};
-    """
     <style>
-        .modal-overlay { 
+        .modal-overlay {{ 
             display: none; 
             position: fixed; 
             top: 0; 
@@ -383,9 +379,11 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
             z-index: 9999; 
             justify-content: center; 
             align-items: center; 
-        }
+        }}
     </style>
-    """
+    <script>
+        const dashboardData = {dashboard_json_data};
+
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
             let tr = document.getElementById('coinTable').getElementsByTagName('tr');
@@ -469,8 +467,6 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
             document.getElementById('chartModal').style.display = 'none';
             document.getElementById('tvChartContainer').innerHTML = '';
         }}
-
-       
     </script>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal p-4">
@@ -543,7 +539,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
         </div>
     </div>
 
-    </body>
+</body>
 </html>
 """
 
