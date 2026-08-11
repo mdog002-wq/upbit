@@ -33,7 +33,6 @@ def load_json(filepath, default):
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                # history_db.json 파일이 리스트 형태인 경우 에러 방지를 위해 default 반환
                 if filepath == HISTORY_FILE and not isinstance(data, dict):
                     return default
                 return data
@@ -383,6 +382,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
     </style>
     <script>
         const dashboardData = {dashboard_json_data};
+        let sortDirections = {{}};
 
         function filterTable() {{
             let input = document.getElementById('searchInput').value.toLowerCase();
@@ -391,6 +391,29 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
                 let td = tr[i].getElementsByTagName('td')[1];
                 tr[i].style.display = (td && (td.textContent || td.innerText).toLowerCase().indexOf(input) > -1) ? "" : "none";
             }}
+        }}
+
+        function sortTable(columnIndex, type) {{
+            const table = document.getElementById('coinTable');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            let rows = Array.from(tbody.getElementsByTagName('tr'));
+            
+            let ascending = sortDirections[columnIndex] = !sortDirections[columnIndex];
+
+            rows.sort((rowA, rowB) => {
+                let cellA = rowA.getElementsByTagName('td')[columnIndex].textContent.trim();
+                let cellB = rowB.getElementsByTagName('td')[columnIndex].textContent.trim();
+
+                if (type === 'number') {{
+                    cellA = parseFloat(cellA.replace(/[^0-9.-]+/g, "")) || 0;
+                    cellB = parseFloat(cellB.replace(/[^0-9.-]+/g, "")) || 0;
+                    return ascending ? cellA - cellB : cellB - cellA;
+                }} else {{
+                    return ascending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+                }}
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
         }}
 
         function runAiDiagnosis() {{
@@ -507,17 +530,17 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
             <div class="overflow-x-auto max-h-[70vh]">
                 <table id="coinTable" class="min-w-full bg-white border border-gray-200 text-sm text-center">
-                    <thead class="bg-gray-800 text-white uppercase text-xs sticky top-0 z-10">
+                    <thead class="bg-gray-800 text-white uppercase text-xs sticky top-0 z-10 cursor-pointer">
                         <tr>
-                            <th class="py-3 px-4">순위</th>
-                            <th class="py-3 px-4">한글코인명</th>
-                            <th class="py-3 px-4">현재가격 (KRW)</th>
-                            <th class="py-3 px-4">전일대비 등락률</th>
-                            <th class="py-3 px-4">RSI(14)</th>
-                            <th class="py-3 px-4">DTW패턴유사도</th>
-                            <th class="py-3 px-4">거래량절벽</th>
-                            <th class="py-3 px-4">유동성</th>
-                            <th class="py-3 px-4">최종예측점수</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(0, 'number')">순위 ↕</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(1, 'string')">한글코인명 ↕</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(2, 'number')">현재가격 (KRW) ↕</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(3, 'number')">전일대비 등락률 ↕</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(4, 'number')">RSI(14) ↕</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(5, 'number')">DTW패턴유사도 ↕</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(6, 'number')">거래량절벽 ↕</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(7, 'number')">유동성 ↕</th>
+                            <th class="py-3 px-4 hover:bg-gray-700" onclick="sortTable(8, 'number')">최종예측점수 ↕</th>
                             <th class="py-3 px-4">목표가 1차</th>
                         </tr>
                     </thead>
