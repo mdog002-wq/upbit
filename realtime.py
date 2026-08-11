@@ -121,9 +121,8 @@ class UpbitWebSocketManager:
                 await asyncio.sleep(2)
 
     def start(self):
-        self.is_running = False
-        import threading
         self.is_running = True
+        import threading
         t = threading.Thread(target=lambda: asyncio.run(self._connect_websocket()), daemon=True)
         t.start()
 
@@ -240,6 +239,17 @@ def save_json(filepath, data):
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
+def clean_git_markers(text):
+    """Git merge/stash 충돌 마커가 생성된 경우 이를 제거하는 함수"""
+    lines = text.splitlines()
+    cleaned = []
+    in_conflict = False
+    for line in lines:
+        if line.startswith("<<<<<<<") or line.startswith(">>>>>>>") or line.startswith("======="):
+            continue
+        cleaned.append(line)
+    return "\n".join(cleaned)
+
 def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, history_db, weights, btc_multiplier, ws_data, is_ai_recommended, is_warning):
     ticker = market.replace("KRW-", "")
     candles = fetch_5m_candles(market, count=120)
@@ -311,9 +321,7 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     if change_rate >= 12.0: raw_score *= 0.50
     if liquidity_index < 15.0: raw_score *= 0.50
 
-    # -------------------------------------------------------------
-    # 최근 3시간 (5분 간격 = 최근 36회 실행) 동안 TOP 10 진입 횟수 계산
-    # -------------------------------------------------------------
+    # 최근 3시간 (최근 36회) 동안 TOP 10 진입 횟수 계산
     prev_history = history_db.get(market, [])
     prev_score = prev_history[-1]["score"] if prev_history else None
 
@@ -325,7 +333,6 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     else:
         smoothed_score = raw_score
 
-    # 최근 3시간 중 TOP 10에 머문 비율에 따라 최대 +5.0점 가산점 부여
     count_bonus = min(5.0, (top10_count_3h / 36.0) * 5.0)
     smoothed_score += count_bonus
 
@@ -343,8 +350,12 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     calculated_max_tp = max(calculated_tp2 * 1.03, max(df["high_price"].max(), current_price + (atr * 5.0)))
     calculated_sl = min(current_price * 0.975, min(current_price - (atr * 1.2), df_frame["low_price"].min() * 0.995))
 
+    # 한글 및 티커 문자열 내 Git 마커 오염 제거
+    clean_k_name = clean_git_markers(k_name).strip()
+    clean_ticker = clean_git_markers(ticker).strip()
+
     return {
-        "market": market, "ticker": ticker, "name": k_name,
+        "market": market, "ticker": clean_ticker, "name": clean_k_name,
         "current_price": current_price, "change_rate": round(change_rate, 2),
         "pattern_similarity": combined_pattern_sim, "positive_count": positive_count,
         "vol_cliff_score": round(vol_cliff_score, 1), "score": final_score,
@@ -649,14 +660,16 @@ window.onkeydown = function(event) {
 </html>
 """
 
-    final_html = html_template.replace("{{CURRENT_TIME}}", current_time_str)\
-                              .replace("{{BTC_STATUS}}", btc_status)\
-                              .replace("{{WIN_RATE}}", str(win_rate))\
-                              .replace("{{TOTAL_TRADES}}", str(total_trades))\
-                              .replace("{{WINS}}", str(wins))\
-                              .replace("{{LOSSES}}", str(losses))\
-                              .replace("{{DASHBOARD_JSON_DATA}}", dashboard_json_data)\
-                              .replace("{{ROWS}}", rows_html)
+    cleaned_template = clean_git_markers(html_template)
+
+    final_html = cleaned_template.replace("{{CURRENT_TIME}}", current_time_str)\
+                                  .replace("{{BTC_STATUS}}", btc_status)\
+                                  .replace("{{WIN_RATE}}", str(win_rate))\
+                                  .replace("{{TOTAL_TRADES}}", str(total_trades))\
+                                  .replace("{{WINS}}", str(wins))\
+                                  .replace("{{LOSSES}}", str(losses))\
+                                  .replace("{{DASHBOARD_JSON_DATA}}", dashboard_json_data)\
+                                  .replace("{{ROWS}}", rows_html)
 
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(final_html)
@@ -727,7 +740,6 @@ def main():
         history_db[m_code].append({
             "timestamp": time.time(), "score": item["score"], "rank": rank, "price": item["current_price"]
         })
-        # 24시간 분량(약 288회)의 히스토리를 보관하여 3시간 분량(-36) 계산에 부족함이 없도록 유지
         history_db[m_code] = [h for h in history_db[m_code] if h["timestamp"] >= time.time() - 86400][-300:]
 
     save_json(HISTORY_FILE, history_db)
@@ -735,7 +747,7 @@ def main():
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("🎨 [대시보드 업데이트 완료] 기준 시간 3시간으로 변경 완료!")
+    print("🎨 [대시보드 업데이트 완료] Git 충돌 마커 방지 로직 반영 완료!")
 
 if __name__ == "__main__":
     main()
