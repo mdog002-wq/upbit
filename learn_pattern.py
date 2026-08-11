@@ -59,6 +59,8 @@ def calculate_max_dtw(seq1, golden_patterns):
 def fetch_5m_candles(market, count=120):
     url = f"https://api.upbit.com/v1/candles/minutes/5?market={market}&count={count}"
     try:
+        # 업비트 Open API 초당 제한 준수를 위한 미세 지연
+        time.sleep(0.08)
         res = requests.get(url, headers=HEADERS, timeout=5)
         if res.status_code == 200:
             return res.json()
@@ -163,7 +165,7 @@ def main():
 
     recommended_symbols = fetch_remote_recommendations()
 
-    # 업비트 전체 KRW 마켓 코인 안전하게 조회
+    # 업비트 전체 KRW 마켓 코인 조회
     all_krw = []
     try:
         res = requests.get("https://api.upbit.com/v1/market/all", headers=HEADERS, timeout=5)
@@ -177,8 +179,8 @@ def main():
         return
 
     analyzed_results = []
-    # 병렬 처리로 전체 코인 분석 (max_workers=8)
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    # API 요청 제한을 고려해 max_workers를 3으로 안정화
+    with ThreadPoolExecutor(max_workers=3) as executor:
         futures = [
             executor.submit(
                 analyze_single_coin, item["market"], item["korean_name"],
@@ -193,7 +195,7 @@ def main():
     if analyzed_results:
         analyzed_results.sort(key=lambda x: x["score"], reverse=True)
         save_json(HISTORY_FILE, analyzed_results[:20])
-        print(f"✅ 전체 코인 스코어링 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
+        print(f"✅ 전체 {len(all_krw)}개 중 {len(analyzed_results)}개 코인 분석 완료 (1위: {analyzed_results[0]['ticker']} - {analyzed_results[0]['score']}점)")
     else:
         print("⚠️ 분석된 결과가 없습니다.")
 
