@@ -15,21 +15,8 @@ jobs:
   run-analyzer:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-   
-    steps:
-      - name: Check Blocked Time Window (02:00 ~ 02:14 KST)
-        run: |
-          HOUR=$(TZ="Asia/Seoul" date +%k | tr -d ' ')
-          MINUTE=$(TZ="Asia/Seoul" date +%M | sed 's/^0//')
-          MINUTE=${MINUTE:-0}
-         
-          echo "Current KST Time: ${HOUR}:${MINUTE}"
-         
-          if [ "$HOUR" -eq 2 ] && [ "$MINUTE" -ge 0 ] && [ "$MINUTE" -le 14 ]; then
-            echo "Notice: Current time is within restricted window (02:00 ~ 02:14 KST). Skipping."
-            exit 0
-          fi
 
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
