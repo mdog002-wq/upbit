@@ -183,25 +183,20 @@ def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patter
         "score": sc,
         "rsi": round(rsi_val, 1),
         "pattern_similarity": combined_pattern_sim,
+        "vol_cliff_score": round(vol_cliff_score, 2),
+        "liquidity_index": liquidity_score,
+        "ai_volatility_score": round(min(100.0, max(0.0, (atr / current_price) * 1000)), 1), # 예시 변동성 지표
+        "is_ai_recommended": ticker in recommended_symbols,
+        "is_warning": False,
         "tp1": round(tp1, 2),
         "tp2": round(tp2, 2),
         "sl": round(sl, 2),
-        "is_repo1_recommended": ticker in recommended_symbols,
-        # 웹 UI 표 컬럼 대응 필드
-        "종목명": f"{k_name} ({ticker})",
-        "AI 스코어": sc,
-        "현재가": current_price,
-        "변동률": f"{'+' if change_rate > 0 else ''}{round(change_rate, 2)}%",
-        "거래절벽": round(vol_cliff_score, 2),
-        "RSI": round(rsi_val, 1),
-        "유동성": liquidity_score,
-        "패턴유사도": f"{combined_pattern_sim}%",
-        "시체비율": f"{corpse_ratio}%",
-        "저항선(1차/2차)": f"{round(tp1, 2)} / {round(tp2, 2)}",
-        "목표가 1": f"{round(tp1, 2)} ({'+' if tp1_pct > 0 else ''}{tp1_pct}%)",
-        "목표가 2": f"{round(tp2, 2)} ({'+' if tp2_pct > 0 else ''}{tp2_pct}%)"
+        "tp1_pct": round(((tp1 - current_price) / current_price) * 100, 2),
+        "tp2_pct": round(((tp2 - current_price) / current_price) * 100, 2),
+        "sl_pct": round(((sl - current_price) / current_price) * 100, 2),
+        "corpse_ratio": corpse_ratio,
+        "rank": 0 # 순위 정렬 후 할당 가능
     }
-
 
 def update_index_html_timestamp(now_str):
     index_path = os.path.join(DOCS_DIR, "index.html")
