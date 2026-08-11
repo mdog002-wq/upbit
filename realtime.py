@@ -23,7 +23,8 @@ DOCS_DIR = "docs"
 INDEX_HTML_FILE = os.path.join(DOCS_DIR, "index.html")
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
 WEIGHTS_FILE = os.path.join(DATA_DIR, "weights.json")
-PATTERN_FILE = GOLDEN_PATTERN_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit-p/main/data/golden_pattern.json"
+
+GOLDEN_PATTERN_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit-p/main/data/golden_pattern.json"
 REMOTE_TRACKER_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/ai_recommend_tracker.json"
 WARNING_COINS_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit-a/main/docs/warning_coins.json"
 
@@ -45,6 +46,19 @@ def save_json(filepath, data):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
+
+
+# 누락되었던 골든 패턴 로드 함수 추가
+def fetch_golden_patterns():
+    try:
+        res = requests.get(f"{GOLDEN_PATTERN_URL}?t={int(time.time())}", timeout=5)
+        if res.status_code == 200:
+            data = res.json()
+            if isinstance(data, dict):
+                return data
+    except Exception:
+        pass
+    return {"golden_patterns": [], "golden_volume_patterns": []}
 
 
 def calculate_dtw_similarity(seq1, seq2):
@@ -400,7 +414,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
             
             let ascending = sortDirections[columnIndex] = !sortDirections[columnIndex];
 
-            rows.sort((rowA, rowB) => {
+            rows.sort((rowA, rowB) => {{
                 let cellA = rowA.getElementsByTagName('td')[columnIndex].textContent.trim();
                 let cellB = rowB.getElementsByTagName('td')[columnIndex].textContent.trim();
 
@@ -411,7 +425,7 @@ def generate_and_save_html(analyzed_results, current_time_str, btc_status, backt
                 }} else {{
                     return ascending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
                 }}
-            });
+            }});
 
             rows.forEach(row => tbody.appendChild(row));
         }}
