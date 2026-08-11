@@ -1,13 +1,13 @@
 import asyncio
 import json
-import websockets
-import pandas as pd
-import numpy as np
-import requests
-import time
 import os
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from fastdtw import fastdtw
+import numpy as np
+import pandas as pd
+import requests
 
 DATA_DIR = "data"
 HISTORY_FILE = os.path.join(DATA_DIR, "history_db.json")
@@ -15,11 +15,16 @@ WEIGHTS_FILE = os.path.join(DATA_DIR, "weights.json")
 PATTERN_FILE = os.path.join(DATA_DIR, "golden_pattern.json")
 REMOTE_TRACKER_URL = "https://raw.githubusercontent.com/mdog002-wq/upbit/main/docs/ai_recommend_tracker.json"
 
+# 공통 헤더 정의
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+
 def load_json(filepath, default):
     if os.path.exists(filepath):
         try:
-            with open(filepath, "r", encoding="utf-8") as f: return json.load(f)
-        except Exception: pass
+            with open(filepath, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
     return default
 
 def save_json(filepath, data):
@@ -32,7 +37,8 @@ def calculate_dtw_similarity(seq1, seq2):
         s1 = np.asarray(seq1, dtype=np.float64).reshape(-1)
         s2 = np.asarray(seq2, dtype=np.float64).reshape(-1)
         min_len = min(len(s1), len(s2))
-        if min_len == 0: return 0.0
+        if min_len == 0:
+            return 0.0
         s1, s2 = s1[-min_len:], s2[-min_len:]
         distance, _ = fastdtw(s1, s2, dist=lambda x, y: abs(x - y))
         avg_dist = distance / min_len
@@ -41,19 +47,23 @@ def calculate_dtw_similarity(seq1, seq2):
         return 0.0
 
 def calculate_max_dtw(seq1, golden_patterns):
-    if not golden_patterns: return 0.0
+    if not golden_patterns:
+        return 0.0
     max_sim = 0.0
     for pattern in golden_patterns:
         sim = calculate_dtw_similarity(seq1, pattern)
-        if sim > max_sim: max_sim = sim
+        if sim > max_sim:
+            max_sim = sim
     return max_sim
 
 def fetch_5m_candles(market, count=120):
     url = f"https://api.upbit.com/v1/candles/minutes/5?market={market}&count={count}"
     try:
-        res = requests.get(url, timeout=5)
-        if res.status_code == 200: return res.json()
-    except Exception: pass
+        res = requests.get(url, headers=HEADERS, timeout=5)
+        if res.status_code == 200:
+            return res.json()
+    except Exception:
+        pass
     return []
 
 def calculate_atr(df, period=14):
@@ -67,19 +77,21 @@ def calculate_atr(df, period=14):
 
 def fetch_remote_recommendations():
     try:
-        res = requests.get(f"{REMOTE_TRACKER_URL}?t={int(time.time())}", timeout=5)
+        res = requests.get(f"{REMOTE_TRACKER_URL}?t={int(time.time())}", headers=HEADERS, timeout=5)
         if res.status_code == 200:
             data = res.json()
             if data and isinstance(data, list):
                 latest = data[-1]
                 return [c.get("symbol") for c in latest.get("recommended_coins", []) if c.get("symbol")]
-    except Exception: pass
+    except Exception:
+        pass
     return []
 
 def analyze_single_coin(market, k_name, golden_price_patterns, golden_vol_patterns, weights, recommended_symbols):
     ticker = market.replace("KRW-", "")
     candles = fetch_5m_candles(market, count=120)
-    if len(candles) < 60: return None
+    if len(candles) < 60:
+        return None
 
     df = pd.DataFrame(candles).sort_values("timestamp").reset_index(drop=True)
     current_price = df.iloc[-1]["trade_price"]
@@ -151,12 +163,21 @@ def main():
 
     recommended_symbols = fetch_remote_recommendations()
 
-    # 업비트 전체 KRW 마켓 코인 조회
-    res = requests.get("https://api.upbit.com/v1/market/all")
-    all_krw = [m for m in res.json() if m["market"].startswith("KRW-")]
+    # 업비트 전체 KRW 마켓 코인 안전하게 조회
+    all_krw = []
+    try:
+        res = requests.get("https://api.upbit.com/v1/market/all", headers=HEADERS, timeout=5)
+        if res.status_code == 200 and isinstance(res.json(), list):
+            all_krw = [m for m in res.json() if isinstance(m, dict) and m.get("market", "").startswith("KRW-")]
+    except Exception as e:
+        print(f"⚠️ 업비트 마켓 목록 조회 실패: {e}")
+
+    if not all_krw:
+        print("⚠️ KRW 마켓 코인을 불러오지 못했습니다.")
+        return
 
     analyzed_results = []
-    # 병렬 처리로 전체 코인 분석 (max_workers=8로 최적화)
+    # 병렬 처리로 전체 코인 분석 (max_workers=8)
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = [
             executor.submit(
