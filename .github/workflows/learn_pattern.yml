@@ -1,4 +1,4 @@
-name: Upbit Learn Pattern
+Name: Upbit Learn Pattern
 
 on:
   workflow_dispatch:
@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Pattern Learner
         run: |
@@ -35,13 +35,15 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/golden_pattern.json
           
-          # 변경사항이 있는 경우에만 커밋 및 rebase 후 푸시
-          if ! git diff-index --quiet HEAD --; then
-            git commit -m "Auto: Update golden pattern from past 6 months data [skip ci]"
+          # data 폴더 전체 또는 변경된 결과 파일 스테이징
+          git add data/
+          
+          # Staged 영역에 변경 사항이 있는지 정확히 체크
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto: Update golden pattern & history data [skip ci]"
             git pull --rebase origin main
             git push origin main
           else
-            echo "No changes to commit"
+            echo "No changes detected in data/ directory. Skipping commit."
           fi
