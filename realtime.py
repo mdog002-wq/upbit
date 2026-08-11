@@ -52,12 +52,16 @@ def save_json(filepath, data):
 def fetch_golden_patterns():
     try:
         res = requests.get(f"{GOLDEN_PATTERN_URL}?t={int(time.time())}", timeout=5)
+        print(f"🔍 [디버그] 골든 패턴 API 응답 코드: {res.status_code}")
         if res.status_code == 200:
             data = res.json()
             if isinstance(data, dict):
+                p_len = len(data.get("golden_patterns", []))
+                v_len = len(data.get("golden_volume_patterns", []))
+                print(f"✅ [디버그] 골든 패턴 로드 성공! (가격 패턴: {p_len개}, 볼륨 패턴: {v_len개})")
                 return data
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"❌ [디버그] 골든 패턴 로드 중 오류 발생: {e}")
     return {"golden_patterns": [], "golden_volume_patterns": []}
 
 
