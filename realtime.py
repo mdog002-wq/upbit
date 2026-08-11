@@ -257,10 +257,10 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     if ws_data and "trade_price" in ws_data:
         current_price, change_rate = ws_data["trade_price"], ws_data["signed_change_rate"]
     else:
-    current_price = df.iloc[-1]["trade_price"]
-    # 5분봉 데이터 기준 첫 캔들의 시가(opening_price) 대비 변동률로 계산
-    prev_price = df.iloc[0]["opening_price"] if df.iloc[0]["opening_price"] > 0 else current_price
-    change_rate = ((current_price - prev_price) / prev_price) * 100
+        current_price = df.iloc[-1]["trade_price"]
+        # 5분봉 데이터 기준 첫 캔들의 시가(opening_price) 대비 변동률로 계산
+        prev_price = df.iloc[0]["opening_price"] if df.iloc[0]["opening_price"] > 0 else current_price
+        change_rate = ((current_price - prev_price) / prev_price) * 100
 
     df_frame = df.iloc[-36:].copy().reset_index(drop=True)
     prices, volumes = df_frame["trade_price"].values, df_frame["candle_acc_trade_volume"].values
