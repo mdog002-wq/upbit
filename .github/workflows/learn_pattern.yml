@@ -1,4 +1,4 @@
-Name: Upbit Learn Pattern
+name: Upbit Learn Pattern
 
 on:
   workflow_dispatch:
