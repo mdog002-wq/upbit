@@ -419,10 +419,6 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .ai-btn { background-color: #007bff; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; display: inline-block; transition: background 0.2s; }
 .ai-btn:hover { background-color: #0056b3; }
 
-.status-card { background: #ffffff; padding: 12px 20px; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 14px; font-weight: bold; color: #495057; }
-.winrate-card { border-left: 6px solid #2b8a3e; }
-.winrate-val { font-size: 18px; color: #e03131; }
-
 .ai-badge { background-color: #0d6efd !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; padding: 2px 6px !important; border-radius: 4px !important; margin-left: 6px !important; display: inline-block !important; vertical-align: middle !important; }
 .warning-badge { background-color: #ff4d4f !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; padding: 2px 6px !important; border-radius: 4px !important; margin-left: 4px !important; display: inline-block !important; vertical-align: middle !important; animation: pulse 1.5s infinite; }
 
@@ -438,30 +434,34 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .star-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: #ccc; margin-right: 4px; padding: 0; }
 .star-btn.active { color: #ffb703; }
 
-/* 툴바 및 상시 오픈 관심종목 칸 배치 (길이 줄이고 우측 생성) */
-.toolbar-container { display: flex; align-items: stretch; gap: 12px; margin-bottom: 15px; }
-.toolbar-left-group { display: flex; flex-direction: column; gap: 8px; flex: 1; max-width: 580px; }
+/* 레이아웃 구조 개편: 좌측(상태+검색+AI진단) / 우측(확장된 관심종목 패널) */
+.dashboard-top-section { display: flex; gap: 12px; margin-bottom: 15px; align-items: stretch; }
+.left-controls { display: flex; flex-direction: column; gap: 10px; flex: 1.2; }
+
+/* 상태 정보 카드 통합 */
+.status-combined-card { background: #ffffff; padding: 12px 18px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px; color: #495057; display: flex; flex-direction: column; gap: 6px; border-left: 5px solid #2b8a3e; }
+.winrate-val { font-size: 16px; color: #e03131; font-weight: bold; }
 
 .search-box { width: 100%; }
-.search-box input { width: 100%; padding: 8px 12px; font-size: 14px; border: 1px solid #ced4da; border-radius: 6px; outline: none; background: #ffffff; box-sizing: border-box; }
+.search-box input { width: 100%; padding: 9px 12px; font-size: 14px; border: 1px solid #ced4da; border-radius: 6px; outline: none; background: #ffffff; box-sizing: border-box; }
 
-.ai-diagnosis-box { display: flex; align-items: center; gap: 6px; background: #ffffff; padding: 6px 12px; border-radius: 6px; border: 1px solid #ced4da; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.ai-diagnosis-box { display: flex; align-items: center; gap: 6px; background: #ffffff; padding: 8px 12px; border-radius: 6px; border: 1px solid #ced4da; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 .ai-diagnosis-box input { padding: 6px 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 13px; outline: none; }
 .ai-diagnosis-btn { background-color: #2b8a3e; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s; white-space: nowrap; }
 .ai-diagnosis-btn:hover { background-color: #216a2f; }
 
-/* 우측 관심종목 상시 노출 전용 박스 */
-.watchlist-live-panel { flex: 1; background: #ffffff; border: 1px solid #ced4da; border-radius: 6px; padding: 8px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; min-height: 80px; justify-content: center; }
-.watchlist-panel-header { font-size: 12px; font-weight: bold; color: #495057; border-bottom: 1px solid #e9ecef; padding-bottom: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-.watchlist-items-wrapper { display: flex; flex-wrap: wrap; gap: 8px; max-height: 52px; overflow-y: auto; }
-.watchlist-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px 8px; font-size: 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+/* 우측 관심종목 대형 확충 패널 (비트코인 상황 우측 공백까지 차지) */
+.watchlist-live-panel { flex: 1; background: #ffffff; border: 1px solid #ced4da; border-radius: 8px; padding: 12px 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+.watchlist-panel-header { font-size: 13px; font-weight: bold; color: #495057; border-bottom: 1px solid #e9ecef; padding-bottom: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.watchlist-items-wrapper { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; max-height: 140px; overflow-y: auto; align-content: flex-start; }
+.watchlist-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 5px 10px; font-size: 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 .watchlist-card .rank { font-weight: bold; color: #007bff; }
 .watchlist-card .name { font-weight: bold; color: #333; }
 .watchlist-card .price { font-weight: bold; }
 
 .ai-result-card { display: none; background: #eef3fc; border: 1px solid #b3d4ff; padding: 12px 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-.table-container { max-height: 75vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); background: #ffffff; }
+.table-container { max-height: 70vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); background: #ffffff; }
 table { width: 100%; border-collapse: collapse; background: #ffffff; }
 th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; }
 th { position: sticky; top: 0; z-index: 10; background-color: #f1f3f5; color: #495057; font-weight: 600; cursor: pointer; user-select: none; transition: background-color 0.2s; box-shadow: inset 0 -1px 0 #e9ecef; }
@@ -517,7 +517,7 @@ function updateLiveWatchlistPanel() {
     countSpan.innerText = list.length;
 
     if (list.length === 0) {
-        container.innerHTML = '<span style="color:#999; font-size:12px;">지정된 관심종목이 없습니다. 테이블의 ⭐ 버튼을 누르면 이 자리에 바로 나타납니다.</span>';
+        container.innerHTML = '<span style="color:#999; font-size:12px; padding: 10px 0;">지정된 관심종목이 없습니다. 아래 표에서 ⭐ 버튼을 눌러 추가하세요.</span>';
         return;
     }
 
@@ -696,29 +696,31 @@ window.onkeydown = function(event) {
 <div class="header-right">업데이트: <b>{{CURRENT_TIME}}</b></div>
 </div>
 
-<div class="status-card winrate-card">
-🎯 <b>실시간 백테스팅 승률 (익절 +3% / 손절 -2.5% 기준):</b> 
-<span class="winrate-val">{{WIN_RATE}}%</span> 
-<span style="font-size: 13px; color: #666; font-weight: normal;">(최근 포착 TOP10 종목 총 {{TOTAL_TRADES}}건 검증 — {{WINS}}승 {{LOSSES}}패)</span>
-</div>
+<div class="dashboard-top-section">
+    <div class="left-controls">
+        <div class="status-combined-card">
+            <div>
+                🎯 <b>실시간 백테스팅 승률 (익절 +3% / 손절 -2.5% 기준):</b> 
+                <span class="winrate-val">{{WIN_RATE}}%</span> 
+                <span style="font-size: 12px; color: #666; font-weight: normal;">(최근 TOP10 총 {{TOTAL_TRADES}}건 — {{WINS}}승 {{LOSSES}}패)</span>
+            </div>
+            <div>
+                🌐 <b>비트코인(BTC) 시장 상황:</b> <span style="color:#007bff; font-weight: bold;">{{BTC_STATUS}}</span>
+            </div>
+        </div>
 
-<div class="status-card">
-🌐 비트코인(BTC) 시장 상황: <span style="color:#007bff;">{{BTC_STATUS}}</span>
-</div>
-
-<div class="toolbar-container">
-    <div class="toolbar-left-group">
         <div class="search-box">
             <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색...">
         </div>
+
         <div class="ai-diagnosis-box">
             <span style="font-weight: bold; font-size: 13px; color: #007bff; white-space: nowrap;">🤖 AI 스마트 진단:</span>
-            <input type="text" id="aiCoinInput" placeholder="종목명/티커" style="width: 90px;">
-            <input type="number" id="aiPriceInput" placeholder="진입가 (KRW)" style="width: 100px;">
+            <input type="text" id="aiCoinInput" placeholder="종목명/티커" style="width: 85px;">
+            <input type="number" id="aiPriceInput" placeholder="진입가 (KRW)" style="width: 95px;">
             <button class="ai-diagnosis-btn" onclick="runAiDiagnosis()">분석하기</button>
         </div>
     </div>
-    
+
     <div class="watchlist-live-panel">
         <div class="watchlist-panel-header">
             <span>⭐ My 관심종목 실시간 현황</span>
@@ -854,7 +856,7 @@ def main():
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("🎨 [대시보드 업데이트 완료] 우측 상시 오픈 관심종목 칸 배치 완료!")
+    print("🎨 [대시보드 업데이트 완료] 비트코인 공백 제거 및 관심종목 우측 전면 확장 완료!")
 
 if __name__ == "__main__":
     main()
