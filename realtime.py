@@ -204,7 +204,6 @@ def check_btc_status():
     except Exception:
         return "NEUTRAL (보통)", 1.0
 
-# [개선 1] 익절 +3.0% / 손절 -2.5%로 현실적인 노이즈 범주 상향
 def calculate_historical_win_rate(history_db, target_tp_pct=3.0, target_sl_pct=2.5):
     total_trades, wins, losses = 0, 0, 0
     for market, records in history_db.items():
@@ -252,7 +251,6 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         current_price = df.iloc[-1]["trade_price"]
         change_rate = ((current_price - df.iloc[-1]["prev_closing_price"]) / df.iloc[-1]["prev_closing_price"]) * 100
 
-    # 분석 프레임을 최근 36개(3시간)로 확대하여 윗꼬리 고점 착각 방지
     df_frame = df.iloc[-36:].copy().reset_index(drop=True)
     prices, volumes = df_frame["trade_price"].values, df_frame["candle_acc_trade_volume"].values
 
@@ -285,7 +283,9 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     df["ma60"] = df["trade_price"].rolling(60).mean()
     last_row = df.iloc[-1]
 
-    ma_momentum_score = 100.0 if last_row["ma5"] > last_row["ma20"] > last_row["ma60"] else (60.0 if last_row["ma5"] > last_row["ma20"] else 20.0)
+    # [개선 1] 연속성 점수 산정 (이동평균 교차 시 급격한 점수 요동 방지)
+    dev_5_20 = ((last_row["ma5"] - last_row["ma20"]) / (last_row["ma20"] + 1e-8)) * 100
+    ma_momentum_score = min(100.0, max(0.0, 50.0 + (dev_5_20 * 20.0)))
 
     up_5pct_count = sum(1 for _, row in df.iterrows() if ((row["high_price"] - row["low_price"]) / (row["low_price"] + 1e-8)) * 100 >= 5.0 and row["trade_price"] >= row["opening_price"])
     down_5pct_count = sum(1 for _, row in df.iterrows() if ((row["high_price"] - row["low_price"]) / (row["high_price"] + 1e-8)) * 100 >= 5.0 and row["trade_price"] < row["opening_price"])
@@ -294,8 +294,7 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
     liquidity_index = round(min(100.0, max(0.0, (np.log10(acc_24h_krw + 1e-8) - 7) * 20)), 1) if acc_24h_krw > 0 else 0.0
     rsi = calculate_rsi(df["trade_price"])
 
-    # [개선 2] 가중치 기반 점수 산출
-    base_score = (
+    raw_score = (
         combined_pattern_sim * weights.get("w_pattern", 0.25) +
         (positive_count / 36.0 * 100) * weights.get("w_buy_sell", 0.10) +
         ai_volatility_score * weights.get("w_ai_volatility", 0.05) +
@@ -306,14 +305,26 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         min(100.0, max(0.0, change_rate * 3.33)) * weights.get("w_daily_momentum", 0.15)
     )
 
-    # [개선 3] 과열 종목 및 고점 추격 매수 감점 강화
-    if rsi >= 68.0: base_score *= 0.60
-    elif rsi <= 35.0: base_score *= 0.80
+    if rsi >= 68.0: raw_score *= 0.60
+    elif rsi <= 35.0: raw_score *= 0.80
     
-    if change_rate >= 12.0: base_score *= 0.50  # 당일 +12% 이상 폭등한 상투 종목 감점
-    if liquidity_index < 15.0: base_score *= 0.50 # 잡코인 유동성 감점
+    if change_rate >= 12.0: raw_score *= 0.50
+    if liquidity_index < 15.0: raw_score *= 0.50
 
-    final_score = max(0.0, base_score * btc_multiplier)
+    # [개선 2] EMA 점수 평탄화 (직전 5분 점수 60% + 신규 점수 40%) 적용으로 5분 주기 순위 급등락 차단
+    prev_history = history_db.get(market, [])
+    prev_score = prev_history[-1]["score"] if prev_history else None
+
+    if prev_score is not None:
+        smoothed_score = (raw_score * 0.4) + (prev_score * 0.6)
+    else:
+        smoothed_score = raw_score
+
+    # [개선 3] 직전 회차 TOP 10 종목 보유 가산점(+3.0점)
+    if prev_history and prev_history[-1].get("rank", 99) <= 10:
+        smoothed_score += 3.0
+
+    final_score = max(0.0, smoothed_score * btc_multiplier)
     if is_ai_recommended:
         final_score *= 1.01 if (rsi < 68.0 and vol_surge_score >= 10.0) else 0.95
 
@@ -346,7 +357,6 @@ def analyze_single_coin(market, k_name, ideal_price_pattern, ideal_vol_pattern, 
         "corpse_ratio": corpse_ratio, "res_1": round(res_1, 4), "res_2": round(res_2, 4)
     }
 
-# HTML 생성 함수는 동일 유지
 def generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, html_path=HTML_OUTPUT):
     os.makedirs(os.path.dirname(html_path), exist_ok=True)
     win_rate, total_trades, wins, losses = backtest_stats
@@ -661,20 +671,17 @@ def main():
     btc_status, btc_multiplier = check_btc_status()
 
     history_db = load_json(HISTORY_FILE, {})
-    
-    # [개선 1] 현실적인 목표 승률 판정 조건으로 재설정 (익절 +3% / 손절 -2.5%)
     backtest_stats = calculate_historical_win_rate(history_db, target_tp_pct=3.0, target_sl_pct=2.5)
 
-    # [개선 2] 고점 추격 매수를 막도록 균형 잡힌 가중치 기본값 적용
     weights = load_json(WEIGHTS_FILE, {
-        "w_pattern": 0.25,        # 차트 유사도 비중 대폭 강화
+        "w_pattern": 0.25,
         "w_buy_sell": 0.10, 
         "w_ai_volatility": 0.05,
-        "w_vol_cliff": 0.15,      # 눌림목 포착 강화
-        "w_breakout": 0.05,       # 고점 돌파 비중 축소
-        "w_vol_surge": 0.10,      # 거래량 상투 비중 축소
+        "w_vol_cliff": 0.15,
+        "w_breakout": 0.05,
+        "w_vol_surge": 0.10,
         "w_ma_alignment": 0.15, 
-        "w_daily_momentum": 0.15  # 당일 변동성 비중 축소
+        "w_daily_momentum": 0.15
     })
 
     pattern_data = load_json(PATTERN_FILE, {})
@@ -723,7 +730,7 @@ def main():
 
     current_time_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     generate_full_dashboard_html(analysis_results, current_time_str, btc_status, backtest_stats, HTML_OUTPUT)
-    print("🎨 [대시보드 업데이트 완료] 고점 추격 매수 방지 및 승률 검증 로직 고도화 적용 완료!")
+    print("🎨 [대시보드 업데이트 완료] 순위 평탄화(Smoothed Score) 로직 적용으로 5분 주기 등락 안정화 완료!")
 
 if __name__ == "__main__":
     main()
