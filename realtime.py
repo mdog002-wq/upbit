@@ -436,36 +436,23 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 .star-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: #ccc; margin-right: 4px; padding: 0; }
 .star-btn.active { color: #ffb703; }
 
-/* 3컬럼 레이아웃: 좌측(1) - 중앙(1.5) - 우측(1.5) */
+/* 3컬럼 대시보드 상단 레이아웃 */
 .dashboard-top-section { 
     display: grid; 
-    grid-template-columns: 1fr 1.5fr 1.5fr; 
+    grid-template-columns: 1.2fr 1.5fr 1.3fr; 
     gap: 12px; 
     margin-bottom: 15px; 
     align-items: stretch; 
 }
 
-/* 좌측 & 중앙 세로 정렬 컨테이너 */
+/* 좌측/중앙 세로 정렬 구조 */
 .left-controls, .center-controls { 
     display: flex; 
     flex-direction: column; 
     gap: 10px; 
 }
 
-/* 검색창 스타일 */
-.search-box { width: 100%; }
-.search-box input { 
-    width: 100%; 
-    padding: 9px 12px; 
-    font-size: 14px; 
-    border: 1px solid #ced4da; 
-    border-radius: 6px; 
-    outline: none; 
-    background: #ffffff; 
-    box-sizing: border-box; 
-}
-
-/* 중앙: 승률 & BTC 상태 카드 */
+/* [좌측 상단] 실시간 백테스팅 & BTC 상태 카드 */
 .status-combined-card { 
     background: #ffffff; 
     padding: 10px 14px; 
@@ -481,7 +468,33 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 }
 .winrate-val { font-size: 15px; color: #e03131; font-weight: bold; }
 
-/* 중앙: AI 스마트 진단 바 */
+/* [좌측 하단] 코인명/티커 검색창 */
+.search-box { width: 100%; }
+.search-box input { 
+    width: 100%; 
+    padding: 9px 12px; 
+    font-size: 14px; 
+    border: 1px solid #ced4da; 
+    border-radius: 6px; 
+    outline: none; 
+    background: #ffffff; 
+    box-sizing: border-box; 
+}
+
+/* [중앙 상단] AI 진단 결과 카드 (좌측 수치 카드로 생긴 공백 채움) */
+.ai-result-card { 
+    display: none; 
+    background: #eef3fc; 
+    border: 1px solid #b3d4ff; 
+    padding: 10px 14px; 
+    border-radius: 6px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+    font-size: 13px;
+    line-height: 1.4;
+    flex: 1; /* 높이를 맞춰 상단 공백을 가득 채움 */
+}
+
+/* [중앙 하단] AI 진단 입력 바 */
 .ai-diagnosis-box { 
     display: flex; 
     align-items: center; 
@@ -512,7 +525,7 @@ body { background-color: #f8f9fa; color: #333333; font-family: 'Segoe UI', Tahom
 }
 .ai-diagnosis-btn:hover { background-color: #216a2f; }
 
-/* 우측: 관심종목 패널 */
+/* [우측] 관심종목 패널 */
 .watchlist-live-panel { 
     background: #ffffff; 
     border: 1px solid #ced4da; 
@@ -786,15 +799,8 @@ window.onkeydown = function(event) {
 
 <!-- 대시보드 상단 3분할 영역 -->
 <div class="dashboard-top-section">
-    <!-- 1. 좌측: 종목 검색 -->
+    <!-- 1. 좌측 컬럼: (상) 백테스팅 & BTC 상태 / (하) 코인명·티커 검색창 -->
     <div class="left-controls">
-        <div class="search-box">
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색...">
-        </div>
-    </div>
-
-    <!-- 2. 중앙: 상태 카드 & AI 진단 -->
-    <div class="center-controls">
         <div class="status-combined-card">
             <div>
                 🎯 <b>실시간 백테스팅 승률:</b> 
@@ -806,6 +812,17 @@ window.onkeydown = function(event) {
             </div>
         </div>
 
+        <div class="search-box">
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="코인명 또는 티커 검색...">
+        </div>
+    </div>
+
+    <!-- 2. 중앙 컬럼: (상) AI 진단 결과 카드 (상단 공백 위치) / (하) AI 진단 입력창 -->
+    <div class="center-controls">
+        <div id="aiResultCard" class="ai-result-card">
+            <!-- AI 진단 버튼 클릭 시 결과가 이곳에 들어갑니다 -->
+        </div>
+
         <div class="ai-diagnosis-box">
             <span style="font-weight: bold; font-size: 13px; color: #007bff; white-space: nowrap;">🤖 AI 진단:</span>
             <input type="text" id="aiCoinInput" placeholder="종목명/티커" style="width: 80px;">
@@ -814,7 +831,7 @@ window.onkeydown = function(event) {
         </div>
     </div>
 
-    <!-- 3. 우측: 관심종목 패널 -->
+    <!-- 3. 우측 컬럼: 관심종목 현황 패널 -->
     <div class="watchlist-live-panel">
         <div class="watchlist-panel-header">
             <span>⭐ My 관심종목 현황</span>
@@ -823,7 +840,6 @@ window.onkeydown = function(event) {
         <div id="watchlistLiveItems" class="watchlist-items-wrapper"></div>
     </div>
 </div>
-
 <div id="aiResultCard" class="ai-result-card"></div>
 
 <div class="table-container">
