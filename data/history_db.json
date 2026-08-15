@@ -523,7 +523,11 @@
             "price": 53.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3637068,
+=======
+            "timestamp": 1786805725.3186948,
+>>>>>>> Stashed changes
             "score": 36.99,
             "rank": 219,
             "price": 53.0
@@ -1053,8 +1057,13 @@
             "price": 42.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3623269,
             "score": 47.18,
+=======
+            "timestamp": 1786805725.31729,
+            "score": 47.15,
+>>>>>>> Stashed changes
             "rank": 137,
             "price": 42.2
         }
@@ -1589,9 +1598,15 @@
             "price": 224.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363175,
             "score": 41.08,
             "rank": 189,
+=======
+            "timestamp": 1786805725.3190663,
+            "score": 34.24,
+            "rank": 241,
+>>>>>>> Stashed changes
             "price": 224.0
         }
     ],
@@ -2119,7 +2134,11 @@
             "price": 110.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3605518,
+=======
+            "timestamp": 1786805725.315458,
+>>>>>>> Stashed changes
             "score": 61.35,
             "rank": 32,
             "price": 110.0
@@ -2655,9 +2674,15 @@
             "price": 16850.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3625631,
             "score": 45.64,
             "rank": 151,
+=======
+            "timestamp": 1786805725.3175204,
+            "score": 45.64,
+            "rank": 150,
+>>>>>>> Stashed changes
             "price": 16850.0
         }
     ],
@@ -3185,9 +3210,15 @@
             "price": 10.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3630023,
             "score": 42.71,
             "rank": 178,
+=======
+            "timestamp": 1786805725.318264,
+            "score": 40.01,
+            "rank": 193,
+>>>>>>> Stashed changes
             "price": 10.1
         }
     ],
@@ -3721,9 +3752,15 @@
             "price": 10.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361443,
             "score": 52.82,
             "rank": 84,
+=======
+            "timestamp": 1786805725.3163874,
+            "score": 52.82,
+            "rank": 85,
+>>>>>>> Stashed changes
             "price": 10.8
         }
     ],
@@ -4257,7 +4294,11 @@
             "price": 1.02
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361999,
+=======
+            "timestamp": 1786805725.3169491,
+>>>>>>> Stashed changes
             "score": 48.43,
             "rank": 118,
             "price": 1.02
@@ -4793,10 +4834,17 @@
             "price": 35.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3603277,
             "score": 64.02,
             "rank": 19,
             "price": 35.2
+=======
+            "timestamp": 1786805725.3151693,
+            "score": 64.06,
+            "rank": 18,
+            "price": 35.3
+>>>>>>> Stashed changes
         }
     ],
     "KRW-BIRB": [
@@ -5323,9 +5371,15 @@
             "price": 76.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360958,
             "score": 58.34,
             "rank": 56,
+=======
+            "timestamp": 1786805725.3158553,
+            "score": 58.34,
+            "rank": 55,
+>>>>>>> Stashed changes
             "price": 76.3
         }
     ],
@@ -5859,7 +5913,11 @@
             "price": 92.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3626478,
+=======
+            "timestamp": 1786805725.3176224,
+>>>>>>> Stashed changes
             "score": 45.29,
             "rank": 156,
             "price": 92.0
@@ -6395,7 +6453,11 @@
             "price": 194.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3626804,
+=======
+            "timestamp": 1786805725.3176572,
+>>>>>>> Stashed changes
             "score": 44.85,
             "rank": 158,
             "price": 194.0
@@ -6925,7 +6987,11 @@
             "price": 42.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364211,
+=======
+            "timestamp": 1786805725.3191996,
+>>>>>>> Stashed changes
             "score": 32.95,
             "rank": 249,
             "price": 42.0
@@ -7461,9 +7527,15 @@
             "price": 1.72
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3638017,
             "score": 36.52,
             "rank": 223,
+=======
+            "timestamp": 1786805725.3187537,
+            "score": 36.52,
+            "rank": 222,
+>>>>>>> Stashed changes
             "price": 1.72
         }
     ],
@@ -7997,7 +8069,11 @@
             "price": 3.03
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3621767,
+=======
+            "timestamp": 1786805725.3171353,
+>>>>>>> Stashed changes
             "score": 47.85,
             "rank": 129,
             "price": 3.03
@@ -8521,9 +8597,15 @@
             "price": 71.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3633273,
             "score": 39.52,
             "rank": 197,
+=======
+            "timestamp": 1786805725.318416,
+            "score": 39.36,
+            "rank": 202,
+>>>>>>> Stashed changes
             "price": 71.4
         }
     ],
@@ -9051,9 +9133,15 @@
             "price": 52.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3610249,
             "score": 57.87,
             "rank": 60,
+=======
+            "timestamp": 1786805725.3159237,
+            "score": 57.87,
+            "rank": 59,
+>>>>>>> Stashed changes
             "price": 52.3
         }
     ],
@@ -9575,7 +9663,11 @@
             "price": 60.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3632076,
+=======
+            "timestamp": 1786805725.3182087,
+>>>>>>> Stashed changes
             "score": 40.43,
             "rank": 191,
             "price": 60.1
@@ -10111,7 +10203,11 @@
             "price": 6.91
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360658,
+=======
+            "timestamp": 1786805725.3155615,
+>>>>>>> Stashed changes
             "score": 60.77,
             "rank": 38,
             "price": 6.91
@@ -10647,7 +10743,11 @@
             "price": 56.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360177,
+=======
+            "timestamp": 1786805725.315063,
+>>>>>>> Stashed changes
             "score": 66.17,
             "rank": 12,
             "price": 56.1
@@ -11183,9 +11283,15 @@
             "price": 11.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3634546,
             "score": 38.87,
             "rank": 205,
+=======
+            "timestamp": 1786805725.3184812,
+            "score": 38.87,
+            "rank": 206,
+>>>>>>> Stashed changes
             "price": 11.9
         }
     ],
@@ -11713,9 +11819,15 @@
             "price": 11.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3607905,
             "score": 59.77,
             "rank": 46,
+=======
+            "timestamp": 1786805725.315683,
+            "score": 59.77,
+            "rank": 45,
+>>>>>>> Stashed changes
             "price": 11.9
         }
     ],
@@ -12237,7 +12349,11 @@
             "price": 21640.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3636563,
+=======
+            "timestamp": 1786805725.3186622,
+>>>>>>> Stashed changes
             "score": 37.39,
             "rank": 217,
             "price": 21760.0
@@ -12761,9 +12877,15 @@
             "price": 4.85
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3622935,
             "score": 47.45,
             "rank": 135,
+=======
+            "timestamp": 1786805725.3172731,
+            "score": 47.45,
+            "rank": 136,
+>>>>>>> Stashed changes
             "price": 4.85
         }
     ],
@@ -13297,7 +13419,11 @@
             "price": 79.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364453,
+=======
+            "timestamp": 1786805725.3194475,
+>>>>>>> Stashed changes
             "score": 29.75,
             "rank": 263,
             "price": 79.3
@@ -13815,7 +13941,11 @@
             "price": 7.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362194,
+=======
+            "timestamp": 1786805725.3171527,
+>>>>>>> Stashed changes
             "score": 47.83,
             "rank": 130,
             "price": 7.4
@@ -14345,9 +14475,15 @@
             "price": 135.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3628716,
             "score": 43.53,
             "rank": 170,
+=======
+            "timestamp": 1786805725.3168802,
+            "score": 49.14,
+            "rank": 114,
+>>>>>>> Stashed changes
             "price": 135.0
         }
     ],
@@ -14881,10 +15017,17 @@
             "price": 107.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3607733,
             "score": 60.02,
             "rank": 45,
             "price": 108.0
+=======
+            "timestamp": 1786805725.3156652,
+            "score": 60.0,
+            "rank": 44,
+            "price": 107.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-KERNEL": [
@@ -15405,7 +15548,11 @@
             "price": 47.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3611248,
+=======
+            "timestamp": 1786805725.3160436,
+>>>>>>> Stashed changes
             "score": 56.86,
             "rank": 66,
             "price": 47.0
@@ -15941,9 +16088,15 @@
             "price": 6.18
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362401,
             "score": 46.74,
             "rank": 141,
+=======
+            "timestamp": 1786805725.3173497,
+            "score": 46.74,
+            "rank": 140,
+>>>>>>> Stashed changes
             "price": 6.18
         }
     ],
@@ -16465,7 +16618,11 @@
             "price": 10.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3617046,
+=======
+            "timestamp": 1786805725.316644,
+>>>>>>> Stashed changes
             "score": 50.44,
             "rank": 100,
             "price": 10.2
@@ -16995,7 +17152,11 @@
             "price": 6.48
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.359976,
+=======
+            "timestamp": 1786805725.3148572,
+>>>>>>> Stashed changes
             "score": 83.25,
             "rank": 1,
             "price": 6.48
@@ -17531,9 +17692,15 @@
             "price": 1417.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361325,
             "score": 53.86,
             "rank": 77,
+=======
+            "timestamp": 1786805725.3162673,
+            "score": 53.86,
+            "rank": 78,
+>>>>>>> Stashed changes
             "price": 1417.0
         }
     ],
@@ -18067,9 +18234,15 @@
             "price": 1414.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361952,
             "score": 48.69,
             "rank": 115,
+=======
+            "timestamp": 1786805725.316915,
+            "score": 48.69,
+            "rank": 116,
+>>>>>>> Stashed changes
             "price": 1414.0
         }
     ],
@@ -18597,7 +18770,11 @@
             "price": 41.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3615263,
+=======
+            "timestamp": 1786805725.3164573,
+>>>>>>> Stashed changes
             "score": 52.1,
             "rank": 89,
             "price": 41.9
@@ -19115,7 +19292,11 @@
             "price": 24.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3600535,
+=======
+            "timestamp": 1786805725.3149374,
+>>>>>>> Stashed changes
             "score": 73.09,
             "rank": 5,
             "price": 24.8
@@ -19651,7 +19832,11 @@
             "price": 225.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3622105,
+=======
+            "timestamp": 1786805725.3171704,
+>>>>>>> Stashed changes
             "score": 47.78,
             "rank": 131,
             "price": 225.0
@@ -20187,7 +20372,11 @@
             "price": 51.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3617551,
+=======
+            "timestamp": 1786805725.3166952,
+>>>>>>> Stashed changes
             "score": 50.23,
             "rank": 103,
             "price": 51.5
@@ -20723,10 +20912,17 @@
             "price": 1184.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364736,
             "score": 21.76,
             "rank": 281,
             "price": 1191.0
+=======
+            "timestamp": 1786805725.3195956,
+            "score": 26.03,
+            "rank": 272,
+            "price": 1206.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-JUP": [
@@ -21259,7 +21455,11 @@
             "price": 241.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360159,
+=======
+            "timestamp": 1786805725.3150446,
+>>>>>>> Stashed changes
             "score": 67.12,
             "rank": 11,
             "price": 241.0
@@ -21789,9 +21989,15 @@
             "price": 8.92
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3619678,
             "score": 48.69,
             "rank": 116,
+=======
+            "timestamp": 1786805725.3169312,
+            "score": 48.69,
+            "rank": 117,
+>>>>>>> Stashed changes
             "price": 8.92
         }
     ],
@@ -22325,9 +22531,15 @@
             "price": 1414.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3609257,
             "score": 58.39,
             "rank": 54,
+=======
+            "timestamp": 1786805725.3158212,
+            "score": 58.39,
+            "rank": 53,
+>>>>>>> Stashed changes
             "price": 1414.0
         }
     ],
@@ -22843,10 +23055,17 @@
             "price": 216.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3647764,
             "score": 15.19,
             "rank": 283,
             "price": 217.0
+=======
+            "timestamp": 1786805725.3197753,
+            "score": 14.43,
+            "rank": 283,
+            "price": 216.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-XRP": [
@@ -23379,9 +23598,15 @@
             "price": 1416.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3632402,
             "score": 40.04,
             "rank": 193,
+=======
+            "timestamp": 1786805725.3184478,
+            "score": 39.02,
+            "rank": 204,
+>>>>>>> Stashed changes
             "price": 1417.0
         }
     ],
@@ -23915,7 +24140,11 @@
             "price": 19.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360605,
+=======
+            "timestamp": 1786805725.3155084,
+>>>>>>> Stashed changes
             "score": 61.19,
             "rank": 35,
             "price": 19.4
@@ -24433,7 +24662,11 @@
             "price": 22850.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3606913,
+=======
+            "timestamp": 1786805725.3155968,
+>>>>>>> Stashed changes
             "score": 60.4,
             "rank": 40,
             "price": 22850.0
@@ -24969,7 +25202,11 @@
             "price": 68.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3644218,
+=======
+            "timestamp": 1786805725.3194149,
+>>>>>>> Stashed changes
             "score": 30.58,
             "rank": 261,
             "price": 68.1
@@ -25505,7 +25742,11 @@
             "price": 9.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3604662,
+=======
+            "timestamp": 1786805725.3153653,
+>>>>>>> Stashed changes
             "score": 62.18,
             "rank": 27,
             "price": 9.2
@@ -26029,9 +26270,15 @@
             "price": 4038.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3630812,
             "score": 42.36,
             "rank": 183,
+=======
+            "timestamp": 1786805725.3180604,
+            "score": 42.36,
+            "rank": 182,
+>>>>>>> Stashed changes
             "price": 4038.0
         }
     ],
@@ -26565,9 +26812,15 @@
             "price": 48.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3630335,
             "score": 42.68,
             "rank": 180,
+=======
+            "timestamp": 1786805725.3180096,
+            "score": 42.68,
+            "rank": 179,
+>>>>>>> Stashed changes
             "price": 48.6
         }
     ],
@@ -27101,9 +27354,15 @@
             "price": 1855.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3620937,
             "score": 48.12,
             "rank": 124,
+=======
+            "timestamp": 1786805725.3170319,
+            "score": 48.12,
+            "rank": 123,
+>>>>>>> Stashed changes
             "price": 1855.0
         }
     ],
@@ -27631,7 +27890,11 @@
             "price": 121.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360724,
+=======
+            "timestamp": 1786805725.3156312,
+>>>>>>> Stashed changes
             "score": 60.28,
             "rank": 42,
             "price": 121.0
@@ -28167,7 +28430,11 @@
             "price": 284.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3605182,
+=======
+            "timestamp": 1786805725.315422,
+>>>>>>> Stashed changes
             "score": 61.74,
             "rank": 30,
             "price": 284.0
@@ -28691,9 +28958,15 @@
             "price": 45.6
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3612058,
             "score": 55.51,
             "rank": 71,
+=======
+            "timestamp": 1786805725.3161497,
+            "score": 55.51,
+            "rank": 72,
+>>>>>>> Stashed changes
             "price": 45.6
         }
     ],
@@ -29227,9 +29500,15 @@
             "price": 85.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3610756,
             "score": 57.61,
             "rank": 63,
+=======
+            "timestamp": 1786805725.3159583,
+            "score": 57.61,
+            "rank": 61,
+>>>>>>> Stashed changes
             "price": 85.9
         }
     ],
@@ -29757,7 +30036,11 @@
             "price": 1414.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3622265,
+=======
+            "timestamp": 1786805725.3171864,
+>>>>>>> Stashed changes
             "score": 47.7,
             "rank": 132,
             "price": 1414.0
@@ -30287,10 +30570,17 @@
             "price": 89125000.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3616881,
             "score": 50.52,
             "rank": 99,
             "price": 89128000.0
+=======
+            "timestamp": 1786805725.3159754,
+            "score": 57.01,
+            "rank": 62,
+            "price": 89129000.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-BREV": [
@@ -30811,9 +31101,15 @@
             "price": 96.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3609424,
             "score": 58.38,
             "rank": 55,
+=======
+            "timestamp": 1786805725.3158386,
+            "score": 58.38,
+            "rank": 54,
+>>>>>>> Stashed changes
             "price": 96.1
         }
     ],
@@ -31347,7 +31643,11 @@
             "price": 26.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3617213,
+=======
+            "timestamp": 1786805725.316661,
+>>>>>>> Stashed changes
             "score": 50.44,
             "rank": 101,
             "price": 26.7
@@ -31883,9 +32183,15 @@
             "price": 6450.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3624494,
             "score": 46.26,
             "rank": 144,
+=======
+            "timestamp": 1786805725.3174012,
+            "score": 46.26,
+            "rank": 143,
+>>>>>>> Stashed changes
             "price": 6450.0
         }
     ],
@@ -32419,8 +32725,13 @@
             "price": 273.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3643267,
             "score": 31.93,
+=======
+            "timestamp": 1786805725.3193173,
+            "score": 31.33,
+>>>>>>> Stashed changes
             "rank": 255,
             "price": 272.0
         }
@@ -32937,9 +33248,15 @@
             "price": 150.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3608916,
             "score": 58.74,
             "rank": 52,
+=======
+            "timestamp": 1786805725.3157687,
+            "score": 58.74,
+            "rank": 50,
+>>>>>>> Stashed changes
             "price": 150.0
         }
     ],
@@ -33473,7 +33790,11 @@
             "price": 366.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3618548,
+=======
+            "timestamp": 1786805725.3167963,
+>>>>>>> Stashed changes
             "score": 49.76,
             "rank": 109,
             "price": 366.0
@@ -34009,9 +34330,15 @@
             "price": 69.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3624654,
             "score": 46.24,
             "rank": 145,
+=======
+            "timestamp": 1786805725.3174171,
+            "score": 46.24,
+            "rank": 144,
+>>>>>>> Stashed changes
             "price": 69.9
         }
     ],
@@ -34545,9 +34872,15 @@
             "price": 18.6
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3634865,
             "score": 38.51,
             "rank": 207,
+=======
+            "timestamp": 1786805725.3185139,
+            "score": 38.51,
+            "rank": 208,
+>>>>>>> Stashed changes
             "price": 18.6
         }
     ],
@@ -35081,10 +35414,17 @@
             "price": 36.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364704,
             "score": 23.14,
             "rank": 279,
             "price": 37.1
+=======
+            "timestamp": 1786805725.3197103,
+            "score": 23.01,
+            "rank": 279,
+            "price": 37.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-ENS": [
@@ -35617,9 +35957,15 @@
             "price": 5770.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361903,
             "score": 49.6,
             "rank": 112,
+=======
+            "timestamp": 1786805725.316095,
+            "score": 56.43,
+            "rank": 69,
+>>>>>>> Stashed changes
             "price": 5770.0
         }
     ],
@@ -36153,9 +36499,15 @@
             "price": 9.59
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3638806,
             "score": 36.11,
             "rank": 228,
+=======
+            "timestamp": 1786805725.318819,
+            "score": 36.11,
+            "rank": 226,
+>>>>>>> Stashed changes
             "price": 9.59
         }
     ],
@@ -36683,9 +37035,15 @@
             "price": 122.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361254,
             "score": 54.66,
             "rank": 74,
+=======
+            "timestamp": 1786805725.3161988,
+            "score": 54.66,
+            "rank": 75,
+>>>>>>> Stashed changes
             "price": 122.0
         }
     ],
@@ -37207,9 +37565,15 @@
             "price": 39.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360363,
             "score": 63.43,
             "rank": 21,
+=======
+            "timestamp": 1786805725.3152773,
+            "score": 63.4,
+            "rank": 22,
+>>>>>>> Stashed changes
             "price": 39.7
         }
     ],
@@ -37731,7 +38095,11 @@
             "price": 117.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3631926,
+=======
+            "timestamp": 1786805725.318193,
+>>>>>>> Stashed changes
             "score": 40.9,
             "rank": 190,
             "price": 117.0
@@ -38261,7 +38629,11 @@
             "price": 57.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363631,
+=======
+            "timestamp": 1786805725.3186455,
+>>>>>>> Stashed changes
             "score": 37.5,
             "rank": 216,
             "price": 57.7
@@ -38797,7 +39169,11 @@
             "price": 0.335
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3599994,
+=======
+            "timestamp": 1786805725.3148818,
+>>>>>>> Stashed changes
             "score": 80.4,
             "rank": 2,
             "price": 0.335
@@ -39315,9 +39691,15 @@
             "price": 121.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3610415,
             "score": 57.77,
             "rank": 61,
+=======
+            "timestamp": 1786805725.3159418,
+            "score": 57.77,
+            "rank": 60,
+>>>>>>> Stashed changes
             "price": 121.0
         }
     ],
@@ -39839,9 +40221,15 @@
             "price": 791.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3628073,
             "score": 44.01,
             "rank": 166,
+=======
+            "timestamp": 1786805725.317808,
+            "score": 44.01,
+            "rank": 167,
+>>>>>>> Stashed changes
             "price": 789.0
         }
     ],
@@ -40375,7 +40763,11 @@
             "price": 109.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364295,
+=======
+            "timestamp": 1786805725.3192844,
+>>>>>>> Stashed changes
             "score": 32.35,
             "rank": 253,
             "price": 109.0
@@ -40905,7 +41297,11 @@
             "price": 132.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360346,
+=======
+            "timestamp": 1786805725.315205,
+>>>>>>> Stashed changes
             "score": 63.52,
             "rank": 20,
             "price": 132.0
@@ -41435,7 +41831,11 @@
             "price": 29.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3620148,
+=======
+            "timestamp": 1786805725.3169656,
+>>>>>>> Stashed changes
             "score": 48.38,
             "rank": 119,
             "price": 29.0
@@ -41965,7 +42365,11 @@
             "price": 87.5
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3618703,
+=======
+            "timestamp": 1786805725.3168125,
+>>>>>>> Stashed changes
             "score": 49.75,
             "rank": 110,
             "price": 87.5
@@ -42501,7 +42905,11 @@
             "price": 101.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3606753,
+=======
+            "timestamp": 1786805725.3155792,
+>>>>>>> Stashed changes
             "score": 60.41,
             "rank": 39,
             "price": 101.0
@@ -43037,10 +43445,17 @@
             "price": 469.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3641484,
             "score": 33.81,
             "rank": 245,
             "price": 469.0
+=======
+            "timestamp": 1786805725.3191833,
+            "score": 33.36,
+            "rank": 248,
+            "price": 468.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-ONT": [
@@ -43561,7 +43976,11 @@
             "price": 51.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3637397,
+=======
+            "timestamp": 1786805725.3187203,
+>>>>>>> Stashed changes
             "score": 36.75,
             "rank": 220,
             "price": 51.8
@@ -44091,7 +44510,11 @@
             "price": 17.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3604493,
+=======
+            "timestamp": 1786805725.3153481,
+>>>>>>> Stashed changes
             "score": 62.18,
             "rank": 26,
             "price": 17.9
@@ -44627,7 +45050,11 @@
             "price": 57.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3623536,
+=======
+            "timestamp": 1786805725.3173168,
+>>>>>>> Stashed changes
             "score": 46.94,
             "rank": 138,
             "price": 57.4
@@ -45163,7 +45590,11 @@
             "price": 1695.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3605354,
+=======
+            "timestamp": 1786805725.315441,
+>>>>>>> Stashed changes
             "score": 61.52,
             "rank": 31,
             "price": 1699.0
@@ -45693,7 +46124,11 @@
             "price": 56.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3614926,
+=======
+            "timestamp": 1786805725.316422,
+>>>>>>> Stashed changes
             "score": 52.56,
             "rank": 87,
             "price": 56.2
@@ -46229,9 +46664,15 @@
             "price": 105.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3624814,
             "score": 46.13,
             "rank": 146,
+=======
+            "timestamp": 1786805725.317434,
+            "score": 46.13,
+            "rank": 145,
+>>>>>>> Stashed changes
             "price": 105.0
         }
     ],
@@ -46753,7 +47194,11 @@
             "price": 451.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3606403,
+=======
+            "timestamp": 1786805725.3155437,
+>>>>>>> Stashed changes
             "score": 60.95,
             "rank": 37,
             "price": 451.0
@@ -47283,9 +47728,15 @@
             "price": 3.89
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3639119,
             "score": 35.82,
             "rank": 230,
+=======
+            "timestamp": 1786805725.318852,
+            "score": 35.82,
+            "rank": 228,
+>>>>>>> Stashed changes
             "price": 3.9
         }
     ],
@@ -47813,8 +48264,13 @@
             "price": 18.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3645313,
             "score": 27.52,
+=======
+            "timestamp": 1786805725.3195293,
+            "score": 27.47,
+>>>>>>> Stashed changes
             "rank": 268,
             "price": 18.8
         }
@@ -48343,9 +48799,15 @@
             "price": 13430.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3602924,
             "score": 64.05,
             "rank": 17,
+=======
+            "timestamp": 1786805725.3151343,
+            "score": 64.43,
+            "rank": 16,
+>>>>>>> Stashed changes
             "price": 13430.0
         }
     ],
@@ -48873,9 +49335,15 @@
             "price": 49.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3613088,
             "score": 54.36,
             "rank": 76,
+=======
+            "timestamp": 1786805725.3162491,
+            "score": 54.36,
+            "rank": 77,
+>>>>>>> Stashed changes
             "price": 49.9
         }
     ],
@@ -49409,8 +49877,13 @@
             "price": 99.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362969,
             "score": 42.97,
+=======
+            "timestamp": 1786805725.3179588,
+            "score": 42.93,
+>>>>>>> Stashed changes
             "rank": 176,
             "price": 99.1
         }
@@ -49939,7 +50412,11 @@
             "price": 485.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3643107,
+=======
+            "timestamp": 1786805725.3193004,
+>>>>>>> Stashed changes
             "score": 32.04,
             "rank": 254,
             "price": 486.0
@@ -50475,9 +50952,15 @@
             "price": 2390.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3640683,
             "score": 34.43,
             "rank": 240,
+=======
+            "timestamp": 1786805725.3190155,
+            "score": 34.43,
+            "rank": 238,
+>>>>>>> Stashed changes
             "price": 2388.0
         }
     ],
@@ -51011,9 +51494,15 @@
             "price": 87.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.36258,
             "score": 45.6,
             "rank": 152,
+=======
+            "timestamp": 1786805725.3175387,
+            "score": 45.6,
+            "rank": 151,
+>>>>>>> Stashed changes
             "price": 87.7
         }
     ],
@@ -51547,9 +52036,15 @@
             "price": 104.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3610578,
             "score": 57.72,
             "rank": 62,
+=======
+            "timestamp": 1786805725.3160255,
+            "score": 56.86,
+            "rank": 65,
+>>>>>>> Stashed changes
             "price": 104.0
         }
     ],
@@ -52083,9 +52578,15 @@
             "price": 41.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361655,
             "score": 51.24,
             "rank": 97,
+=======
+            "timestamp": 1786805725.3166106,
+            "score": 51.24,
+            "rank": 98,
+>>>>>>> Stashed changes
             "price": 41.4
         }
     ],
@@ -52619,10 +53120,17 @@
             "price": 3133.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362417,
             "score": 46.6,
             "rank": 142,
             "price": 3135.0
+=======
+            "timestamp": 1786805725.3177426,
+            "score": 44.38,
+            "rank": 163,
+            "price": 3134.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-POL": [
@@ -53149,7 +53657,11 @@
             "price": 107.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3611403,
+=======
+            "timestamp": 1786805725.31606,
+>>>>>>> Stashed changes
             "score": 56.48,
             "rank": 67,
             "price": 107.0
@@ -53673,9 +54185,15 @@
             "price": 1332.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3642433,
             "score": 32.7,
             "rank": 251,
+=======
+            "timestamp": 1786805725.3192155,
+            "score": 32.7,
+            "rank": 250,
+>>>>>>> Stashed changes
             "price": 1332.0
         }
     ],
@@ -54203,7 +54721,11 @@
             "price": 124.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3628874,
+=======
+            "timestamp": 1786805725.3178744,
+>>>>>>> Stashed changes
             "score": 43.4,
             "rank": 171,
             "price": 124.0
@@ -54733,9 +55255,15 @@
             "price": 3175.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3639586,
             "score": 35.23,
             "rank": 233,
+=======
+            "timestamp": 1786805725.3189166,
+            "score": 35.23,
+            "rank": 232,
+>>>>>>> Stashed changes
             "price": 3175.0
         }
     ],
@@ -55269,9 +55797,15 @@
             "price": 46.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3633425,
             "score": 39.47,
             "rank": 198,
+=======
+            "timestamp": 1786805725.3183308,
+            "score": 39.47,
+            "rank": 197,
+>>>>>>> Stashed changes
             "price": 46.4
         }
     ],
@@ -55799,9 +56333,15 @@
             "price": 16.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363294,
             "score": 39.74,
             "rank": 195,
+=======
+            "timestamp": 1786805725.3183131,
+            "score": 39.74,
+            "rank": 196,
+>>>>>>> Stashed changes
             "price": 16.4
         }
     ],
@@ -56335,7 +56875,11 @@
             "price": 105.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3607075,
+=======
+            "timestamp": 1786805725.3156137,
+>>>>>>> Stashed changes
             "score": 60.28,
             "rank": 41,
             "price": 105.0
@@ -56871,10 +57415,17 @@
             "price": 61.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3635032,
             "score": 38.42,
             "rank": 208,
             "price": 61.6
+=======
+            "timestamp": 1786805725.3182802,
+            "score": 40.01,
+            "rank": 194,
+            "price": 61.7
+>>>>>>> Stashed changes
         }
     ],
     "KRW-ZK": [
@@ -57401,7 +57952,11 @@
             "price": 10.6
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361805,
+=======
+            "timestamp": 1786805725.316746,
+>>>>>>> Stashed changes
             "score": 50.14,
             "rank": 106,
             "price": 10.6
@@ -57925,9 +58480,15 @@
             "price": 956.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3641953,
             "score": 33.58,
             "rank": 248,
+=======
+            "timestamp": 1786805725.3191662,
+            "score": 33.58,
+            "rank": 247,
+>>>>>>> Stashed changes
             "price": 956.0
         }
     ],
@@ -58449,9 +59010,15 @@
             "price": 1657.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3634381,
             "score": 38.95,
             "rank": 204,
+=======
+            "timestamp": 1786805725.318465,
+            "score": 38.95,
+            "rank": 205,
+>>>>>>> Stashed changes
             "price": 1657.0
         }
     ],
@@ -58979,9 +59546,15 @@
             "price": 213.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3627284,
             "score": 44.67,
             "rank": 161,
+=======
+            "timestamp": 1786805725.3172193,
+            "score": 47.51,
+            "rank": 134,
+>>>>>>> Stashed changes
             "price": 214.0
         }
     ],
@@ -59509,9 +60082,15 @@
             "price": 9.05
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.36031,
             "score": 64.04,
             "rank": 18,
+=======
+            "timestamp": 1786805725.3151875,
+            "score": 64.04,
+            "rank": 19,
+>>>>>>> Stashed changes
             "price": 9.05
         }
     ],
@@ -60039,9 +60618,15 @@
             "price": 21.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3612218,
             "score": 54.85,
             "rank": 72,
+=======
+            "timestamp": 1786805725.3161654,
+            "score": 54.85,
+            "rank": 73,
+>>>>>>> Stashed changes
             "price": 21.7
         }
     ],
@@ -60569,9 +61154,15 @@
             "price": 641.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3619838,
             "score": 48.52,
             "rank": 117,
+=======
+            "timestamp": 1786805725.3177588,
+            "score": 44.38,
+            "rank": 164,
+>>>>>>> Stashed changes
             "price": 639.0
         }
     ],
@@ -61105,9 +61696,15 @@
             "price": 0.422
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3626113,
             "score": 45.5,
             "rank": 154,
+=======
+            "timestamp": 1786805725.3175724,
+            "score": 45.5,
+            "rank": 153,
+>>>>>>> Stashed changes
             "price": 0.422
         }
     ],
@@ -61635,9 +62232,15 @@
             "price": 0.457
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3625317,
             "score": 45.89,
             "rank": 149,
+=======
+            "timestamp": 1786805725.3174675,
+            "score": 45.99,
+            "rank": 147,
+>>>>>>> Stashed changes
             "price": 0.457
         }
     ],
@@ -62171,9 +62774,15 @@
             "price": 92.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.36316,
             "score": 41.12,
             "rank": 188,
+=======
+            "timestamp": 1786805725.3181765,
+            "score": 41.12,
+            "rank": 189,
+>>>>>>> Stashed changes
             "price": 92.7
         }
     ],
@@ -62701,7 +63310,11 @@
             "price": 71.5
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362952,
+=======
+            "timestamp": 1786805725.3179414,
+>>>>>>> Stashed changes
             "score": 43.33,
             "rank": 175,
             "price": 71.6
@@ -63231,7 +63844,11 @@
             "price": 28.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361772,
+=======
+            "timestamp": 1786805725.3167124,
+>>>>>>> Stashed changes
             "score": 50.21,
             "rank": 104,
             "price": 28.1
@@ -63749,10 +64366,17 @@
             "price": 388.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3610928,
             "score": 57.27,
             "rank": 64,
             "price": 387.0
+=======
+            "timestamp": 1786805725.3159924,
+            "score": 56.97,
+            "rank": 63,
+            "price": 388.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-KNC": [
@@ -64273,7 +64897,11 @@
             "price": 142.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3615744,
+=======
+            "timestamp": 1786805725.3165085,
+>>>>>>> Stashed changes
             "score": 51.91,
             "rank": 92,
             "price": 142.0
@@ -64803,9 +65431,15 @@
             "price": 1414.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3614602,
             "score": 52.69,
             "rank": 85,
+=======
+            "timestamp": 1786805725.3165417,
+            "score": 51.8,
+            "rank": 94,
+>>>>>>> Stashed changes
             "price": 1414.0
         }
     ],
@@ -65339,9 +65973,15 @@
             "price": 263.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3630967,
             "score": 42.28,
             "rank": 184,
+=======
+            "timestamp": 1786805725.3180761,
+            "score": 42.28,
+            "rank": 183,
+>>>>>>> Stashed changes
             "price": 263.0
         }
     ],
@@ -65869,9 +66509,15 @@
             "price": 0.00934
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3630495,
             "score": 42.47,
             "rank": 181,
+=======
+            "timestamp": 1786805725.318027,
+            "score": 42.5,
+            "rank": 180,
+>>>>>>> Stashed changes
             "price": 0.00935
         }
     ],
@@ -66387,9 +67033,15 @@
             "price": 106900.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3609746,
             "score": 58.21,
             "rank": 57,
+=======
+            "timestamp": 1786805725.3158717,
+            "score": 58.21,
+            "rank": 56,
+>>>>>>> Stashed changes
             "price": 106800.0
         }
     ],
@@ -66923,9 +67575,15 @@
             "price": 0.888
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3638964,
             "score": 35.91,
             "rank": 229,
+=======
+            "timestamp": 1786805725.318836,
+            "score": 35.91,
+            "rank": 227,
+>>>>>>> Stashed changes
             "price": 0.888
         }
     ],
@@ -67447,9 +68105,15 @@
             "price": 2663000.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3607566,
             "score": 60.08,
             "rank": 44,
+=======
+            "timestamp": 1786805725.315786,
+            "score": 58.71,
+            "rank": 51,
+>>>>>>> Stashed changes
             "price": 2663000.0
         }
     ],
@@ -67977,9 +68641,15 @@
             "price": 7.24
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3608756,
             "score": 58.77,
             "rank": 51,
+=======
+            "timestamp": 1786805725.315751,
+            "score": 58.77,
+            "rank": 49,
+>>>>>>> Stashed changes
             "price": 7.24
         }
     ],
@@ -68513,7 +69183,11 @@
             "price": 4.62
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3600364,
+=======
+            "timestamp": 1786805725.3149197,
+>>>>>>> Stashed changes
             "score": 76.68,
             "rank": 4,
             "price": 4.62
@@ -69031,7 +69705,11 @@
             "price": 1.18
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3601422,
+=======
+            "timestamp": 1786805725.315027,
+>>>>>>> Stashed changes
             "score": 67.6,
             "rank": 10,
             "price": 1.18
@@ -69567,7 +70245,11 @@
             "price": 53.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3626645,
+=======
+            "timestamp": 1786805725.3176405,
+>>>>>>> Stashed changes
             "score": 44.9,
             "rank": 157,
             "price": 53.8
@@ -70097,9 +70779,15 @@
             "price": 2076.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3627443,
             "score": 44.57,
             "rank": 162,
+=======
+            "timestamp": 1786805725.3177087,
+            "score": 44.57,
+            "rank": 161,
+>>>>>>> Stashed changes
             "price": 2076.0
         }
     ],
@@ -70627,9 +71315,15 @@
             "price": 5845.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3645942,
             "score": 25.59,
             "rank": 272,
+=======
+            "timestamp": 1786805725.319628,
+            "score": 25.59,
+            "rank": 274,
+>>>>>>> Stashed changes
             "price": 5845.0
         }
     ],
@@ -71163,9 +71857,15 @@
             "price": 91.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3616061,
             "score": 51.6,
             "rank": 94,
+=======
+            "timestamp": 1786805725.3165584,
+            "score": 51.6,
+            "rank": 95,
+>>>>>>> Stashed changes
             "price": 91.2
         }
     ],
@@ -71699,9 +72399,15 @@
             "price": 261.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363974,
             "score": 35.19,
             "rank": 234,
+=======
+            "timestamp": 1786805725.3189325,
+            "score": 35.19,
+            "rank": 233,
+>>>>>>> Stashed changes
             "price": 261.0
         }
     ],
@@ -72223,9 +72929,15 @@
             "price": 2308.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3631287,
             "score": 41.52,
             "rank": 186,
+=======
+            "timestamp": 1786805725.3181424,
+            "score": 41.52,
+            "rank": 187,
+>>>>>>> Stashed changes
             "price": 2315.0
         }
     ],
@@ -72753,9 +73465,15 @@
             "price": 122.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3623846,
             "score": 46.82,
             "rank": 140,
+=======
+            "timestamp": 1786805725.3173666,
+            "score": 46.74,
+            "rank": 141,
+>>>>>>> Stashed changes
             "price": 123.0
         }
     ],
@@ -73277,9 +73995,15 @@
             "price": 92.5
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3630176,
             "score": 42.68,
             "rank": 179,
+=======
+            "timestamp": 1786805725.3179932,
+            "score": 42.68,
+            "rank": 178,
+>>>>>>> Stashed changes
             "price": 92.5
         }
     ],
@@ -73813,7 +74537,11 @@
             "price": 617.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3635986,
+=======
+            "timestamp": 1786805725.3186128,
+>>>>>>> Stashed changes
             "score": 37.95,
             "rank": 214,
             "price": 615.0
@@ -74349,9 +75077,15 @@
             "price": 4600.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3640049,
             "score": 35.06,
             "rank": 236,
+=======
+            "timestamp": 1786805725.3189647,
+            "score": 35.06,
+            "rank": 235,
+>>>>>>> Stashed changes
             "price": 4601.0
         }
     ],
@@ -74861,10 +75595,17 @@
             "price": 12.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364038,
             "score": 34.77,
             "rank": 238,
             "price": 12.8
+=======
+            "timestamp": 1786805725.3190339,
+            "score": 34.4,
+            "rank": 239,
+            "price": 12.9
+>>>>>>> Stashed changes
         }
     ],
     "KRW-ALGO": [
@@ -75391,7 +76132,11 @@
             "price": 113.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3627121,
+=======
+            "timestamp": 1786805725.317691,
+>>>>>>> Stashed changes
             "score": 44.67,
             "rank": 160,
             "price": 113.0
@@ -75927,7 +76672,11 @@
             "price": 430.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3643742,
+=======
+            "timestamp": 1786805725.3193648,
+>>>>>>> Stashed changes
             "score": 30.98,
             "rank": 258,
             "price": 430.0
@@ -76457,9 +77206,15 @@
             "price": 2762.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361622,
             "score": 51.45,
             "rank": 95,
+=======
+            "timestamp": 1786805725.3165758,
+            "score": 51.45,
+            "rank": 96,
+>>>>>>> Stashed changes
             "price": 2762.0
         }
     ],
@@ -76987,7 +77742,11 @@
             "price": 233.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3604314,
+=======
+            "timestamp": 1786805725.3153303,
+>>>>>>> Stashed changes
             "score": 62.68,
             "rank": 25,
             "price": 233.0
@@ -77517,9 +78276,15 @@
             "price": 29.5
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3611097,
             "score": 56.96,
             "rank": 65,
+=======
+            "timestamp": 1786805725.3160098,
+            "score": 56.96,
+            "rank": 64,
+>>>>>>> Stashed changes
             "price": 29.5
         }
     ],
@@ -78041,9 +78806,15 @@
             "price": 14.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363256,
             "score": 39.81,
             "rank": 194,
+=======
+            "timestamp": 1786805725.318297,
+            "score": 39.81,
+            "rank": 195,
+>>>>>>> Stashed changes
             "price": 14.0
         }
     ],
@@ -78565,7 +79336,11 @@
             "price": 20.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3605711,
+=======
+            "timestamp": 1786805725.3154752,
+>>>>>>> Stashed changes
             "score": 61.35,
             "rank": 33,
             "price": 20.4
@@ -79101,9 +79876,15 @@
             "price": 5.23
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.360248,
             "score": 64.1,
             "rank": 16,
+=======
+            "timestamp": 1786805725.3151515,
+            "score": 64.1,
+            "rank": 17,
+>>>>>>> Stashed changes
             "price": 5.23
         }
     ],
@@ -79613,9 +80394,15 @@
             "price": 9280.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3633592,
             "score": 39.45,
             "rank": 199,
+=======
+            "timestamp": 1786805725.3183482,
+            "score": 39.45,
+            "rank": 198,
+>>>>>>> Stashed changes
             "price": 9270.0
         }
     ],
@@ -80143,7 +80930,11 @@
             "price": 44.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3644378,
+=======
+            "timestamp": 1786805725.3194313,
+>>>>>>> Stashed changes
             "score": 30.02,
             "rank": 262,
             "price": 44.9
@@ -80667,9 +81458,15 @@
             "price": 124.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3631127,
             "score": 41.8,
             "rank": 185,
+=======
+            "timestamp": 1786805725.3181255,
+            "score": 41.8,
+            "rank": 186,
+>>>>>>> Stashed changes
             "price": 124.0
         }
     ],
@@ -81197,7 +81994,11 @@
             "price": 1787.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.36216,
+=======
+            "timestamp": 1786805725.317117,
+>>>>>>> Stashed changes
             "score": 47.89,
             "rank": 128,
             "price": 1787.0
@@ -81727,9 +82528,15 @@
             "price": 25.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3641636,
             "score": 33.67,
             "rank": 246,
+=======
+            "timestamp": 1786805725.3191342,
+            "score": 33.67,
+            "rank": 245,
+>>>>>>> Stashed changes
             "price": 25.3
         }
     ],
@@ -82263,9 +83070,15 @@
             "price": 131.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3613732,
             "score": 53.15,
             "rank": 80,
+=======
+            "timestamp": 1786805725.3163176,
+            "score": 53.15,
+            "rank": 81,
+>>>>>>> Stashed changes
             "price": 131.0
         }
     ],
@@ -82781,9 +83594,15 @@
             "price": 87.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3627765,
             "score": 44.32,
             "rank": 164,
+=======
+            "timestamp": 1786805725.317775,
+            "score": 44.32,
+            "rank": 165,
+>>>>>>> Stashed changes
             "price": 87.1
         }
     ],
@@ -83317,9 +84136,15 @@
             "price": 3.08
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3616385,
             "score": 51.45,
             "rank": 96,
+=======
+            "timestamp": 1786805725.3165934,
+            "score": 51.45,
+            "rank": 97,
+>>>>>>> Stashed changes
             "price": 3.08
         }
     ],
@@ -83853,7 +84678,11 @@
             "price": 0.000365
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3618212,
+=======
+            "timestamp": 1786805725.316763,
+>>>>>>> Stashed changes
             "score": 50.13,
             "rank": 107,
             "price": 0.000365
@@ -84383,7 +85212,11 @@
             "price": 1239.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3626964,
+=======
+            "timestamp": 1786805725.317675,
+>>>>>>> Stashed changes
             "score": 44.68,
             "rank": 159,
             "price": 1239.0
@@ -84901,7 +85734,11 @@
             "price": 8.52
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3615897,
+=======
+            "timestamp": 1786805725.3165245,
+>>>>>>> Stashed changes
             "score": 51.9,
             "rank": 93,
             "price": 8.52
@@ -85437,9 +86274,15 @@
             "price": 542.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3641176,
             "score": 33.92,
             "rank": 243,
+=======
+            "timestamp": 1786805725.3190856,
+            "score": 34.12,
+            "rank": 242,
+>>>>>>> Stashed changes
             "price": 544.0
         }
     ],
@@ -85967,9 +86810,15 @@
             "price": 25.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3613563,
             "score": 53.17,
             "rank": 79,
+=======
+            "timestamp": 1786805725.3163,
+            "score": 53.17,
+            "rank": 80,
+>>>>>>> Stashed changes
             "price": 25.1
         }
     ],
@@ -86503,9 +87352,15 @@
             "price": 101.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3638182,
             "score": 36.47,
             "rank": 224,
+=======
+            "timestamp": 1786805725.3187702,
+            "score": 36.47,
+            "rank": 223,
+>>>>>>> Stashed changes
             "price": 101.0
         }
     ],
@@ -87033,7 +87888,11 @@
             "price": 1215.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3602128,
+=======
+            "timestamp": 1786805725.3150992,
+>>>>>>> Stashed changes
             "score": 64.88,
             "rank": 14,
             "price": 1215.0
@@ -87557,7 +88416,11 @@
             "price": 8.51
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3614779,
+=======
+            "timestamp": 1786805725.316406,
+>>>>>>> Stashed changes
             "score": 52.62,
             "rank": 86,
             "price": 8.54
@@ -88093,9 +88956,15 @@
             "price": 281.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3645787,
             "score": 25.85,
             "rank": 271,
+=======
+            "timestamp": 1786805725.3196118,
+            "score": 25.85,
+            "rank": 273,
+>>>>>>> Stashed changes
             "price": 281.0
         }
     ],
@@ -88629,7 +89498,11 @@
             "price": 237.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3621428,
+=======
+            "timestamp": 1786805725.3170996,
+>>>>>>> Stashed changes
             "score": 47.92,
             "rank": 127,
             "price": 237.0
@@ -89159,7 +90032,11 @@
             "price": 2.82
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3644845,
+=======
+            "timestamp": 1786805725.3194795,
+>>>>>>> Stashed changes
             "score": 29.61,
             "rank": 265,
             "price": 2.82
@@ -89695,9 +90572,15 @@
             "price": 11.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361426,
             "score": 52.92,
             "rank": 83,
+=======
+            "timestamp": 1786805725.31637,
+            "score": 52.92,
+            "rank": 84,
+>>>>>>> Stashed changes
             "price": 11.2
         }
     ],
@@ -90231,9 +91114,15 @@
             "price": 109.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3645625,
             "score": 26.21,
             "rank": 270,
+=======
+            "timestamp": 1786805725.3195786,
+            "score": 26.21,
+            "rank": 271,
+>>>>>>> Stashed changes
             "price": 109.0
         }
     ],
@@ -90755,9 +91644,15 @@
             "price": 6174000.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3612375,
             "score": 54.72,
             "rank": 73,
+=======
+            "timestamp": 1786805725.3161812,
+            "score": 54.72,
+            "rank": 74,
+>>>>>>> Stashed changes
             "price": 6174000.0
         }
     ],
@@ -91285,7 +92180,11 @@
             "price": 5.38
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364688,
+=======
+            "timestamp": 1786805725.3196938,
+>>>>>>> Stashed changes
             "score": 23.51,
             "rank": 278,
             "price": 5.38
@@ -91821,7 +92720,11 @@
             "price": 61.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3636806,
+=======
+            "timestamp": 1786805725.3186777,
+>>>>>>> Stashed changes
             "score": 37.04,
             "rank": 218,
             "price": 61.3
@@ -92357,9 +93260,15 @@
             "price": 5.22
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3600898,
             "score": 68.15,
             "rank": 7,
+=======
+            "timestamp": 1786805725.3149555,
+            "score": 70.86,
+            "rank": 6,
+>>>>>>> Stashed changes
             "price": 5.21
         }
     ],
@@ -92887,9 +93796,15 @@
             "price": 66.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3628392,
             "score": 43.79,
             "rank": 168,
+=======
+            "timestamp": 1786805725.3178406,
+            "score": 43.79,
+            "rank": 169,
+>>>>>>> Stashed changes
             "price": 66.8
         }
     ],
@@ -93423,9 +94338,15 @@
             "price": 8855.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3631442,
             "score": 41.37,
             "rank": 187,
+=======
+            "timestamp": 1786805725.3181596,
+            "score": 41.37,
+            "rank": 188,
+>>>>>>> Stashed changes
             "price": 8855.0
         }
     ],
@@ -93959,9 +94880,15 @@
             "price": 90.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3639274,
             "score": 35.68,
             "rank": 231,
+=======
+            "timestamp": 1786805725.3188672,
+            "score": 35.68,
+            "rank": 229,
+>>>>>>> Stashed changes
             "price": 90.1
         }
     ],
@@ -94483,7 +95410,11 @@
             "price": 497.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3600178,
+=======
+            "timestamp": 1786805725.3149016,
+>>>>>>> Stashed changes
             "score": 77.53,
             "rank": 3,
             "price": 497.0
@@ -95019,9 +95950,15 @@
             "price": 769.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3638647,
             "score": 36.21,
             "rank": 227,
+=======
+            "timestamp": 1786805725.3188028,
+            "score": 36.21,
+            "rank": 225,
+>>>>>>> Stashed changes
             "price": 769.0
         }
     ],
@@ -95555,7 +96492,11 @@
             "price": 1103.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3607402,
+=======
+            "timestamp": 1786805725.3156483,
+>>>>>>> Stashed changes
             "score": 60.2,
             "rank": 43,
             "price": 1103.0
@@ -96085,7 +97026,11 @@
             "price": 50.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3605878,
+=======
+            "timestamp": 1786805725.3154917,
+>>>>>>> Stashed changes
             "score": 61.25,
             "rank": 34,
             "price": 50.9
@@ -96615,7 +97560,11 @@
             "price": 214.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3601072,
+=======
+            "timestamp": 1786805725.314991,
+>>>>>>> Stashed changes
             "score": 68.05,
             "rank": 8,
             "price": 214.0
@@ -97139,9 +98088,15 @@
             "price": 6.95
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362596,
             "score": 45.55,
             "rank": 153,
+=======
+            "timestamp": 1786805725.317556,
+            "score": 45.55,
+            "rank": 152,
+>>>>>>> Stashed changes
             "price": 6.95
         }
     ],
@@ -97669,7 +98624,11 @@
             "price": 156.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3602304,
+=======
+            "timestamp": 1786805725.3151164,
+>>>>>>> Stashed changes
             "score": 64.66,
             "rank": 15,
             "price": 156.0
@@ -98199,7 +99158,11 @@
             "price": 6.42
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3617887,
+=======
+            "timestamp": 1786805725.3167293,
+>>>>>>> Stashed changes
             "score": 50.15,
             "rank": 105,
             "price": 6.42
@@ -98729,9 +99692,15 @@
             "price": 137.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3600717,
             "score": 70.39,
             "rank": 6,
+=======
+            "timestamp": 1786805725.314974,
+            "score": 70.39,
+            "rank": 7,
+>>>>>>> Stashed changes
             "price": 137.0
         }
     ],
@@ -99265,7 +100234,11 @@
             "price": 536.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3635345,
+=======
+            "timestamp": 1786805725.3185484,
+>>>>>>> Stashed changes
             "score": 38.24,
             "rank": 210,
             "price": 536.0
@@ -99801,9 +100774,15 @@
             "price": 42.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3616712,
             "score": 50.66,
             "rank": 98,
+=======
+            "timestamp": 1786805725.3166268,
+            "score": 50.66,
+            "rank": 99,
+>>>>>>> Stashed changes
             "price": 42.3
         }
     ],
@@ -100325,7 +101304,11 @@
             "price": 3743.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3620305,
+=======
+            "timestamp": 1786805725.3169816,
+>>>>>>> Stashed changes
             "score": 48.38,
             "rank": 120,
             "price": 3743.0
@@ -100855,9 +101838,15 @@
             "price": 103.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3612912,
             "score": 54.38,
             "rank": 75,
+=======
+            "timestamp": 1786805725.3162155,
+            "score": 54.38,
+            "rank": 76,
+>>>>>>> Stashed changes
             "price": 103.0
         }
     ],
@@ -101391,9 +102380,15 @@
             "price": 3.41
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364102,
             "score": 34.12,
             "rank": 242,
+=======
+            "timestamp": 1786805725.3191028,
+            "score": 34.12,
+            "rank": 243,
+>>>>>>> Stashed changes
             "price": 3.43
         }
     ],
@@ -101927,9 +102922,15 @@
             "price": 0.00344
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.36331,
             "score": 39.69,
             "rank": 196,
+=======
+            "timestamp": 1786805725.3188832,
+            "score": 35.66,
+            "rank": 230,
+>>>>>>> Stashed changes
             "price": 0.00345
         }
     ],
@@ -102457,7 +103458,11 @@
             "price": 35.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361838,
+=======
+            "timestamp": 1786805725.3167796,
+>>>>>>> Stashed changes
             "score": 49.94,
             "rank": 108,
             "price": 35.2
@@ -102981,9 +103986,15 @@
             "price": 90.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3642273,
             "score": 32.77,
             "rank": 250,
+=======
+            "timestamp": 1786805725.3192677,
+            "score": 32.5,
+            "rank": 252,
+>>>>>>> Stashed changes
             "price": 90.8
         }
     ],
@@ -103511,7 +104522,11 @@
             "price": 122400.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3615088,
+=======
+            "timestamp": 1786805725.3164387,
+>>>>>>> Stashed changes
             "score": 52.19,
             "rank": 88,
             "price": 122500.0
@@ -104041,7 +105056,11 @@
             "price": 224.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3645005,
+=======
+            "timestamp": 1786805725.3194962,
+>>>>>>> Stashed changes
             "score": 28.99,
             "rank": 266,
             "price": 224.0
@@ -104571,9 +105590,15 @@
             "price": 1480.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3624334,
             "score": 46.36,
             "rank": 143,
+=======
+            "timestamp": 1786805725.317384,
+            "score": 46.36,
+            "rank": 142,
+>>>>>>> Stashed changes
             "price": 1480.0
         }
     ],
@@ -105101,8 +106126,13 @@
             "price": 63.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3644688,
             "score": 29.73,
+=======
+            "timestamp": 1786805725.319464,
+            "score": 29.65,
+>>>>>>> Stashed changes
             "rank": 264,
             "price": 63.4
         }
@@ -105637,9 +106667,15 @@
             "price": 27.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3609085,
             "score": 58.51,
             "rank": 53,
+=======
+            "timestamp": 1786805725.3158033,
+            "score": 58.51,
+            "rank": 52,
+>>>>>>> Stashed changes
             "price": 27.1
         }
     ],
@@ -106167,7 +107203,11 @@
             "price": 0.00646
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3623693,
+=======
+            "timestamp": 1786805725.3173337,
+>>>>>>> Stashed changes
             "score": 46.87,
             "rank": 139,
             "price": 0.00647
@@ -106697,9 +107737,15 @@
             "price": 223.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363374,
             "score": 39.43,
             "rank": 200,
+=======
+            "timestamp": 1786805725.3183644,
+            "score": 39.43,
+            "rank": 199,
+>>>>>>> Stashed changes
             "price": 223.0
         }
     ],
@@ -107233,9 +108279,15 @@
             "price": 136.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3646572,
             "score": 23.8,
             "rank": 276,
+=======
+            "timestamp": 1786805725.3197267,
+            "score": 22.02,
+            "rank": 280,
+>>>>>>> Stashed changes
             "price": 137.0
         }
     ],
@@ -107769,9 +108821,15 @@
             "price": 640.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.361008,
             "score": 57.97,
             "rank": 59,
+=======
+            "timestamp": 1786805725.3159068,
+            "score": 57.97,
+            "rank": 58,
+>>>>>>> Stashed changes
             "price": 640.0
         }
     ],
@@ -108293,9 +109351,15 @@
             "price": 0.653
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3646257,
             "score": 25.07,
             "rank": 274,
+=======
+            "timestamp": 1786805725.319661,
+            "score": 25.07,
+            "rank": 276,
+>>>>>>> Stashed changes
             "price": 0.653
         }
     ],
@@ -108829,7 +109893,11 @@
             "price": 250.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362631,
+=======
+            "timestamp": 1786805725.317606,
+>>>>>>> Stashed changes
             "score": 45.3,
             "rank": 155,
             "price": 250.0
@@ -109353,7 +110421,11 @@
             "price": 1107.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3645155,
+=======
+            "timestamp": 1786805725.3195124,
+>>>>>>> Stashed changes
             "score": 28.74,
             "rank": 267,
             "price": 1107.0
@@ -109883,7 +110955,11 @@
             "price": 56.7
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3629208,
+=======
+            "timestamp": 1786805725.3179078,
+>>>>>>> Stashed changes
             "score": 43.37,
             "rank": 173,
             "price": 56.8
@@ -110413,7 +111489,11 @@
             "price": 8.64
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3634222,
+=======
+            "timestamp": 1786805725.3184319,
+>>>>>>> Stashed changes
             "score": 39.33,
             "rank": 203,
             "price": 8.64
@@ -110937,7 +112017,11 @@
             "price": 159.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363519,
+=======
+            "timestamp": 1786805725.3185315,
+>>>>>>> Stashed changes
             "score": 38.31,
             "rank": 209,
             "price": 159.0
@@ -111473,7 +112557,11 @@
             "price": 79.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3620455,
+=======
+            "timestamp": 1786805725.3169975,
+>>>>>>> Stashed changes
             "score": 48.27,
             "rank": 121,
             "price": 78.7
@@ -111997,7 +113085,11 @@
             "price": 464.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3617377,
+=======
+            "timestamp": 1786805725.3166778,
+>>>>>>> Stashed changes
             "score": 50.24,
             "rank": 102,
             "price": 463.0
@@ -112533,7 +113625,11 @@
             "price": 9.29
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3636153,
+=======
+            "timestamp": 1786805725.318629,
+>>>>>>> Stashed changes
             "score": 37.7,
             "rank": 215,
             "price": 9.31
@@ -113063,9 +114159,15 @@
             "price": 975.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3637857,
             "score": 36.54,
             "rank": 222,
+=======
+            "timestamp": 1786805725.3187375,
+            "score": 36.54,
+            "rank": 221,
+>>>>>>> Stashed changes
             "price": 977.0
         }
     ],
@@ -113593,9 +114695,15 @@
             "price": 215.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.36399,
             "score": 35.08,
             "rank": 235,
+=======
+            "timestamp": 1786805725.3189487,
+            "score": 35.08,
+            "rank": 234,
+>>>>>>> Stashed changes
             "price": 215.0
         }
     ],
@@ -114123,9 +115231,15 @@
             "price": 1652.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3619351,
             "score": 49.14,
             "rank": 114,
+=======
+            "timestamp": 1786805725.316863,
+            "score": 49.14,
+            "rank": 113,
+>>>>>>> Stashed changes
             "price": 1658.0
         }
     ],
@@ -114653,7 +115767,11 @@
             "price": 0.142
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3601248,
+=======
+            "timestamp": 1786805725.315009,
+>>>>>>> Stashed changes
             "score": 67.88,
             "rank": 9,
             "price": 0.142
@@ -115183,7 +116301,11 @@
             "price": 55.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3615587,
+=======
+            "timestamp": 1786805725.316492,
+>>>>>>> Stashed changes
             "score": 51.95,
             "rank": 91,
             "price": 55.9
@@ -115707,7 +116829,11 @@
             "price": 1994.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364342,
+=======
+            "timestamp": 1786805725.319333,
+>>>>>>> Stashed changes
             "score": 31.3,
             "rank": 256,
             "price": 1994.0
@@ -116231,9 +117357,15 @@
             "price": 8.74
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3608434,
             "score": 59.26,
             "rank": 49,
+=======
+            "timestamp": 1786805725.3157182,
+            "score": 59.26,
+            "rank": 47,
+>>>>>>> Stashed changes
             "price": 8.74
         }
     ],
@@ -116767,9 +117899,15 @@
             "price": 82.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3613408,
             "score": 53.78,
             "rank": 78,
+=======
+            "timestamp": 1786805725.316284,
+            "score": 53.78,
+            "rank": 79,
+>>>>>>> Stashed changes
             "price": 82.8
         }
     ],
@@ -117303,7 +118441,11 @@
             "price": 1.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3606226,
+=======
+            "timestamp": 1786805725.3155258,
+>>>>>>> Stashed changes
             "score": 61.06,
             "rank": 36,
             "price": 1.9
@@ -117827,9 +118969,15 @@
             "price": 0.00374
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3630662,
             "score": 42.44,
             "rank": 182,
+=======
+            "timestamp": 1786805725.3180444,
+            "score": 42.44,
+            "rank": 181,
+>>>>>>> Stashed changes
             "price": 0.00374
         }
     ],
@@ -118363,9 +119511,15 @@
             "price": 273.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3638337,
             "score": 36.43,
             "rank": 225,
+=======
+            "timestamp": 1786805725.3187866,
+            "score": 36.43,
+            "rank": 224,
+>>>>>>> Stashed changes
             "price": 273.0
         }
     ],
@@ -118893,10 +120047,17 @@
             "price": 822.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3638494,
             "score": 36.26,
             "rank": 226,
             "price": 822.0
+=======
+            "timestamp": 1786805725.3181083,
+            "score": 42.09,
+            "rank": 185,
+            "price": 821.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-OPEN": [
@@ -119423,7 +120584,11 @@
             "price": 260.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3646724,
+=======
+            "timestamp": 1786805725.3196776,
+>>>>>>> Stashed changes
             "score": 23.53,
             "rank": 277,
             "price": 260.0
@@ -119947,7 +121112,11 @@
             "price": 56.5
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3629363,
+=======
+            "timestamp": 1786805725.3179245,
+>>>>>>> Stashed changes
             "score": 43.37,
             "rank": 174,
             "price": 56.4
@@ -120471,9 +121640,15 @@
             "price": 197.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362823,
             "score": 43.82,
             "rank": 167,
+=======
+            "timestamp": 1786805725.3178236,
+            "score": 43.82,
+            "rank": 168,
+>>>>>>> Stashed changes
             "price": 197.0
         }
     ],
@@ -121007,9 +122182,15 @@
             "price": 90.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3608258,
             "score": 59.39,
             "rank": 48,
+=======
+            "timestamp": 1786805725.317082,
+            "score": 48.01,
+            "rank": 126,
+>>>>>>> Stashed changes
             "price": 90.8
         }
     ],
@@ -121537,9 +122718,15 @@
             "price": 0.46
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3620627,
             "score": 48.2,
             "rank": 122,
+=======
+            "timestamp": 1786805725.3168979,
+            "score": 48.75,
+            "rank": 115,
+>>>>>>> Stashed changes
             "price": 0.46
         }
     ],
@@ -122067,9 +123254,15 @@
             "price": 126.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3609915,
             "score": 58.12,
             "rank": 58,
+=======
+            "timestamp": 1786805725.3158894,
+            "score": 58.12,
+            "rank": 57,
+>>>>>>> Stashed changes
             "price": 125.0
         }
     ],
@@ -122603,9 +123796,15 @@
             "price": 93.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3625476,
             "score": 45.76,
             "rank": 150,
+=======
+            "timestamp": 1786805725.3175895,
+            "score": 45.44,
+            "rank": 154,
+>>>>>>> Stashed changes
             "price": 93.1
         }
     ],
@@ -123139,9 +124338,15 @@
             "price": 1.63
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3614092,
             "score": 52.98,
             "rank": 82,
+=======
+            "timestamp": 1786805725.3163533,
+            "score": 52.98,
+            "rank": 83,
+>>>>>>> Stashed changes
             "price": 1.62
         }
     ],
@@ -123669,7 +124874,11 @@
             "price": 4.17
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3601952,
+=======
+            "timestamp": 1786805725.3150814,
+>>>>>>> Stashed changes
             "score": 65.42,
             "rank": 13,
             "price": 4.17
@@ -124199,9 +125408,15 @@
             "price": 56.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3608599,
             "score": 58.96,
             "rank": 50,
+=======
+            "timestamp": 1786805725.3157353,
+            "score": 58.96,
+            "rank": 48,
+>>>>>>> Stashed changes
             "price": 56.1
         }
     ],
@@ -124729,9 +125944,15 @@
             "price": 24.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3642764,
             "score": 32.54,
             "rank": 252,
+=======
+            "timestamp": 1786805725.3192313,
+            "score": 32.54,
+            "rank": 251,
+>>>>>>> Stashed changes
             "price": 24.3
         }
     ],
@@ -125265,7 +126486,11 @@
             "price": 159.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363223,
+=======
+            "timestamp": 1786805725.3182247,
+>>>>>>> Stashed changes
             "score": 40.13,
             "rank": 192,
             "price": 160.0
@@ -125795,7 +127020,11 @@
             "price": 4.81
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3603976,
+=======
+            "timestamp": 1786805725.315295,
+>>>>>>> Stashed changes
             "score": 62.88,
             "rank": 23,
             "price": 4.81
@@ -126325,7 +127554,11 @@
             "price": 571.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3635826,
+=======
+            "timestamp": 1786805725.3185966,
+>>>>>>> Stashed changes
             "score": 38.01,
             "rank": 213,
             "price": 571.0
@@ -126861,7 +128094,11 @@
             "price": 1.16
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3622415,
+=======
+            "timestamp": 1786805725.3172023,
+>>>>>>> Stashed changes
             "score": 47.55,
             "rank": 133,
             "price": 1.16
@@ -127379,9 +128616,15 @@
             "price": 280000.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3634706,
             "score": 38.58,
             "rank": 206,
+=======
+            "timestamp": 1786805725.3184981,
+            "score": 38.58,
+            "rank": 207,
+>>>>>>> Stashed changes
             "price": 280000.0
         }
     ],
@@ -127909,9 +129152,15 @@
             "price": 3.46
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3622754,
             "score": 47.5,
             "rank": 134,
+=======
+            "timestamp": 1786805725.3172555,
+            "score": 47.5,
+            "rank": 135,
+>>>>>>> Stashed changes
             "price": 3.46
         }
     ],
@@ -128445,9 +129694,15 @@
             "price": 272.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3640854,
             "score": 34.37,
             "rank": 241,
+=======
+            "timestamp": 1786805725.3190498,
+            "score": 34.37,
+            "rank": 240,
+>>>>>>> Stashed changes
             "price": 275.0
         }
     ],
@@ -128981,7 +130236,11 @@
             "price": 85.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3643901,
+=======
+            "timestamp": 1786805725.3193822,
+>>>>>>> Stashed changes
             "score": 30.78,
             "rank": 259,
             "price": 85.9
@@ -129517,9 +130776,15 @@
             "price": 170.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.36472,
             "score": 21.93,
             "rank": 280,
+=======
+            "timestamp": 1786805725.3197432,
+            "score": 21.93,
+            "rank": 281,
+>>>>>>> Stashed changes
             "price": 170.0
         }
     ],
@@ -130047,9 +131312,15 @@
             "price": 26.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3624976,
             "score": 45.94,
             "rank": 147,
+=======
+            "timestamp": 1786805725.3174505,
+            "score": 46.13,
+            "rank": 146,
+>>>>>>> Stashed changes
             "price": 26.2
         }
     ],
@@ -130571,7 +131842,11 @@
             "price": 759.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3641331,
+=======
+            "timestamp": 1786805725.3191183,
+>>>>>>> Stashed changes
             "score": 33.89,
             "rank": 244,
             "price": 761.0
@@ -131107,10 +132382,17 @@
             "price": 92.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3623102,
             "score": 47.29,
             "rank": 136,
             "price": 93.3
+=======
+            "timestamp": 1786805725.3174856,
+            "score": 45.96,
+            "rank": 148,
+            "price": 93.6
+>>>>>>> Stashed changes
         }
     ],
     "KRW-TOKAMAK": [
@@ -131631,9 +132913,15 @@
             "price": 377.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3611891,
             "score": 56.16,
             "rank": 70,
+=======
+            "timestamp": 1786805725.3161323,
+            "score": 56.16,
+            "rank": 71,
+>>>>>>> Stashed changes
             "price": 373.0
         }
     ],
@@ -132167,7 +133455,11 @@
             "price": 85.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3644066,
+=======
+            "timestamp": 1786805725.3193989,
+>>>>>>> Stashed changes
             "score": 30.69,
             "rank": 260,
             "price": 85.4
@@ -132697,9 +133989,15 @@
             "price": 74.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3619196,
             "score": 49.28,
             "rank": 113,
+=======
+            "timestamp": 1786805725.3168464,
+            "score": 49.28,
+            "rank": 112,
+>>>>>>> Stashed changes
             "price": 74.9
         }
     ],
@@ -133233,7 +134531,11 @@
             "price": 0.791
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3605003,
+=======
+            "timestamp": 1786805725.3154042,
+>>>>>>> Stashed changes
             "score": 61.86,
             "rank": 29,
             "price": 0.791
@@ -133763,9 +135065,15 @@
             "price": 139.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3628547,
             "score": 43.71,
             "rank": 169,
+=======
+            "timestamp": 1786805725.3178585,
+            "score": 43.71,
+            "rank": 170,
+>>>>>>> Stashed changes
             "price": 139.0
         }
     ],
@@ -134299,9 +135607,15 @@
             "price": 147.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3634067,
             "score": 39.37,
             "rank": 202,
+=======
+            "timestamp": 1786805725.3183997,
+            "score": 39.37,
+            "rank": 201,
+>>>>>>> Stashed changes
             "price": 147.0
         }
     ],
@@ -134835,7 +136149,11 @@
             "price": 1203.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3604143,
+=======
+            "timestamp": 1786805725.3153121,
+>>>>>>> Stashed changes
             "score": 62.75,
             "rank": 24,
             "price": 1203.0
@@ -135365,7 +136683,11 @@
             "price": 174.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3635664,
+=======
+            "timestamp": 1786805725.318581,
+>>>>>>> Stashed changes
             "score": 38.17,
             "rank": 212,
             "price": 174.0
@@ -135901,9 +137223,15 @@
             "price": 17.4
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3621256,
             "score": 48.02,
             "rank": 126,
+=======
+            "timestamp": 1786805725.317065,
+            "score": 48.02,
+            "rank": 125,
+>>>>>>> Stashed changes
             "price": 17.4
         }
     ],
@@ -136437,7 +137765,11 @@
             "price": 43.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3629048,
+=======
+            "timestamp": 1786805725.3178914,
+>>>>>>> Stashed changes
             "score": 43.39,
             "rank": 172,
             "price": 43.8
@@ -136973,9 +138305,15 @@
             "price": 23.8
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3603802,
             "score": 63.41,
             "rank": 22,
+=======
+            "timestamp": 1786805725.3152227,
+            "score": 63.41,
+            "rank": 21,
+>>>>>>> Stashed changes
             "price": 23.8
         }
     ],
@@ -137503,7 +138841,11 @@
             "price": 0.824
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3618875,
+=======
+            "timestamp": 1786805725.3168297,
+>>>>>>> Stashed changes
             "score": 49.69,
             "rank": 111,
             "price": 0.824
@@ -138033,7 +139375,11 @@
             "price": 1411.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3643584,
+=======
+            "timestamp": 1786805725.319349,
+>>>>>>> Stashed changes
             "score": 30.98,
             "rank": 257,
             "price": 1411.0
@@ -138569,7 +139915,11 @@
             "price": 18.6
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.362985,
+=======
+            "timestamp": 1786805725.3179758,
+>>>>>>> Stashed changes
             "score": 42.88,
             "rank": 177,
             "price": 18.6
@@ -139105,9 +140455,15 @@
             "price": 0.99
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3639426,
             "score": 35.6,
             "rank": 232,
+=======
+            "timestamp": 1786805725.3189006,
+            "score": 35.6,
+            "rank": 231,
+>>>>>>> Stashed changes
             "price": 0.986
         }
     ],
@@ -139629,7 +140985,11 @@
             "price": 0.592
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3604832,
+=======
+            "timestamp": 1786805725.3153865,
+>>>>>>> Stashed changes
             "score": 61.92,
             "rank": 28,
             "price": 0.592
@@ -140165,9 +141525,15 @@
             "price": 48.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3641794,
             "score": 33.62,
             "rank": 247,
+=======
+            "timestamp": 1786805725.31915,
+            "score": 33.62,
+            "rank": 246,
+>>>>>>> Stashed changes
             "price": 49.1
         }
     ],
@@ -140689,9 +142055,15 @@
             "price": 5.3
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3611734,
             "score": 56.35,
             "rank": 69,
+=======
+            "timestamp": 1786805725.3161135,
+            "score": 56.35,
+            "rank": 70,
+>>>>>>> Stashed changes
             "price": 5.3
         }
     ],
@@ -141219,10 +142591,17 @@
             "price": 678.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.363766,
             "score": 36.55,
             "rank": 221,
             "price": 678.0
+=======
+            "timestamp": 1786805725.3180923,
+            "score": 42.11,
+            "rank": 184,
+            "price": 675.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-PUMP": [
@@ -141755,9 +143134,15 @@
             "price": 3.95
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3608084,
             "score": 59.73,
             "rank": 47,
+=======
+            "timestamp": 1786805725.3157005,
+            "score": 59.73,
+            "rank": 46,
+>>>>>>> Stashed changes
             "price": 3.95
         }
     ],
@@ -142279,9 +143664,15 @@
             "price": 429.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3645473,
             "score": 26.72,
             "rank": 269,
+=======
+            "timestamp": 1786805725.3195622,
+            "score": 26.72,
+            "rank": 270,
+>>>>>>> Stashed changes
             "price": 429.0
         }
     ],
@@ -142809,9 +144200,15 @@
             "price": 25.9
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3620777,
             "score": 48.17,
             "rank": 123,
+=======
+            "timestamp": 1786805725.3170145,
+            "score": 48.17,
+            "rank": 122,
+>>>>>>> Stashed changes
             "price": 25.9
         }
     ],
@@ -143333,7 +144730,11 @@
             "price": 269.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3615425,
+=======
+            "timestamp": 1786805725.3164744,
+>>>>>>> Stashed changes
             "score": 51.96,
             "rank": 90,
             "price": 269.0
@@ -143863,9 +145264,15 @@
             "price": 127.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3621097,
             "score": 48.11,
             "rank": 125,
+=======
+            "timestamp": 1786805725.3170488,
+            "score": 48.11,
+            "rank": 124,
+>>>>>>> Stashed changes
             "price": 127.0
         }
     ],
@@ -144393,7 +145800,11 @@
             "price": 425.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.36355,
+=======
+            "timestamp": 1786805725.318565,
+>>>>>>> Stashed changes
             "score": 38.17,
             "rank": 211,
             "price": 425.0
@@ -144929,9 +146340,15 @@
             "price": 111.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3627915,
             "score": 44.07,
             "rank": 165,
+=======
+            "timestamp": 1786805725.3177907,
+            "score": 44.07,
+            "rank": 166,
+>>>>>>> Stashed changes
             "price": 111.0
         }
     ],
@@ -145453,9 +146870,15 @@
             "price": 20.2
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3625145,
             "score": 45.92,
             "rank": 148,
+=======
+            "timestamp": 1786805725.317503,
+            "score": 45.92,
+            "rank": 149,
+>>>>>>> Stashed changes
             "price": 20.3
         }
     ],
@@ -145989,9 +147412,15 @@
             "price": 137.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3613904,
             "score": 53.06,
             "rank": 81,
+=======
+            "timestamp": 1786805725.3163352,
+            "score": 53.06,
+            "rank": 82,
+>>>>>>> Stashed changes
             "price": 137.0
         }
     ],
@@ -146513,9 +147942,15 @@
             "price": 7.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3640528,
             "score": 34.59,
             "rank": 239,
+=======
+            "timestamp": 1786805725.3189998,
+            "score": 34.59,
+            "rank": 237,
+>>>>>>> Stashed changes
             "price": 7.1
         }
     ],
@@ -147049,9 +148484,15 @@
             "price": 965.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.364021,
             "score": 34.93,
             "rank": 237,
+=======
+            "timestamp": 1786805725.3189814,
+            "score": 34.93,
+            "rank": 236,
+>>>>>>> Stashed changes
             "price": 965.0
         }
     ],
@@ -147579,9 +149020,15 @@
             "price": 253.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3633902,
             "score": 39.42,
             "rank": 201,
+=======
+            "timestamp": 1786805725.3183815,
+            "score": 39.42,
+            "rank": 200,
+>>>>>>> Stashed changes
             "price": 252.0
         }
     ],
@@ -148109,9 +149556,15 @@
             "price": 875.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3646092,
             "score": 25.38,
             "rank": 273,
+=======
+            "timestamp": 1786805725.3196442,
+            "score": 25.38,
+            "rank": 275,
+>>>>>>> Stashed changes
             "price": 875.0
         }
     ],
@@ -148639,7 +150092,11 @@
             "price": 1404.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3647614,
+=======
+            "timestamp": 1786805725.3197594,
+>>>>>>> Stashed changes
             "score": 19.42,
             "rank": 282,
             "price": 1404.0
@@ -149163,7 +150620,11 @@
             "price": 73.1
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3611572,
+=======
+            "timestamp": 1786805725.3160782,
+>>>>>>> Stashed changes
             "score": 56.47,
             "rank": 68,
             "price": 73.1
@@ -149687,10 +151148,17 @@
             "price": 290600.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3646414,
             "score": 24.08,
             "rank": 275,
             "price": 291200.0
+=======
+            "timestamp": 1786805725.3195453,
+            "score": 26.86,
+            "rank": 269,
+            "price": 291400.0
+>>>>>>> Stashed changes
         }
     ],
     "KRW-PRL": [
@@ -150223,10 +151691,17 @@
             "price": 509.0
         },
         {
+<<<<<<< Updated upstream
             "timestamp": 1786805694.3627603,
             "score": 44.54,
             "rank": 163,
             "price": 505.0
+=======
+            "timestamp": 1786805725.3177254,
+            "score": 44.4,
+            "rank": 162,
+            "price": 504.0
+>>>>>>> Stashed changes
         }
     ]
 }
